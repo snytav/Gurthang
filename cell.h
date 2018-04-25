@@ -2412,7 +2412,9 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
      return 0;
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void SetAllCurrentsToZero(uint3 threadIdx)
 {
 	int i1,l1,k1;
@@ -2436,8 +2438,10 @@ void SetAllCurrentsToZero(uint3 threadIdx)
 //    }
 }
 
-__host__ __device__
-void writeToArray(double *E, CellDouble Ec,int pnum)
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void writeToArray(double *E, CellDouble Ec,int pnum)
 {
     // double g;
      int count = 0;
@@ -2496,7 +2500,10 @@ void writeToArray(double *E, CellDouble Ec,int pnum)
 
 }
 
-__host__ __device__ double getFortranArrayValue(double *E,int i,int l,int k)
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ double getFortranArrayValue(double *E,int i,int l,int k)
 {
 	int n = getFortranCellNumber(i,l,k);
 
@@ -2509,8 +2516,10 @@ __host__ __device__ double getFortranArrayValue(double *E,int i,int l,int k)
 
 // MAPPING: fORTRAN NODE i GOES TO 2nd NODE OF C++ CELL i-1
 // Simple : C++ (i+i1) ----->>>> F(i+i1-1)
-__host__ __device__
-void readField(double *E, CellDouble & Ec,uint3 threadIdx)
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void readField(double *E, CellDouble & Ec,uint3 threadIdx)
 {
 	int i_f,l_f,k_f;
 	int i1,l1,k1;
@@ -2548,7 +2557,9 @@ void readField(double *E, CellDouble & Ec,uint3 threadIdx)
 //     }
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void readField(double *E, CellDouble & Ec)
 {
 	int i_f,l_f,k_f;
@@ -2585,7 +2596,9 @@ void readField(double *E, CellDouble & Ec)
 }
 
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void writeAllToArrays(double *glob_Jx,double *glob_Jy,double *glob_Jz,double *glob_Rho,int pnum)
 {
      writeToArray(glob_Jx,*Jx,pnum);
@@ -2594,7 +2607,9 @@ void writeAllToArrays(double *glob_Jx,double *glob_Jy,double *glob_Jz,double *gl
     // writeToArray(glob_Rho,*Rho,pnum);
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void readFieldsFromArrays(double *glob_Ex,double *glob_Ey,double *glob_Ez,double *glob_Hx,double *glob_Hy,double *glob_Hz,uint3 threadIdx)
 {
      readField(glob_Ex,*Ex,threadIdx);
@@ -2605,7 +2620,9 @@ void readFieldsFromArrays(double *glob_Ex,double *glob_Ey,double *glob_Ez,double
      readField(glob_Hz,*Hz,threadIdx);
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void readFieldsFromArrays(double *glob_Ex,double *glob_Ey,double *glob_Ez,double *glob_Hx,double *glob_Hy,double *glob_Hz)
 {
      readField(glob_Ex,*Ex);
@@ -2616,7 +2633,9 @@ void readFieldsFromArrays(double *glob_Ex,double *glob_Ey,double *glob_Ez,double
      readField(glob_Hz,*Hz);
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 thrust::host_vector< Particle >  getFlyList()
 {
    thrust::host_vector<Particle> fl;
@@ -2639,7 +2658,9 @@ thrust::host_vector< Particle >  getFlyList()
      return fl;
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 int getFortranParticleNumber(int n)
 {
     Particle p;
@@ -2721,7 +2742,9 @@ void memcpy(unsigned char *tgt,unsigned char *src,int size)
 //
 //    return dst;
 //}
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 Cell<Particle> & operator=(Cell<Particle> const & src)
 {
 	i   = src.i;
@@ -2978,7 +3001,9 @@ void SetControlSystem(int j,double *c)
 //	 }
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+#endif
 void SetControlSystemToParticles()
 {
 	Particle p;
