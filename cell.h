@@ -234,7 +234,9 @@ int ClearCell()
     return 0;
 }
 
+#ifdef __CUDACC__
 __host__ __device__
+#endif
 int AllocParticles()
 {
       int size = sizeof(Particle)/sizeof(double);
@@ -251,19 +253,29 @@ int AllocParticles()
       return 0;
 }
 
-__host__ __device__ double ParticleArrayRead(int n_particle,int attribute)
+#ifdef __CUDACC__
+__host__ __device__
+#endif
+double ParticleArrayRead(int n_particle,int attribute)
 {
 //	printf("n_p %d att %d\n",n_particle,attribute);
 	return doubParticleArray[attribute + n_particle*sizeof(Particle)/sizeof(double)];
 }
 
-__host__ __device__ void ParticleArrayWrite(int n_particle,int attribute,double t)
+#ifdef __CUDACC__
+__host__ __device__
+#endif
+void ParticleArrayWrite(int n_particle,int attribute,double t)
 {
 //	printf("n_p %d att %d\n",n_particle,attribute);
 	doubParticleArray[attribute + n_particle*sizeof(Particle)/sizeof(double)] = t;
 }
 
-double __host__ __device__ int2double(int a,int b)
+double
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+int2double(int a,int b)
 {
     unsigned long long u;
     double *d;
@@ -274,7 +286,11 @@ double __host__ __device__ int2double(int a,int b)
     return *d;
 }
 
-void __host__ __device__ double2int(double d,int *a,int *b)
+void
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ double2int(double d,int *a,int *b)
 {
     unsigned long long *u,uu;
 
@@ -287,7 +303,11 @@ void __host__ __device__ double2int(double d,int *a,int *b)
 
 }
 
-__host__ __device__ void writeParticleToSurface(int n,Particle *p)
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void writeParticleToSurface(int n,Particle *p)
 {
 //   	double3 x;
    	int size_p = sizeof(Particle);
@@ -360,7 +380,11 @@ __host__ __device__ void writeParticleToSurface(int n,Particle *p)
 
 }
 
-__host__ __device__ void addParticleToSurface(Particle *p,int *number_of_particles)
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void addParticleToSurface(Particle *p,int *number_of_particles)
 {
 
 
@@ -373,7 +397,11 @@ __host__ __device__ void addParticleToSurface(Particle *p,int *number_of_particl
 
 }
 
-__host__ __device__ void readParticleFromSurfaceDevice(int n,Particle *p)
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void readParticleFromSurfaceDevice(int n,Particle *p)
 {
 //	int size_p = sizeof(Particle);
 //	double *pos;
@@ -454,7 +482,11 @@ __host__ __device__ void readParticleFromSurfaceDevice(int n,Particle *p)
 
 public:
 
-__host__ __device__ void removeParticleFromSurfaceDevice(int n,Particle *p,int *number_of_particles)
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void removeParticleFromSurfaceDevice(int n,Particle *p,int *number_of_particles)
 {
     int i,k;
     double b;
@@ -499,7 +531,11 @@ __host__ __device__ void removeParticleFromSurfaceDevice(int n,Particle *p,int *
 
 
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 void printCellParticles(char *where,int nt)
 {
 	Particle p;
@@ -514,43 +550,78 @@ void printCellParticles(char *where,int nt)
 }
 
 
-
+#ifdef __CUDACC__
+__host__ __device__
+#endif
 __host__ __device__
   double get_hx(){return hx;}
 
-__host__ __device__
 
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double get_hy(){return hy;}
 
-__host__ __device__
 
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double get_hz(){return hz;}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   int    get_i(){return i;}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   int    get_l(){return l;}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   int    get_k(){return k;}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   CellDouble& getJx(){return (*Jx);}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   CellDouble& getJy(){return (*Jy);}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   CellDouble& getJz(){return (*Jz);}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   CellDouble& getRho(){return (*Rho);}
 
@@ -562,20 +633,39 @@ __host__ __device__
 
   void writeToArray(double *E);
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   double getCellFraction(double x,double x0,double hx){ double t = (x - x0)/hx;
                                                         return t;}
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   int    getCellNumber(double x,double x0,double hx){   return ((int) (getCellFraction(x,x0,hx) + 1.0) +1);}
 //  int    getCellNumberCenterGlobalized(double x,double x0,double hx){double t = (getCellFraction(x,x0,hx) + 1.5);  // C-style numbering for correct global array reference
 //                                                           return (int)(t + 1) - 2;}
 __host__ __device__
 
-int    getCellNumberCenter(double x,double x0,double hx){double t = ((getCellFraction(x,x0,hx) + 1.0) + 1.5);         // Fortran-style numbering used for particle shift computation
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
+
+int    getCellNumberCenter(double x,double x0,double hx)
+ {
+	 double t = ((getCellFraction(x,x0,hx) + 1.0) + 1.5);         // Fortran-style numbering used for particle shift computation
                                                          return (int)(t);}
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 int    getCellNumberCenterY(double x,double x0,double hx){double t = (x-x0)/hx + 1.5;         // Fortran-style numbering used for particle shift computation
                                                          return (int)(t);}
 __host__ __device__
