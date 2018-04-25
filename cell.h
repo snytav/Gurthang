@@ -754,35 +754,30 @@ int    getCellNumberCenterY(double x,double x0,double hx){double t = (x-x0)/hx +
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-
   double getCellTransitAverage(double hz,int i1, int i2,double x0){return (hz * (((double)i1 + (double)i2) * 0.5 - 2.0) + x0);}
 
 
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-
   double getCellTransitRatio(double z1,double z,double z2){return (z2 - z) / (z1 - z);}
 
 
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-
   double getCellTransitProduct(double z1,double z,double z2){return (z2 - z) * (z1 - z);}
 
 
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-
   double getRatioBasedX(double x1,double x,double s){      return (x + (x1 - x) * s);}
 
 
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-
   double getCenterRelatedShift(double x,double x1,int i,double hx,double x0){ //double t = 0.50*(x+x1);
                                                                             //  double t1 = hx*((double)i-2.50);
                                                                               return (0.50*(x+x1)-hx*((double)i-2.50) -x0);}
@@ -803,6 +798,9 @@ int    getCellNumberCenterY(double x,double x0,double hx){double t = (x-x0)/hx +
  	     *dz = (((p->z > z0 + hz) && (p->z < z0 + 2*hz)) || ((p->z < hz) && (k == Nz - 1))) ? 2 : ( ((p->z < z0) || ((p->z > zm-hz) && (k == 0))) ? 0 : 1);
    }
 
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
    __host__ __device__ void inverseDirection(int *dx,int *dy,int *dz)
    {
 	    *dx = (*dx == 2) ? 0 : ( *dx == 0 ? 2 : 1);
@@ -817,12 +815,18 @@ int    getCellNumberCenterY(double x,double x0,double hx){double t = (x-x0)/hx +
 bool isPointInCell(double3 x){return ((x0 <= x.x) && (x.x < x0 + hx) && (y0 <= x.y) && (x.y < y0 + hy) && (z0 <= x.z) && (x.z < z0 + hz));}
 
   //public:
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
     Cell(){}
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
    ~Cell(){}
-__host__ __device__
-    Cell(int i1,int l1,int k1,double Lx,double Ly, double Lz,int Nx1, int Ny1, int Nz1,double tau1)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ Cell(int i1,int l1,int k1,double Lx,double Ly, double Lz,int Nx1, int Ny1, int Nz1,double tau1)
                                                                                        {Cell();
 											Nx = Nx1; Ny = Ny1; Nz = Nz1; i = i1; l = l1;k = k1;
                                                                                         hx = Lx/((double)Nx); hy = Ly/((double)Ny); hz = Lz/((double)Nz);
@@ -834,6 +838,9 @@ __host__ __device__
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 double3 GetElectricField(
 			    int i,int l,int k,int  i1,int  l1,int k1,
 			    double& s1,double& s2,double& s3,double& s4,double& s5,double& s6,
@@ -862,13 +869,17 @@ double3 GetElectricField(
 	return E;
 }
 
-__host__ __device__
-    int3 getCellTripletNumber(int n){int3 i; i.z = n % (Nz+2);
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+int3 getCellTripletNumber(int n){int3 i; i.z = n % (Nz+2);
 							  i.y = ((n -i.z)/(Nz+2))%(Ny + 2);
 							  i.x = (n - i.z - i.y*(Nz+2))/((Ny+2)*(Nz+2));
 							  return i;}
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 int getGlobalCellNumberTriplet(int *i,int *l,int *k){
 	if(*i >= Nx+2) *i -= Nx+2;
 	if(*l >= Ny+2) *l -= Ny+2;
@@ -877,7 +888,9 @@ int getGlobalCellNumberTriplet(int *i,int *l,int *k){
 	return 0;
 }
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 int getGlobalCellNumber        (int i,int l,int k){
 
 	getGlobalCellNumberTriplet(&i,&l,&k);
@@ -885,7 +898,9 @@ int getGlobalCellNumber        (int i,int l,int k){
 	return (i*(Ny+2)*(Nz+2) + l*(Nz+2) + k);
 }
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 int getWrapCellNumberTriplet(int *i,int *l,int *k){
 	if(*i >= Nx)
 	{
@@ -925,16 +940,18 @@ int getWrapCellNumberTriplet(int *i,int *l,int *k){
 	return 0;
 }
 
-__host__ __device__
-int getWrapCellNumber        (int i,int l,int k){
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endifint getWrapCellNumber        (int i,int l,int k){
 
 	getWrapCellNumberTriplet(&i,&l,&k);
 
 	return (i*(Ny+2)*(Nz+2) + l*(Nz+2) + k);
 }
 
-__host__ __device__
-int getFortranCellNumber       (int i,int l,int k)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endifint getFortranCellNumber       (int i,int l,int k)
 {
 //	if(i == 102 && l == 2 && k == 0)
 //	{
@@ -943,7 +960,9 @@ int getFortranCellNumber       (int i,int l,int k)
 //	}
 	return getGlobalCellNumber(i-1,l-1,k-1);}
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void getFortranCellTriplet       (int n,int *i,int *l,int *k)
 {
 	*i = n/((Ny+2)*(Nz+2));
@@ -955,7 +974,9 @@ void getFortranCellTriplet       (int n,int *i,int *l,int *k)
 	(*k) += 1;
 }
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 
     int getGlobalBoundaryCellNumber(int i,int k,int dir,int N){ int i1 = (dir==0)*N + (dir == 1)*i + (dir == 2)*i;
                                                                 int l1 = (dir==0)*i + (dir == 1)*N + (dir == 2)*k;
@@ -963,17 +984,19 @@ __host__ __device__
 							return getGlobalCellNumber(i1,l1,k1);
                                                       }
 
-__host__ __device__
-
-    int getPeriodicShift(int dir,int i,int Nx)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+int getPeriodicShift(int dir,int i,int Nx)
 {
 //	printf("getPeriodicShift dir %d i %d Nx %d result %d \n",dir,i,Nx,((i == -1)*(Nx-1) + (i == Nx)*0 + (i >= 0 && i < Nx)*i));
 	return ((i == -1)*(Nx-1) + (i == Nx)*0 + (i >= 0 && i < Nx)*i);
 }
 
-__host__ __device__
-
-    int getDirectedPeriodicShift(int dir,int i)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+int getDirectedPeriodicShift(int dir,int i)
 {
 	return (dir == 0)*getPeriodicShift(dir,i,Nx)+(dir == 1)*getPeriodicShift(dir,i,Ny) + (dir == 2)*getPeriodicShift(dir,i,Nz);
 }
@@ -981,8 +1004,9 @@ __host__ __device__
 
 
 
-__host__ __device__
-
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
     int3 getFlyout(Particle p)
 {
 	int3 n3;
@@ -1005,10 +1029,15 @@ __host__ __device__
 //	return getGlobalBoundaryCellNumber(i1,k1,boundary_dir,N);
 //}
 
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+void ClearParticles(){number_of_particles = 0;}
 
-__host__ __device__ void ClearParticles(){number_of_particles = 0;}
-
-__host__ __device__ void Init()
+#ifdef __CUDACC__
+__host__ __device__
+#endif
+void Init()
 {
 //#ifdef GPU_PARTICLE
 //    cudaMalloc((void**)&Jx,sizeof(CellDouble));
@@ -1037,8 +1066,10 @@ __host__ __device__ void Init()
 /*#endif*/
 }
 
-
-__host__ __device__  void SetZero()
+#ifdef __CUDACC__
+ __host__ __device__
+#endif
+void SetZero()
 {
 
      Init();
