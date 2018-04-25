@@ -1719,8 +1719,9 @@ if(p->fortran_number == 32587 && p->sort == 2)
 L18:    return;
 }
 
-__host__ __device__
-
+#ifdef __CUDACC__
+ __host__ __device__
+#endif
 void Reflect(Particle *p)
 {
        // double s1;
@@ -1776,7 +1777,6 @@ L15:
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
@@ -1989,7 +1989,9 @@ void pqr(int3& i,double3& x,double3& x1,double& a1,double tau,CurrentTensor *t1,
 
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
@@ -2043,8 +2045,9 @@ void pqr(int3& i,double3& x,double3& x1,double& a1,double tau)
 }
 
 
-__host__ __device__
-
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 bool Insert(Particle& p)
 {
 //	 if(p.fortran_number == 14536 && ((int)p.sort == 2))
@@ -2167,7 +2170,9 @@ int getParticleTypeNumber(double mass,double q_mass)
 	return num;
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 virtual
 int Move0(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
