@@ -676,11 +676,19 @@ int    getCellNumberCenterY(double x,double x0,double hx){double t = (x-x0)/hx +
  #endif
  int    getCellNumberCenterCurrent(double x,double x0,double hx){double t = (getCellFraction(x,x0,hx) + 1.5);         // Fortran-style numbering used for particle shift computation
                                                                  return (int)(t+1);}
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   int getPointPosition(double x,double x0,double hx){return (int)getCellFraction(x,x0,hx);}
 
-__host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 
   int getPointCell(double3 x){                                                                     // for Particle to Cell distribution:
       int i = getPointPosition(x.x,0.0,hx);
@@ -689,16 +697,25 @@ __host__ __device__
       return getGlobalCellNumber(i,l,k);
   }
 
-   __host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double getNodeX(int i){return (((double)i-0.5)*hx);}
 
-   __host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double getNodeY(int i){return (((double)i-0.5)*hy);}
 
-   __host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double getNodeZ(int i){return (((double)i-0.5)*hz);}
 
-   __host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double getCoreCell(int code,int i,int l, int k)
   {
          switch(code)
@@ -717,10 +734,14 @@ __host__ __device__
 	 }
   }
 
-   __host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double getCellReminder(double x,double x0,double hx)    {return (getCellNumber(x,x0,hx)- getCellFraction(x,x0,hx)) - 1.0;}
 
-   __host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
   double getCellCenterReminder(double x,double x0,double hx)
   {
     double t  = getCellNumberCenter(x,x0,hx);
@@ -729,19 +750,39 @@ __host__ __device__
     return (t - 0.5 - tf - 1.0);
   }
 
-   __host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
   double getCellTransitAverage(double hz,int i1, int i2,double x0){return (hz * (((double)i1 + (double)i2) * 0.5 - 2.0) + x0);}
 
-   __host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
   double getCellTransitRatio(double z1,double z,double z2){return (z2 - z) / (z1 - z);}
 
-   __host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
   double getCellTransitProduct(double z1,double z,double z2){return (z2 - z) * (z1 - z);}
 
-   __host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
   double getRatioBasedX(double x1,double x,double s){      return (x + (x1 - x) * s);}
 
-   __host__ __device__
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
   double getCenterRelatedShift(double x,double x1,int i,double hx,double x0){ //double t = 0.50*(x+x1);
                                                                             //  double t1 = hx*((double)i-2.50);
                                                                               return (0.50*(x+x1)-hx*((double)i-2.50) -x0);}
@@ -751,7 +792,11 @@ __host__ __device__
 
 
 
-   __host__ __device__ void flyDirection(Particle *p,int *dx,int *dy,int *dz)
+
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void flyDirection(Particle *p,int *dx,int *dy,int *dz)
    {
 	     *dx = (((p->x > x0 + hx) && (p->x < x0 + 2*hx)) || ((p->x < hx) && (i == Nx - 1))) ? 2 : ( ((p->x < x0) || ((p->x > xm-hx) && (i == 0))) ? 0 : 1);
  	     *dy = (((p->y > y0 + hy) && (p->y < y0 + 2*hy)) || ((p->y < hy) && (l == Ny - 1))) ? 2 : ( ((p->y < y0) || ((p->y > ym-hy) && (l == 0))) ? 0 : 1);
@@ -766,7 +811,9 @@ __host__ __device__
    }
 
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 bool isPointInCell(double3 x){return ((x0 <= x.x) && (x.x < x0 + hx) && (y0 <= x.y) && (x.y < y0 + hy) && (z0 <= x.z) && (x.z < z0 + hz));}
 
   //public:
