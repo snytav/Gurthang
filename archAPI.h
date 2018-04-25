@@ -28,6 +28,11 @@
 #define DEVICE_TO_HOST   -131315
 #define DEVICE_TO_DEVICE -131316
 
+#ifdef __CUDACC__
+#define hostdevice_for_CUDA __host__ __device__
+#define global_for_CUDA __global__
+#endif
+
 //#define DETAILED_CURRENTS_WRITE
 //#define OMP_DETAILED_OUTPUT
 //#define OMP_OUTPUT

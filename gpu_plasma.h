@@ -162,7 +162,10 @@ __global__ void testKernel(double *p,int jmp)
 }
 
 template <template <class Particle> class Cell >
-__global__ void printParticle(Cell<Particle>  **cells,int num,int sort)
+#ifdef __CUDACC__
+__global__
+#endif
+void printParticle(Cell<Particle>  **cells,int num,int sort)
 {
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
@@ -193,7 +196,10 @@ __global__ void printParticle(Cell<Particle>  **cells,int num,int sort)
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_SetAllCurrentsToZero(Cell<Particle>  **cells)
+#ifdef __CUDACC__
+__global__
+#endif
+void GPU_SetAllCurrentsToZero(Cell<Particle>  **cells)
 {
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
@@ -212,7 +218,10 @@ __global__ void GPU_SetAllCurrentsToZero(Cell<Particle>  **cells)
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_getCellEnergy(
+#ifdef __CUDACC__
+__global__
+#endif
+void GPU_getCellEnergy(
 		Cell<Particle>  **cells,double *d_ee,
 		double *d_Ex,double *d_Ey,double *d_Ez)
 {
@@ -237,7 +246,8 @@ __global__ void GPU_getCellEnergy(
 
 
 template <template <class Particle> class Cell >
-__global__ void GPU_SetFieldsToCells(Cell<Particle>  **cells,
+global_for_CUDA
+void GPU_SetFieldsToCells(Cell<Particle>  **cells,
         double *Ex,double *Ey,double *Ez,
         double *Hx,double *Hy,double *Hz
 		)
@@ -256,7 +266,7 @@ __global__ void GPU_SetFieldsToCells(Cell<Particle>  **cells,
 	nc.readFieldsFromArrays(Ex,Ey,Ez,Hx,Hy,Hz,threadIdx);
 }
 
-__host__ __device__
+hostdevice_for_CUDA
 double CheckArraySize(double* a, double* dbg_a,int size)
 	{
 	//    Cell<Particle> c = (*AllCells)[0];
