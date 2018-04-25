@@ -34,7 +34,9 @@
 }*/
 
 #ifdef GPU_PARTICLE
+#ifdef __CUDACC__
    __global__
+#endif
 #endif
 void MoveParticle(void *,int,double);
 
@@ -668,8 +670,10 @@ int    getCellNumberCenter(double x,double x0,double hx)
 
 int    getCellNumberCenterY(double x,double x0,double hx){double t = (x-x0)/hx + 1.5;         // Fortran-style numbering used for particle shift computation
                                                          return (int)(t);}
-__host__ __device__
 
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
  int    getCellNumberCenterCurrent(double x,double x0,double hx){double t = (getCellFraction(x,x0,hx) + 1.5);         // Fortran-style numbering used for particle shift computation
                                                                  return (int)(t+1);}
 __host__ __device__
