@@ -11,9 +11,34 @@
 
 #include<stdlib.h>
 #include<stdio.h>
+#include <unistd.h>
 #include <string.h>
 #include <sys/time.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+//#include <unistd.h>
+//#include <stdio.h>
+#include <errno.h>
+
+#ifdef __CUDACC__
+#include <nvToolsExtCuda.h>
+#include <nvToolsExtCudaRt.h>
+#endif
+
+
+#include <time.h>
+
+//#ifdef __OMP__
+#include <omp.h>
+//#endif
+
+#ifdef __CUDACC__
 #include <cuda.h>
+#endif
+
+#include "archAPI.h"
 #include "rnd.h"
 #include "plasma.h"
 #include "gpucell.h"
