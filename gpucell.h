@@ -514,7 +514,123 @@ double compareToCell(Cell<Particle> & d_src)
 	return Cell<Particle>::compareToCell(d_src);
 }
 
-//void ListAllParticles(FILE *f)
+void addParticlesToCellOnDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,char *where,int nt)
+{
+	static GPUCell<Particle> *h_copy_of_d_src;
+	static int first = 1;
+	int code;
+
+
+	if(first == 1)
+	{
+	   first = 0;
+	   h_copy_of_d_src = new GPUCell<Particle>;
+	   h_copy_of_d_src->Init();
+
+	}
+
+	int err = getLastError();
+	if(err != 0)
+		{
+			 printf(" copyCellFromDevice enter %d %s \n ",err,getErrorString(err));
+			 exit(0);
+		}
+
+
+	ThreadSynchronize();
+
+	err = MemoryCopy(h_copy_of_d_src,d_src,sizeof(GPUCell<Particle>),DEVICE_TO_HOST);
+	if(err != 0)
+	{
+		 printf(" copyCellFromDevice1 %d %s \n ",err,getErrorString(err));
+		 exit(0);
+	}
+	//printf("Cuda error: %d: %s.\n", code,getErrorString((cudaError_t) code));
+    if(h_copy_of_d_src->number_of_particles < 0 || h_copy_of_d_src->number_of_particles > MAX_particles_per_cell)
+    {
+    	int qq = 0;
+    }
+	//code = MemoryCopy(h_dst,&h_copy_of_d_src,sizeof(GPUCell<Particle,dims>),cudaMemcpyHostToHost);
+#ifdef COPY_CELLS_MEMORY_PRINTS
+	printf("step %d %s number of particles %5d %3d %3d %d \n",nt,where,h_copy_of_d_src->i,h_copy_of_d_src->l,h_copy_of_d_src->k,h_copy_of_d_src->number_of_particles);
+#endif
+
+
+
+	h_dst->number_of_particles = h_copy_of_d_src->number_of_particles;
+
+	code = MemoryCopy(h_dst->doubParticleArray,h_copy_of_d_src->doubParticleArray,
+			   sizeof(Particle)*MAX_particles_per_cell,DEVICE_TO_HOST);
+	if(code != 0)
+	{
+		 printf(" copyCellFromDevice3 %d %s \n ",code,getErrorString(code));
+		 exit(0);
+	}
+
+	//printf("i %d l %d k %d q_m %15.5e \n",h_dst->i,h_dst->k,h_dst->l,h_dst->ParticleArrayRead(50,1));
+
+
+	//h_dst->Jx = new CellDouble;
+	//compareArrayHostToDevice((double *)h_dst->Jx,(double *)(h_copy_of_d_src.Jx),sizeof(CellDouble),"TEST");
+
+	code = MemoryCopy(h_dst->Jx,h_copy_of_d_src->Jx,sizeof(CellDouble),DEVICE_TO_HOST);
+	if(code != 0)
+	{
+		 printf(" copyCellFromDevice4 %d \n ",code);
+		 exit(0);
+	}
+
+
+
+	//h_dst->Jy = new CellDouble;
+	code = MemoryCopy(h_dst->Jy,h_copy_of_d_src->Jy,sizeof(CellDouble),DEVICE_TO_HOST);
+	if(code != 0)
+	{
+		 printf(" copyCellFromDevice5 %d \n ",code);
+		 exit(0);
+	}
+
+	//h_dst->Jz = new CellDouble;
+	code = MemoryCopy(h_dst->Jz,h_copy_of_d_src->Jz,sizeof(CellDouble),DEVICE_TO_HOST);
+	if(code != 0)
+	{
+		 printf(" copyCellFromDevice6 %d \n ",code);
+		 exit(0);
+	}
+
+	//h_dst->Ex = new CellDouble;
+	code = MemoryCopy(h_dst->Ex,h_copy_of_d_src->Ex,sizeof(CellDouble),DEVICE_TO_HOST);
+	//h_dst->Ey = new CellDouble;
+	code = MemoryCopy(h_dst->Ey,h_copy_of_d_src->Ey,sizeof(CellDouble),DEVICE_TO_HOST);
+	//h_dst->Ez = new CellDouble;
+	code = MemoryCopy(h_dst->Ez,h_copy_of_d_src->Ez,sizeof(CellDouble),DEVICE_TO_HOST);
+	//h_dst->Hx = new CellDouble;
+	code = MemoryCopy(h_dst->Hx,h_copy_of_d_src->Hx,sizeof(CellDouble),DEVICE_TO_HOST);
+	//h_dst->Hy = new CellDouble;
+	code = MemoryCopy(h_dst->Hy,h_copy_of_d_src->Hy,sizeof(CellDouble),DEVICE_TO_HOST);
+	//h_dst->Hz = new CellDouble;
+	code = MemoryCopy(h_dst->Hz,h_copy_of_d_src->Hz,sizeof(CellDouble),DEVICE_TO_HOST);
+	//h_dst->Rho = new CellDouble;
+	code = MemoryCopy(h_dst->Rho,h_copy_of_d_src->Rho,sizeof(CellDouble),DEVICE_TO_HOST);
+	if(code != 0)
+	{
+		 printf(" copyCellFromDevice10 %d \n ",code);
+		 exit(0);
+	}
+
+
+	//memcpy((unsigned char *)dst.Jx,(unsigned char *)src.Jx,sizeof(CellDouble));
+	//printf("i %d l %d k %d q_m %15.5e \n",h_dst->i,h_dst->k,h_dst->l,h_dst->ParticleArrayRead(50,1));
+
+    //cudaMalloc(&d_dst,sizeof(Cell<Particle,dims>));
+
+
+    //cudaMemcpy(h_dst,d_src,sizeof(Cell<Particle,dims>),cudaMemcpyDeviceToHost);
+   // cudaMemcpy(h_ctrl,d_dst,sizeof(Cell<Particle,dims>),cudaMemcpyDeviceToHost);
+
+}
+
+
 
 
 
