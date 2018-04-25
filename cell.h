@@ -942,7 +942,8 @@ int getWrapCellNumberTriplet(int *i,int *l,int *k){
 
  #ifdef __CUDACC__
  __host__ __device__
- #endifint getWrapCellNumber        (int i,int l,int k){
+ #endif
+ int getWrapCellNumber        (int i,int l,int k){
 
 	getWrapCellNumberTriplet(&i,&l,&k);
 
@@ -951,7 +952,8 @@ int getWrapCellNumberTriplet(int *i,int *l,int *k){
 
  #ifdef __CUDACC__
  __host__ __device__
- #endifint getFortranCellNumber       (int i,int l,int k)
+ #endif
+ int getFortranCellNumber       (int i,int l,int k)
 {
 //	if(i == 102 && l == 2 && k == 0)
 //	{
@@ -1097,7 +1099,9 @@ void SetZero()
      }
 }
 
+#ifdef __CUDACC__
 __host__ __device__
+#endif
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
@@ -1172,8 +1176,9 @@ void InverseKernel(double x,double y, double z,
 }
 
 
-__host__ __device__
-
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 //double Interpolate3D(int n_field,int i,int l,int k,double sx,double sx1,double sy,double sy1,double sz,double sz1)
 double Interpolate3D(CellDouble *E,int3 *cell,
 		double sx,double sx1,double sy,
@@ -1276,7 +1281,9 @@ double Interpolate3D(CellDouble *E,int3 *cell,
        return t;
 }
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
@@ -1309,48 +1316,73 @@ double3 GetMagneticField(
 	return H;
 }
 
-__host__ __device__ double s1_interpolate(double x)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ double s1_interpolate(double x)
 {
 	return (int)(x/hx + 1.0) - x/hx;
 }
 
-__host__ __device__ double s2_interpolate(double x)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+double s2_interpolate(double x)
 {
 	return (int)(x/hx + 1.5) -0.5 - x/hx;
 }
 
-__host__ __device__ double s3_interpolate(double y)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+double s3_interpolate(double y)
 {
 	return (int)(y/hy + 1.0) - y/hy;
 }
 
-__host__ __device__ double s5_interpolate(double z)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+double s5_interpolate(double z)
 {
 	return (int)(z/hz + 1.0) - z/hz;
 }
 
-__host__ __device__ double s4_interpolate(double y)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+double s4_interpolate(double y)
 {
 	return (int)(y/hy + 1.5) -0.5 - y/hy;
 }
 
-__host__ __device__ double s6_interpolate(double z)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+double s6_interpolate(double z)
 {
 	return (int)(z/hz + 1.5) -0.5 - z/hz;
 }
 
-__host__ __device__ void writeWrongCurrentAttribute(int num_along_cell,double a,int num_attr)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+void writeWrongCurrentAttribute(int num_along_cell,double a,int num_attr)
 {
 	d_wrong_current_particle_attributes[num_along_cell*PARTICLE_ATTRIBUTES + num_attr-1] = a;
 }
 
-__host__ __device__ double getWrongCurrentAttribute(int num_along_cell,int num_attr)
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+double getWrongCurrentAttribute(int num_along_cell,int num_attr)
 {
 	return d_wrong_current_particle_attributes[num_along_cell*PARTICLE_ATTRIBUTES + num_attr-1];
 }
 
-__host__ __device__
-
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
         int i,l,k,i1,l1,k1;
@@ -1405,16 +1437,18 @@ void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,Cell
 			     s11,s21,s31,s41,s51,s61,p,Hx1,Hy1,Hz1);
 }
 
-__host__ __device__
-
+#ifdef __CUDACC__
+ __host__ __device__
+#endif
 double d_sign(double a, double b)
 {
     if(b > 0) return a;
     else return -a;
 }
 
-__host__ __device__
-
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void CurrentToMesh(double3 x,double3 x1,double mass,double q_m,double tau)
 {
       double3 x2;
@@ -1521,8 +1555,9 @@ L11:
 L18:    return;
 }
 
-__host__ __device__
-
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
 void CurrentToMesh(double3 x,double3 x1,double mass,double q_m,double tau,
             		int *cells,CurrentTensor *t1,CurrentTensor *t2,Particle *p)
 {
@@ -1738,7 +1773,10 @@ L15:
 
 }
 
-__host__ __device__
+ #ifdef __CUDACC__
+ __host__ __device__
+ #endif
+
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
