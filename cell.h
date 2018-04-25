@@ -183,7 +183,10 @@ public:
   double *doubArrivalArray;
 
   //get position in arrival matrix of a cell for the particles for cell "c"
-  __host__ __device__ int getArrivalMatrixPosition(Cell *c,int *ix,int *iy,int *iz)
+#ifdef __CUDACC__
+  __host__ __device__
+#endif
+  int getArrivalMatrixPosition(Cell *c,int *ix,int *iy,int *iz)
   {
 	  int ci = c->i,cl = c->l,ck = c->k;
 
@@ -208,8 +211,9 @@ public:
 
 double *getParticles() { return  doubParticleArray; }
 
-
+#ifdef __CUDACC__
 __host__ __device__
+#endif
 virtual
 int ClearCell()
 {
