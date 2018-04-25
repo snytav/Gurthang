@@ -2181,8 +2181,10 @@ int Move0(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move1(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1)
@@ -2190,8 +2192,10 @@ int Move1(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move2(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1)
@@ -2199,23 +2203,29 @@ int Move2(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move3(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1)
 {
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move4(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1)
 {
 	return 0;
 }
 
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 virtual
 int Move5(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control,CellDouble *Ex1)
@@ -2223,87 +2233,113 @@ int Move5(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move6(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control)
 {
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move7(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control)
 {
 	return 0;
 }
 
-__host__ __device__
-virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move8(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control,int jmp_control)
 {
 	return 0;
 }
 
-__host__ __device__
-//virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move9(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 double *p_control)
 {
 	return 0;
 }
 
-__host__ __device__
-//virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move10(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass)
 {
 	return 0;
 }
 
-__host__ __device__
-//virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move11(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass)
 {
 	return 0;
 }
 
-__host__ __device__
-//virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move12(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
 {
 	return 0;
 }
-__host__ __device__
-//virtual
+
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move13(unsigned int i,int *cells,CurrentTensor *t1)
 {
 	return 0;
 }
-__host__ __device__
-//virtual
+
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+virtual
 int Move14(unsigned int i,int *cells)
 {
 	return 0;
 }
-__host__ __device__
-//virtual
+
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move15(unsigned int i)
 {
 	return 0;
 }
 
-__host__ __device__
-//virtual
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ virtual
 int Move16()
 {
 	return 0;
 }
 
 
-
-__host__ __device__
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
