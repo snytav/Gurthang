@@ -48,6 +48,7 @@
 #include <stdint.h>
 
 #include <sys/sysinfo.h>
+#include <sys/time.h>
 
 //struct sysinfo {
 //       long uptime;             /* Seconds since boot */
@@ -64,6 +65,23 @@
 //       unsigned int mem_unit;   /* Memory unit size in bytes */
 //       char _f[20-2*sizeof(long)-sizeof(int)]; /* Padding for libc5 */
 //   };
+
+#include "init.h"
+#include "diagnose.h"
+
+#include<string>
+#include <iostream>
+
+#include "particle_target.h"
+
+#include "params.h"
+
+#include "memory_control.h"
+
+
+
+using namespace std;
+
 
 double get_meminfo(void)
 {

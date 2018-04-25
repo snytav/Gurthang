@@ -13,6 +13,7 @@
 #include "read_particles.h"
 
 #define PARTICLES_RUN_ONE_TIMESTEP 10
+#define DIMENSIONS 3
 
 
 template<class Particle,int dims>

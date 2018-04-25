@@ -13,7 +13,8 @@
 
 #define FLY_PRINTS
 
-typedef enum {ION, PLASMA_ELECTRON, BEAM_ELECTRON} particle_sorts;
+//typedef enum {ION, PLASMA_ELECTRON, BEAM_ELECTRON} particle_sorts;
+#include "particle_types.h"
 
 __host__ __device__
 void writeParticleAttribute(int j,double ami,int num,double t);
