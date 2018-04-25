@@ -149,120 +149,120 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Jx),sizeof(CellDouble));
 	err4 = getLastError();
 
-	cudaMemcpy(h_src->Jx,Cell<Particle>::Jx,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err5 = cudaGetLastError();
+	MemoryCopy(h_src->Jx,Cell<Particle>::Jx,sizeof(CellDouble),HOST_TO_DEVICE);
+	err5 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Jx,(double *)h_src->Jx,sizeof(CellDouble),"Jx");
 
 	MemoryAllocate((void**)&(h_src->Jy),sizeof(CellDouble));
 	err6 = getLastError();
 
-	cudaMemcpy(h_src->Jy,Cell<Particle>::Jy,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	//compareArrayHostToDevice((double *)Cell<Particle>::Jy,(double *)h_src->Jy,sizeof(CellDouble),"Jy");
-	err7 = cudaGetLastError();
+	MemoryCopy(h_src->Jy,Cell<Particle>::Jy,sizeof(CellDouble),HOST_TO_DEVICE);
+	//compareArrayHostToDevice((double *)Cell<Particle,dims>::Jy,(double *)h_src->Jy,sizeof(CellDouble),"Jy");
+	err7 = getLastError();
 
 
 	MemoryAllocate((void**)&(h_src->Jz),sizeof(CellDouble));
 	err8 = getLastError();
 
-	cudaMemcpy(h_src->Jz,Cell<Particle>::Jz,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err9 = cudaGetLastError();
+	MemoryCopy(h_src->Jz,Cell<Particle>::Jz,sizeof(CellDouble),HOST_TO_DEVICE);
+	err9 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Jz,(double *)h_src->Jz,sizeof(CellDouble),"Jz");
 
 	MemoryAllocate((void**)&(h_src->Ex),sizeof(CellDouble));
 	err10 = getLastError();
 
-	cudaMemcpy(h_src->Ex,Cell<Particle>::Ex,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err11 = cudaGetLastError();
+	MemoryCopy(h_src->Ex,Cell<Particle>::Ex,sizeof(CellDouble),HOST_TO_DEVICE);
+	err11 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Ex,(double *)h_src->Ex,sizeof(CellDouble),"Ex");
 
 	MemoryAllocate((void**)&(h_src->Ey),sizeof(CellDouble));
 	err12 = getLastError();
 
-	cudaMemcpy(h_src->Ey,Cell<Particle>::Ey,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err13 = cudaGetLastError();
+	MemoryCopy(h_src->Ey,Cell<Particle>::Ey,sizeof(CellDouble),HOST_TO_DEVICE);
+	err13 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Ey,(double *)h_src->Ey,sizeof(CellDouble),"Ey");
 
-	cudaMalloc(&(h_src->Ez),sizeof(CellDouble));
-	err14 = cudaGetLastError();
+	MemoryAllocate((void**)&(h_src->Ez),sizeof(CellDouble));
+	err14 = getLastError();
 
-	cudaMemcpy(h_src->Ez,Cell<Particle>::Ez,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err15 = cudaGetLastError();
+	MemoryCopy(h_src->Ez,Cell<Particle>::Ez,sizeof(CellDouble),HOST_TO_DEVICE);
+	err15 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Ez,(double *)h_src->Ez,sizeof(CellDouble),"Ez");
 
-	cudaMalloc(&(h_src->Hx),sizeof(CellDouble));
-	err16 = cudaGetLastError();
+	MemoryAllocate((void**)&(h_src->Hx),sizeof(CellDouble));
+	err16 = getLastError();
 
-	cudaMemcpy(h_src->Hx,Cell<Particle>::Hx,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err17 = cudaGetLastError();
+	MemoryCopy(h_src->Hx,Cell<Particle>::Hx,sizeof(CellDouble),HOST_TO_DEVICE);
+	err17 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Hx,(double *)h_src->Hx,sizeof(CellDouble),"Hx");
 
 	cudaMalloc(&(h_src->Hy),sizeof(CellDouble));
 	err18 = cudaGetLastError();
 
-	cudaMemcpy(h_src->Hy,Cell<Particle>::Hy,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err19 = cudaGetLastError();
+	MemoryCopy(h_src->Hy,Cell<Particle>::Hy,sizeof(CellDouble),HOST_TO_DEVICE);
+	err19 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Hy,(double *)h_src->Hy,sizeof(CellDouble),"Hy");
 
-	cudaMalloc(&(h_src->Hz),sizeof(CellDouble));
-	err20 = cudaGetLastError();
+	MemoryAllocate((void**)&(h_src->Hz),sizeof(CellDouble));
+	err20 = getLastError();
 
-	cudaMemcpy(h_src->Hz,Cell<Particle>::Hz,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err21 = cudaGetLastError();
+	MemoryCopy(h_src->Hz,Cell<Particle>::Hz,sizeof(CellDouble),HOST_TO_DEVICE);
+	err21 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Hz,(double *)h_src->Hz,sizeof(CellDouble),"Hz");
 
-	cudaMalloc(&(h_src->Rho),sizeof(CellDouble));
-	err22 = cudaGetLastError();
+	MemoryAllocate((void**)&(h_src->Rho),sizeof(CellDouble));
+	err22 = getLastError();
 
-	cudaMemcpy(h_src->Rho,Cell<Particle>::Rho,sizeof(CellDouble),cudaMemcpyHostToDevice);
-	err23 = cudaGetLastError();
+	MemoryCopy(h_src->Rho,Cell<Particle>::Rho,sizeof(CellDouble),HOST_TO_DEVICE);
+	err23 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Rho,(double *)h_src->Rho,sizeof(CellDouble),"Rho");
 
 	//memcpy((unsigned char *)dst.Jx,(unsigned char *)src.Jx,sizeof(CellDouble));
 	//printf("i %d l %d k %d q_m %15.5e \n",h_src->i,h_src->k,h_src->l,Cell<Particle>::ParticleArrayRead(0,7));
 
-    cudaMalloc(&d_dst,sizeof(GPUCell<Particle>));
-	err24 = cudaGetLastError();
+    MemoryAllocate((void**)&d_dst,sizeof(GPUCell<Particle>));
+	err24 = getLastError();
 
 
 
-    cudaMemcpy(d_dst,h_src,sizeof(GPUCell<Particle>),cudaMemcpyHostToDevice);
-	err25 = cudaGetLastError();
+    MemoryCopy(d_dst,h_src,sizeof(GPUCell<Particle>),HOST_TO_DEVICE);
+	err25 = getLastError();
 
 	if(
-			(err1 != cudaSuccess) ||
-			(err2 != cudaSuccess) ||
-			(err3 != cudaSuccess) ||
-			(err4 != cudaSuccess) ||
-			(err5 != cudaSuccess) ||
-			(err6 != cudaSuccess) ||
-			(err7 != cudaSuccess) ||
-			(err8 != cudaSuccess) ||
-			(err9 != cudaSuccess) ||
-			(err10 != cudaSuccess) ||
-			(err11 != cudaSuccess) ||
-			(err12 != cudaSuccess) ||
-			(err13 != cudaSuccess) ||
-			(err14 != cudaSuccess) ||
-			(err15 != cudaSuccess) ||
-			(err16 != cudaSuccess) ||
-			(err17 != cudaSuccess) ||
-			(err18 != cudaSuccess) ||
-			(err19 != cudaSuccess) ||
-			(err20 != cudaSuccess) ||
-			(err21 != cudaSuccess) ||
-			(err22 != cudaSuccess) ||
-			(err23 != cudaSuccess) ||
-			(err24 != cudaSuccess) ||
-			(err25 != cudaSuccess)
+			(err1 != 0) ||
+			(err2 != 0) ||
+			(err3 != 0) ||
+			(err4 != 0) ||
+			(err5 != 0) ||
+			(err6 != 0) ||
+			(err7 != 0) ||
+			(err8 != 0) ||
+			(err9 != 0) ||
+			(err10 != 0) ||
+			(err11 != 0) ||
+			(err12 != 0) ||
+			(err13 != 0) ||
+			(err14 != 0) ||
+			(err15 != 0) ||
+			(err16 != 0) ||
+			(err17 != 0) ||
+			(err18 != 0) ||
+			(err19 != 0) ||
+			(err20 != 0) ||
+			(err21 != 0) ||
+			(err22 != 0) ||
+			(err23 != 0) ||
+			(err24 != 0) ||
+			(err25 != 0)
 	  )
 	{
 		//int qq = 0;
