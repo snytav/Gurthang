@@ -155,16 +155,14 @@ __device__ double cuda_atomicAdd(double *address, double val)
 
 const int flagCPUandGPUrun = 1;
 
-__global__ void testKernel(double *p,int jmp)
+global_for_CUDA void testKernel(double *p,int jmp)
 {
 //	cuPrintf("jmp %d \n",jmp);
 //	cuPrintf("%p \n",(void *)p);
 }
 
 template <template <class Particle> class Cell >
-#ifdef __CUDACC__
-__global__
-#endif
+global_for_CUDA
 void printParticle(Cell<Particle>  **cells,int num,int sort)
 {
 	unsigned int nx = blockIdx.x;
@@ -196,9 +194,7 @@ void printParticle(Cell<Particle>  **cells,int num,int sort)
 }
 
 template <template <class Particle> class Cell >
-#ifdef __CUDACC__
-__global__
-#endif
+global_for_CUDA
 void GPU_SetAllCurrentsToZero(Cell<Particle>  **cells)
 {
 	unsigned int nx = blockIdx.x;
@@ -218,9 +214,7 @@ void GPU_SetAllCurrentsToZero(Cell<Particle>  **cells)
 }
 
 template <template <class Particle> class Cell >
-#ifdef __CUDACC__
-__global__
-#endif
+global_for_CUDA
 void GPU_getCellEnergy(
 		Cell<Particle>  **cells,double *d_ee,
 		double *d_Ex,double *d_Ey,double *d_Ez)
@@ -298,7 +292,7 @@ double CheckArraySize(double* a, double* dbg_a,int size)
 
 
 template <template <class Particle> class Cell >
-__global__ void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
+global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 		      double *jx,double *jy,double *jz,double *rho)
 {
 	unsigned int nx = blockIdx.x;
@@ -372,7 +366,7 @@ __global__ void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_WriteControlSystem(Cell<Particle>  **cells)
+global_for_CUDA void GPU_WriteControlSystem(Cell<Particle>  **cells)
 {
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
@@ -404,7 +398,7 @@ __global__ void GPU_WriteControlSystem(Cell<Particle>  **cells)
 
 
 template <template <class Particle> class Cell >
-__global__ void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *d_stage)
+global_for_CUDA void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *d_stage)
 {
 	    unsigned int nx = blockIdx.x;
 		unsigned int ny = blockIdx.y;
@@ -601,7 +595,7 @@ __global__ void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *d_sta
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_ArrangeFlights(Cell<Particle>  **cells,int nt, int *d_stage)
+global_for_CUDA void GPU_ArrangeFlights(Cell<Particle>  **cells,int nt, int *d_stage)
 {
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
@@ -709,7 +703,7 @@ __global__ void GPU_ArrangeFlights(Cell<Particle>  **cells,int nt, int *d_stage)
 
 
 template <template <class Particle> class Cell >
-__global__ void GPU_CollectStrayParticles(Cell<Particle>  **cells,int nt
+global_for_CUDA void GPU_CollectStrayParticles(Cell<Particle>  **cells,int nt
 //		                         int n,
 //		                         int i,
 //		                         double mass,
@@ -863,7 +857,7 @@ __device__ void copyCellDouble(CellDouble *dst,CellDouble *src,unsigned int n,ui
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_GetCellNumbers(Cell<Particle>  **cells,
+global_for_CUDA void GPU_GetCellNumbers(Cell<Particle>  **cells,
 		                         int *numbers)
 {
 		Cell<Particle>  *c;//,nc;
@@ -873,7 +867,7 @@ __global__ void GPU_GetCellNumbers(Cell<Particle>  **cells,
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_StepAllCells(Cell<Particle>  **cells,
+global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 //		                         int n,
 		                         int i,
 //		                         CellDouble *jx,
@@ -959,7 +953,7 @@ __global__ void GPU_StepAllCells(Cell<Particle>  **cells,
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_ControlAllCellsCurrents(Cell<Particle>  **cells,int n,int i,CellDouble *jx,CellDouble *jy,CellDouble *jz)
+global_for_CUDA void GPU_ControlAllCellsCurrents(Cell<Particle>  **cells,int n,int i,CellDouble *jx,CellDouble *jy,CellDouble *jz)
 {
 //	unsigned int nx = blockIdx.x;
 //	unsigned int ny = blockIdx.y;
@@ -1001,7 +995,7 @@ void emh2_Element(
 }
 
 template <template <class Particle> class Cell >
-__global__
+global_for_CUDA
 void GPU_emh2(
 		 Cell<Particle>  **cells,
 				            int i_s,int l_s,int k_s,
@@ -1041,7 +1035,7 @@ void emh1_Element(
 }
 
 template <template <class Particle> class Cell >
-__global__
+global_for_CUDA
 void GPU_emh1(
 		 Cell<Particle>  **cells,
 				            int i_s,int l_s,int k_s,
@@ -1080,7 +1074,7 @@ void periodicElement(Cell<Particle> *c,int i,int k,double *E,int dir, int to,int
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_periodic(Cell<Particle>  **cells,
+global_for_CUDA void GPU_periodic(Cell<Particle>  **cells,
                              int i_s,int k_s,
                              double *E,int dir, int to,int from)
 {
@@ -1117,7 +1111,7 @@ void periodicCurrentElement(Cell<Particle> *c,int i,int k,double *E,int dir, int
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_CurrentPeriodic(Cell<Particle>  **cells,double *E,int dirE, int dir,
+global_for_CUDA void GPU_CurrentPeriodic(Cell<Particle>  **cells,double *E,int dirE, int dir,
                              int i_s,int k_s,int N)
 {
 	unsigned int nx = blockIdx.x;
@@ -1130,7 +1124,7 @@ __global__ void GPU_CurrentPeriodic(Cell<Particle>  **cells,double *E,int dirE, 
 }
 
 template <template <class Particle> class Cell >
-__global__ void GPU_eme(
+global_for_CUDA void GPU_eme(
 
 		            Cell<Particle>  **cells,
 		            int i_s,int l_s,int k_s,
@@ -1157,7 +1151,7 @@ __global__ void GPU_eme(
 }
 
 template <template <class Particle> class Cell >
-__global__ void copy_pointers(Cell<Particle>  **cells,int *d_flags,double_pointer *d_pointers)
+global_for_CUDA void copy_pointers(Cell<Particle>  **cells,int *d_flags,double_pointer *d_pointers)
 {
 	Cell<Particle>  *c = cells[blockIdx.x];
 
