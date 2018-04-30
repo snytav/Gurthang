@@ -6,22 +6,14 @@
 int main(int argc,char*argv[])
 {
    GPUPlasma<GPUCell> *plasma;
-
-  // Cell<Particle> *c;
-   
-  // InitMPI(argc,argv);
-
-      size_t sizeP;
+   size_t sizeP;
 
       printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
       cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
       printf("printf default limit %d \n",sizeP/1024/1024);
 
-      sizeP *= 10;
-      sizeP *= 10;
-      sizeP *= 10;
-      sizeP *= 10;
+      sizeP *= 10000;
       cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
 
       cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
