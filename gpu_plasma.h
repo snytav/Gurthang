@@ -4134,9 +4134,11 @@ void checkCurrentControlPoint(int j,int nt)
 		readFortranBinaryArray(f,dbgJy);
 		readFortranBinaryArray(f,dbgJz);
 
-	 t_jx = CheckArraySilent(Jx,dbgJx);
-	 t_jy = CheckArraySilent(Jy,dbgJy);
-	 t_jz = CheckArraySilent(Jz,dbgJz);
+		int size = (Nx+2)*(Ny+2)*(Nz+2);
+
+	 t_jx = CheckArraySilent(Jx,dbgJx,size);
+	 t_jy = CheckArraySilent(Jy,dbgJy,size);
+	 t_jz = CheckArraySilent(Jz,dbgJz,size);
 
      printf("Jx %15.5e Jy %15.5e Jz %15.5e \n",t_jx,t_jy,t_jz);
 }
@@ -4151,20 +4153,6 @@ void checkControlPoint(int num,int nt,int check_part)
 
 	 memory_monitor("checkControlPoint1",nt);
 
-//	 if(num == 270)
-//	 {
-//
-//#ifndef FINAL_
-//		 return;
-//#endif
-//	 }
-//	 else
-//	 {
-//#ifndef 
-//         return;
-//#endif
-//	 }
-
 	 if(nt % FORTRAN_NUMBER_OF_SMALL_STEPS != 0) return;
 
 	 memory_monitor("checkControlPoint2",nt);
@@ -4174,24 +4162,20 @@ void checkControlPoint(int num,int nt,int check_part)
 
 	 memory_monitor("checkControlPoint3",nt);
 
+	 int size = (Nx+2)*(Ny+2)*(Nz+2);
 
-	 t_ex = CheckArraySilent(Ex,dbgEx);
-	 t_ey = CheckArraySilent(Ey,dbgEy);
-	 t_ez = CheckArraySilent(Ez,dbgEz);
-	 t_hx = CheckArraySilent(Hx,dbgHx);
-	 t_hy = CheckArraySilent(Hy,dbgHy);
-	 t_hz = CheckArraySilent(Hz,dbgHz);
-	 t_jx = CheckArraySilent(Jx,dbgJx);
-	 t_jy = CheckArraySilent(Jy,dbgJy);
-	 t_jz = CheckArraySilent(Jz,dbgJz);
 
-//     printf("Ex %15.5e Ey %15.5e Ez %15.5e \n",t_ex,t_ey,t_ez);
-//     printf("Hx %15.5e Hy %15.5e Ez %15.5e \n",t_hx,t_hy,t_hz);
-//     printf("Jx %15.5e Jy %15.5e Jz %15.5e \n",t_jx,t_jy,t_jz);
+	 t_ex = CheckArraySilent(Ex,dbgEx,size);
+	 t_ey = CheckArraySilent(Ey,dbgEy,size);
+	 t_ez = CheckArraySilent(Ez,dbgEz,size);
+	 t_hx = CheckArraySilent(Hx,dbgHx,size);
+	 t_hy = CheckArraySilent(Hy,dbgHy,size);
+	 t_hz = CheckArraySilent(Hz,dbgHz,size);
+	 t_jx = CheckArraySilent(Jx,dbgJx,size);
+	 t_jy = CheckArraySilent(Jy,dbgJy,size);
+	 t_jz = CheckArraySilent(Jz,dbgJz,size);
+
 	 memory_monitor("checkControlPoint4",nt);
-
-
-    // if(num == 275) exit(0);
 
 	 t_ex = CheckGPUArraySilent(dbgEx,d_Ex);
 	 t_ey = CheckGPUArraySilent(dbgEy,d_Ey);
@@ -4240,15 +4224,6 @@ void checkControlPoint(int num,int nt,int check_part)
     		 );
      fclose(f_prec_report);
 
-    // if(num == 270) exit(0);
-
-//     if(check_part)
-//     {
-//        GPUCell<Particle> c = *(h_CellArray[141]);
-//     	printf("checkControlPointParticles cell 141 particles %20d \n",c.number_of_particles);
-
-
- //    }
      memory_monitor("checkControlPoint7",nt);
 
      fclose(f);
@@ -4521,16 +4496,13 @@ double CheckArray	(double* a, double* dbg_a)
 	}
 
 
-double CheckArraySilent	(double* a, double* dbg_a)
+double CheckArraySilent	(double* a, double* dbg_a,int size)
 	{
 	    Cell<Particle> c = (*AllCells)[0];
-//	    int wrong = 0;
 	    double diff = 0.0;
-	   // puts("begin array checking=============================");
-	    for(int n = 0;n < (Nx + 2)*(Ny + 2)*(Nz + 2);n++)
+
+	    for(int n = 0;n < size;n++)
 	    {
-//	        double t  = a[n];
-//		    double dt = dbg_a[n];
             diff += pow(a[n] - dbg_a[n],2.0);
 
 	        if(fabs(a[n] - dbg_a[n]) > TOLERANCE)
@@ -4538,16 +4510,10 @@ double CheckArraySilent	(double* a, double* dbg_a)
 
 		       int3 i = c.getCellTripletNumber(n);
 
-//		       printf("n %5d i %3d l %3d k %3d %15.5e dbg %15.5e diff %15.5e wrong %10d \n",
-//				   n,i.x+1,i.y+1,i.z+1,a[n],dbg_a[n],fabs(a[n] - dbg_a[n]),wrong++);
      		}
 	    }
-//	    printf("  end array checking============================= %.2f less than %15.5e diff %15.5e \n",
-//	    		(1.0-((double)wrong/((Nx + 2)*(Ny + 2)*(Nz + 2)))),TOLERANCE,
-//	    		pow(diff/((Nx + 2)*(Ny + 2)*(Nz + 2)),0.5)
-//	    	  );
 
-	    return pow(diff/((Nx + 2)*(Ny + 2)*(Nz + 2)),0.5);
+	    return pow(diff/(size),0.5);
 	}
 
 double CheckGPUArraySilent	(double* a, double* d_a)
@@ -4555,6 +4521,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	    static double *t;
 	    static int f = 1;
 	    cudaError_t err;
+
 
 	    if(f == 1)
 	    {
@@ -4570,7 +4537,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	            }
 
 
-	   return CheckArraySilent(a,t);
+	   return CheckArraySilent(a,t,(Nx+2)*(Ny+2)*(Nz+2));
 	}
 
 
