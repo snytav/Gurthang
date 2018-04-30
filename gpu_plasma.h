@@ -4082,6 +4082,7 @@ void checkControlPoint(int num,int nt,int check_part)
 {
 	 double t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,t_jx,t_jy,t_jz;
 	 double t_qx,t_qy,t_qz,t_njx,t_njy,t_njz;
+
 	 FILE *f;
 	 char fn_copy[100];
 	 struct sysinfo info;

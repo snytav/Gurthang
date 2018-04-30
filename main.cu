@@ -6,6 +6,7 @@
 int main(int argc,char*argv[])
 {
    GPUPlasma<GPUCell> *plasma;
+
   // Cell<Particle> *c;
    
   // InitMPI(argc,argv);
