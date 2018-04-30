@@ -60,16 +60,8 @@ int main(int argc,char*argv[])
        printf("after  Step  %10d CPU memory free %10u GPU memory total %10d free %10d\n",
     		   nt,info.freeram/1024/1024/1024,m_total/1024/1024/1024,m_free/1024/1024/1024);
 #endif
-//#ifdef MEMORY_PRINTS
-//       printf("GPU memory total %d free %d\n",m_total/1024/1024,m_free/1024/1024);
-//       puts("============================================================================================");
-//#endif
    }
- //  plasma->Step(6);
-//   plasma->Step(7);
-//   plasma->Step(8);
-//   plasma->Step(9);
-//   plasma->Step(10);
+
 
    t = plasma->compareCPUtoGPU();
    printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ plasma check after move %.5f\n",t);
