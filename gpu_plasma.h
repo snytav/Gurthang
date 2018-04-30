@@ -1214,6 +1214,23 @@ void Initialize()
     InitGPUParticles();
     InitGPUFields();
 
+    size_t sizeP;
+
+    printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
+    cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+
+    printf("printf default limit %d \n",sizeP/1024/1024);
+
+    sizeP *= 10000;
+    cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
+
+    cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+
+    printf("printf limit set to %d \n",sizeP/1024/1024);
+
+    int err = cudaSetDevice(0);
+
+    printf("err %d \n",err);
 }
 
 void InitGPUFields()
@@ -5818,6 +5835,7 @@ int memory_monitor(char *legend,int nt)
 	fprintf(f,"step %10d %50s GPU memory total %10d free %10d free CPU memory %10u \n",nt,legend,m_total/1024/1024,m_free/1024/1024,info.freeram/1024/1024);
 
 }
+
 
 };
 
