@@ -3803,76 +3803,22 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	  void LoadTestData(int nt,int part_nt)
 	  {
 	     thrust::host_vector<Particle> vp,bin_vp;
-//	     char d_exfile[100],d_eyfile[100],d_ezfile[100],d_hxfile[100],d_hyfile[100],d_hzfile[100];
-//	     char d_0exfile[100],d_0eyfile[100],d_0ezfile[100];
-//	     char jxfile[100],jyfile[100],jzfile[100];
-//	     char np_jxfile[100],np_jyfile[100],np_jzfile[100];
-//	     char np_exfile[100],np_eyfile[100],np_ezfile[100];
-//	     char d_jxfile[100],d_jyfile[100],d_jzfile[100];
-//	     char qxfile[100],qyfile[100],qzfile[100];
-//	     char pfile[100],nextpfile[100];
 	     char part_name[100];
-//
-//	     sprintf(qxfile,"dnqx%06d.dat",nt);
-//	     sprintf(qyfile,"dnqy%06d.dat",nt);
-//	     sprintf(qzfile,"dnqz%06d.dat",nt);
-//
+	     std::string jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
+		 qxfile,qyfile,qzfile;
+
 	     readDebugArray("hxlg",Hx,nt,5);
 	     readDebugArray("hylg",Hy,nt,5);
 	     readDebugArray("hzlg",Hz,nt,5);
-//
-//
-//	     sprintf(d_exfile,"dnex%06d.dat",2*nt-1);
-//	     sprintf(d_eyfile,"dney%06d.dat",2*nt-1);
-//	     sprintf(d_ezfile,"dnez%06d.dat",2*nt-1);
-//
-//	     sprintf(d_0exfile,"dnex%06d.dat",2*nt-2);
-//	     sprintf(d_0eyfile,"dney%06d.dat",2*nt-2);
-//	     sprintf(d_0ezfile,"dnez%06d.dat",2*nt-2);
-//
-//	     sprintf(d_hxfile,"dnhx%06d.dat",2*nt-1);
-//	     sprintf(d_hyfile,"dnhy%06d.dat",2*nt-1);
-//	     printf(d_hyfile);
-//	     sprintf(d_hzfile,"dnhz%06d.dat",2*nt-1);
-//
-//	     sprintf(jxfile,"dnjx%06d.dat",2*nt);
-//	     sprintf(jyfile,"dnjy%06d.dat",2*nt);
-//	     sprintf(jzfile,"dnjz%06d.dat",2*nt);
-//
-//	     sprintf(d_jxfile,"npjx%06d.dat",2*nt);
-//	     sprintf(d_jyfile,"npjy%06d.dat",2*nt);
-//	     sprintf(d_jzfile,"npjz%06d.dat",2*nt);
-//
-//	     sprintf(np_jxfile,"npjx%06d.dat",2*nt);
-//	     sprintf(np_jyfile,"npjy%06d.dat",2*nt);
-//	     sprintf(np_jzfile,"npjz%06d.dat",2*nt);
-//
-//	     sprintf(np_exfile,"exlg%03d.dat",2*nt);
-//	     sprintf(np_eyfile,"eylg%03d.dat",2*nt);
-//	     sprintf(np_ezfile,"ezlg%03d.dat",2*nt);
-//
-//	     sprintf(pfile,    "part%06d000.dat",nt);
-//	     sprintf(nextpfile,"part%06d000.dat",nt+2);
 
-	     std::string jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
-		 qxfile,qyfile,qzfile;
 
 	     get_load_data_file_names(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
 	    		 qxfile,qyfile,qzfile,nt);
 
 	     InitQdebug(qxfile,qyfile,qzfile);
 
-	     InitCurrents(
-	    		 jxfile ,
-	    		 jyfile ,
-	    		 jzfile ,
-	    		 d_jxfile ,
-	    		 d_jyfile ,
-	    		 d_jzfile ,
-	    		 np_jxfile ,
-	    		 np_jyfile ,
-	    		 np_jzfile ,
-	    		 0);
+	     InitCurrents(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,
+	    		 np_jxfile,np_jyfile,np_jzfile,0);
 
 	     if(nt > 1)
 	     {
