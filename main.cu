@@ -27,7 +27,6 @@ int main(int argc,char*argv[])
    
       printf("err %d \n",err);
 
-   //plasma = new GPUPlasma<GPUCell>(100,4,4,1.2566,0.05,0.05,1.0,100,1.0,0.001);
    plasma = new GPUPlasma<GPUCell>(100,4,4,1.1424,0.05,0.05,1.0,2000,1.0,0.001);
  
    plasma->Initialize();
@@ -37,9 +36,7 @@ int main(int argc,char*argv[])
    size_t m_free,m_total;
 
    cudaMemGetInfo(&m_free,&m_total);
-//#ifdef MEMORY_PRINTS
-//   printf("GPU memory total %d free %d\n",m_total/1024/1024,m_free/1024/1024);
-//#endif
+
    struct sysinfo info;
 
 
@@ -68,7 +65,6 @@ int main(int argc,char*argv[])
 
    delete plasma;
    
- //  CloseMPI();
 
    return 0;
 }
