@@ -12,7 +12,7 @@ CUDALIBS=  -g -L$(CUDALIB) -lcuda -lcudart #-lthrust
 MPIFLAGS=
 CFLAGS=
 
-OBJ = main.o rnd.o mpi_shortcut.o
+OBJ = main.o rnd.o mpi_shortcut.o service_functions.o
             
 main.o: main.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 

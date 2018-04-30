@@ -44,6 +44,8 @@
 #include "gpucell.h"
 #include "mpi_shortcut.h"
 
+#include "service_functions.h"
+
 #include <sys/resource.h>
 #include <stdint.h>
 
@@ -3797,7 +3799,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	  void LoadTestData(int nt,int part_nt)
 	  {
 	     thrust::host_vector<Particle> vp,bin_vp;
-	//     char exfile[100],eyfile[100],ezfile[100],hxfile[100],hyfile[100],hzfile[100];
 	     char d_exfile[100],d_eyfile[100],d_ezfile[100],d_hxfile[100],d_hyfile[100],d_hzfile[100];
 	     char d_0exfile[100],d_0eyfile[100],d_0ezfile[100];
 	     char jxfile[100],jyfile[100],jzfile[100];
@@ -3807,25 +3808,13 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	     char qxfile[100],qyfile[100],qzfile[100];
 	     char pfile[100],nextpfile[100];
 	     char part_name[100];
-//	     int  i;
-
-	    // sprintf(exfile,"dnex%06d.dat",nt-1);
-	    // read3DarrayLog(logname, ldE1,40,2);
-//	     readDebugArray("hylg",Ex,nt,4);
-//	     //sprintf(eyfile,"dney%06d.dat",nt-1);
-//	     readDebugArray("hxlg",Ey,nt,2);
-//	     //sprintf(ezfile,"dnez%06d.dat",nt-1);
-//	     readDebugArray("hxlg",Ez,nt,4);
 
 	     sprintf(qxfile,"dnqx%06d.dat",nt);
 	     sprintf(qyfile,"dnqy%06d.dat",nt);
 	     sprintf(qzfile,"dnqz%06d.dat",nt);
 
-	     //sprintf(hxfile,"dnhx%06d.dat",nt-2);
 	     readDebugArray("hxlg",Hx,nt,5);
-	     //sprintf(hyfile,"dnhy%06d.dat",nt-2);
 	     readDebugArray("hylg",Hy,nt,5);
-	     //sprintf(hzfile,"dnhz%06d.dat",nt-2);
 	     readDebugArray("hzlg",Hz,nt,5);
 
 
@@ -3858,10 +3847,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	     sprintf(np_eyfile,"eylg%03d.dat",2*nt);
 	     sprintf(np_ezfile,"ezlg%03d.dat",2*nt);
 
-	//     sprintf(per_jxfile,"dnjx%06d.dat",2*nt);
-	//     sprintf(per_jyfile,"dnjy%06d.dat",2*nt-1);
-	//     sprintf(per_jzfile,"dnjz%06d.dat",2*nt-1);
-
 	     sprintf(pfile,    "part%06d000.dat",nt);
 	     sprintf(nextpfile,"part%06d000.dat",nt+2);
 
@@ -3869,30 +3854,14 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 	     InitCurrents(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,0);
 
-	//     InitFields(exfile,eyfile,ezfile,
-	//    		    hxfile,hyfile,hzfile,
-	//    		    d_exfile,d_eyfile,d_ezfile,
-	//    		    d_0exfile,d_0eyfile,d_0ezfile,
-	//    		    np_exfile,np_eyfile,np_ezfile,
-	//    		    d_hxfile,d_hyfile,d_hzfile);
-	//
-
 	     if(nt > 1)
 	     {
 	    	 ClearAllParticles();
-
 	     }
-
-
-//	      InitParticles(pfile,vp);
-//	      InitParticlesNext(nextpfile,vp);
 
 	      sprintf(part_name,"mumu000%08d.dat",part_nt);
 
 	      InitBinaryParticles(part_name,bin_vp,part_nt);
-//	      InitBinaryParticlesNext("mumu00000007.dat",bin_vp);
-
-        //  Distribute(bin_vp);
 
           AssignArraysToCells();
 
@@ -4496,25 +4465,7 @@ double CheckArray	(double* a, double* dbg_a)
 	}
 
 
-double CheckArraySilent	(double* a, double* dbg_a,int size)
-	{
-	   // Cell<Particle> c = (*AllCells)[0];
-	    double diff = 0.0;
 
-	    for(int n = 0;n < size;n++)
-	    {
-            diff += pow(a[n] - dbg_a[n],2.0);
-
-//	        if(fabs(a[n] - dbg_a[n]) > TOLERANCE)
-//		    {
-//
-//		       int3 i = c.getCellTripletNumber(n);
-//
-//     		}
-	    }
-
-	    return pow(diff/(size),0.5);
-	}
 
 double CheckGPUArraySilent	(double* a, double* d_a)
 	{
