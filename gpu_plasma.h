@@ -1203,33 +1203,44 @@ public:
 
    int CPU_field;
 
-void Initialize()
+int setPrintfLimit()
 {
+	size_t sizeP;
 
+	printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
 
-	InitializeCPU();
+	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
+	printf("printf default limit %d \n",sizeP/1024/1024);
 
+	sizeP *= 10000;
+	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
+
+	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+
+	printf("printf limit set to %d \n",sizeP/1024/1024);
+
+	return 0;
+}
+
+int InitializeGPU()
+{
     InitGPUParticles();
     InitGPUFields();
 
-    size_t sizeP;
-
-    printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
-    cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
-
-    printf("printf default limit %d \n",sizeP/1024/1024);
-
-    sizeP *= 10000;
-    cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
-
-    cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
-
-    printf("printf limit set to %d \n",sizeP/1024/1024);
+    setPrintfLimit();
 
     int err = cudaSetDevice(0);
 
-    printf("err %d \n",err);
+    printf("InitializeGPU error %d \n",err);
+
+    return 0;
+}
+
+void Initialize()
+{
+	InitializeCPU();
+	InitializeGPU();
 }
 
 void InitGPUFields()
