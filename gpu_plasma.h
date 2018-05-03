@@ -2933,48 +2933,96 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			//exit(0);
 	  }
 
+	  FILE *readPreliminary3Darrays(char *fn,int nt)
+	  {
+		     double *buf;
+		     FILE *f;
+
+		     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+
+		     if((f = fopen(fn,"rb")) == NULL) return NULL;
+		     struct sysinfo info;
+
+		     sysinfo(&info);
+		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+		     readFortranBinaryArray(f,buf);
+		     sysinfo(&info);
+		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+		     readFortranBinaryArray(f,buf);
+		     sysinfo(&info);
+		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+
+		     readFortranBinaryArray(f,buf);
+		     sysinfo(&info);
+		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+
+		     readFortranBinaryArray(f,buf);
+		     sysinfo(&info);
+		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+
+		     readFortranBinaryArray(f,buf);
+		     readFortranBinaryArray(f,buf);
+
+		     readFortranBinaryArray(f,buf);
+		     readFortranBinaryArray(f,buf);
+		     readFortranBinaryArray(f,buf);
+
+		     readFortranBinaryArray(f,buf);
+		     readFortranBinaryArray(f,buf);
+		     readFortranBinaryArray(f,buf);
+		     int err;
+	//--------------------------------------------
+		     err = ferror(f);
+
+		     if(err != 0) return NULL;
+
+		     return f;
+	  }
+
 	  virtual void InitBinaryParticles(char *fn,thrust::host_vector<Particle>& vp,int nt)
 	  {
 	     FILE *f;
-//	     char str[1000];
-	     double /*x,y,z,px,py,pz,q_m*/*buf;//,tp,m;
-//	     int n = 0,t;
-
-	     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-	     if((f = fopen(fn,"rb")) == NULL) return;
+	     double *buf;
 	     struct sysinfo info;
-
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
 	     int err;
-//--------------------------------------------
-	     err = ferror(f);
+//
+//	     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//	     if((f = fopen(fn,"rb")) == NULL) return;
+//	     struct sysinfo info;
+//
+//	     sysinfo(&info);
+//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+//	     readFortranBinaryArray(f,buf);
+//	     sysinfo(&info);
+//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+//	     readFortranBinaryArray(f,buf);
+//	     sysinfo(&info);
+//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+//
+//	     readFortranBinaryArray(f,buf);
+//	     sysinfo(&info);
+//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+//
+//	     readFortranBinaryArray(f,buf);
+//	     sysinfo(&info);
+//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+//
+//	     readFortranBinaryArray(f,buf);
+//	     readFortranBinaryArray(f,buf);
+//
+//	     readFortranBinaryArray(f,buf);
+//	     readFortranBinaryArray(f,buf);
+//	     readFortranBinaryArray(f,buf);
+//
+//	     readFortranBinaryArray(f,buf);
+//	     readFortranBinaryArray(f,buf);
+//	     readFortranBinaryArray(f,buf);
+//	     int err;
+////--------------------------------------------
+//	     err = ferror(f);
+		 if((f = readPreliminary3Darrays(fn,nt)) == NULL) return;
+
 	     readBinaryParticlesOneSort(f,vp,ION,nt);
 	     sysinfo(&info);
 	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
