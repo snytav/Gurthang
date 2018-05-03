@@ -1205,8 +1205,7 @@ public:
 
 void Initialize()
 {
-	f_prec_report = fopen("control_points.dat","wt");
-	fclose(f_prec_report);
+
 
 	InitializeCPU();
 
@@ -4752,6 +4751,9 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   virtual void InitializeCPU()
 	   {
 	      thrust::host_vector<Particle> vp;
+
+	      f_prec_report = fopen("control_points.dat","wt");
+	      fclose(f_prec_report);
 
 	      Alloc();
 	 //     exit(0);
