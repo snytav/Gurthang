@@ -4785,6 +4785,25 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 		   return 0;
 	   }
 
+	   int copyCellsWithParticlesToGPU()
+	   {
+		   Cell<Particle> c000 = (*AllCells)[0];
+		   magf = 1;
+
+		   int size = (Nx+2)*(Ny+2)*(Nz+2);
+
+		   cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+
+		   for(int i = 0;i < size;i++)
+		   {
+		     	Cell<Particle> c,*d_c;
+		   	   	// 	z0 = h_CellArray[i];
+		   	    d_c = c.allocateCopyCellFromDevice();
+
+		   	    cp[i] = d_c;
+		   }
+	   }
+
 
 	   virtual void InitializeCPU()
 	   {
@@ -4793,21 +4812,8 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	      initMeshArrays();
 
 	      LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER);
-	      c000 = (*AllCells)[0];
-	      magf = 1;
 
-	      int size = (Nx+2)*(Ny+2)*(Nz+2);
-
-	      cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
-
-	      for(int i = 0;i < size;i++)
-	      	{
-	      	 	Cell<Particle> c,*d_c;
-	      	// 	z0 = h_CellArray[i];
-	      	    d_c = c.allocateCopyCellFromDevice();
-
-	      	    cp[i] = d_c;
-	      	}
+	      copyCellsWithParticlesToGPU();
 	   }
 
 	   void Free();
