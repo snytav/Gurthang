@@ -4762,6 +4762,27 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   {
 		   f_prec_report = fopen("control_points.dat","wt");
 		   fclose(f_prec_report);
+
+		   return 0;
+	   }
+
+
+	   int initMeshArrays()
+	   {
+		   initControlPointFile();
+
+		   Alloc();
+
+		   Cell<Particle> c000;
+
+		   InitCells();
+		   c000 = (*AllCells)[0];
+
+		   InitFields();
+		   c000 = (*AllCells)[0];
+		   InitCurrents();
+
+		   return 0;
 	   }
 
 
@@ -4769,19 +4790,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   {
 	      thrust::host_vector<Particle> vp;
 
-	      initControlPointFile();
-
-	      Alloc();
-	 //     exit(0);
-	      Cell<Particle> c000;
-
-	      InitCells();
-	      c000 = (*AllCells)[0];
-	//      exit(0);
-
-	      InitFields();
-	      c000 = (*AllCells)[0];
-	      InitCurrents();
+	      initMeshArrays();
 
 	      LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER);
 	      c000 = (*AllCells)[0];
