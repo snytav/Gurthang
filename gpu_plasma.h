@@ -3850,39 +3850,30 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		 return 0;
 	  }
 
+	  int LoadParticleData(int nt,int part_nt)
+	  {
+		 thrust::host_vector<Particle> vp,bin_vp;
+		 char part_name[100];
+
+		 if(nt > 1)
+		 {
+			 ClearAllParticles();
+		 }
+
+		 sprintf(part_name,"mumu000%08d.dat",part_nt);
+
+		 InitBinaryParticles(part_name,bin_vp,part_nt);
+
+		 return 0;
+	  }
+
 	  void LoadTestData(int nt,int part_nt)
 	  {
-	     thrust::host_vector<Particle> vp,bin_vp;
-	     char part_name[100];
-//	     std::string jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
-//		 qxfile,qyfile,qzfile;
-//
-//	     readDebugArray("hxlg",Hx,nt,5);
-//	     readDebugArray("hylg",Hy,nt,5);
-//	     readDebugArray("hzlg",Hz,nt,5);
-//
-//
-//	     get_load_data_file_names(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
-//	    		 qxfile,qyfile,qzfile,nt);
-//
-//	     InitQdebug(qxfile,qyfile,qzfile);
-//
-//	     InitCurrents(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,
-//	    		 np_jxfile,np_jyfile,np_jzfile,0);
 	     LoadMeshData(nt);
 
+	     LoadParticleData(nt,part_nt);
 
-	     if(nt > 1)
-	     {
-	    	 ClearAllParticles();
-	     }
-
-	      sprintf(part_name,"mumu000%08d.dat",part_nt);
-
-	      InitBinaryParticles(part_name,bin_vp,part_nt);
-
-          AssignArraysToCells();
-
+         AssignArraysToCells();
 	  }
 
 void readParticles(char *pfile,char *nextpfile)
