@@ -2979,11 +2979,12 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		     return f;
 	  }
 
-	  int readParticles(FILE *f,thrust::host_vector<Particle>& vp,int nt)
+	  int readParticles(FILE *f,int nt)
 	  {
 		 double *buf;
 		 struct sysinfo info;
 		 int err;
+		 thrust::host_vector<Particle> vp;
 
 		 readBinaryParticlesOneSort(f,vp,ION,nt);
 		 sysinfo(&info);
@@ -3000,13 +3001,13 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 return 0;
 	  }
 
-	  virtual void InitBinaryParticles(char *fn,thrust::host_vector<Particle>& vp,int nt)
+	  virtual void InitBinaryParticles(char *fn,int nt)
 	  {
 	     FILE *f;
 
 		 if((f = readPreliminary3Darrays(fn,nt)) == NULL) return;
 
-		 readParticles(f,vp,nt);
+		 readParticles(f,nt);
 //--------------------------------------------
 
 	     fclose(f);
@@ -3873,7 +3874,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 	  int LoadParticleData(int nt,int part_nt)
 	  {
-		 thrust::host_vector<Particle> vp,bin_vp;
+
 		 char part_name[100];
 
 		 if(nt > 1)
@@ -3883,7 +3884,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 		 sprintf(part_name,"mumu000%08d.dat",part_nt);
 
-		 InitBinaryParticles(part_name,bin_vp,part_nt);
+		 InitBinaryParticles(part_name,part_nt);
 
 		 return 0;
 	  }
