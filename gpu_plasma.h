@@ -4758,13 +4758,18 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	     tau        = TAU;
 	   }
 
+	   int initControlPointFile()
+	   {
+		   f_prec_report = fopen("control_points.dat","wt");
+		   fclose(f_prec_report);
+	   }
+
 
 	   virtual void InitializeCPU()
 	   {
 	      thrust::host_vector<Particle> vp;
 
-	      f_prec_report = fopen("control_points.dat","wt");
-	      fclose(f_prec_report);
+	      initControlPointFile();
 
 	      Alloc();
 	 //     exit(0);
