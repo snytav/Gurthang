@@ -2979,61 +2979,34 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		     return f;
 	  }
 
+	  int readParticles(FILE *f,thrust::host_vector<Particle>& vp,int nt)
+	  {
+		 double *buf;
+		 struct sysinfo info;
+		 int err;
+
+		 readBinaryParticlesOneSort(f,vp,ION,nt);
+		 sysinfo(&info);
+		 printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+		 err = ferror(f);
+
+		 readBinaryParticlesOneSort(f,vp,PLASMA_ELECTRON,nt);
+		 err = ferror(f);
+		 sysinfo(&info);
+		 printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+		 err = ferror(f);
+		 readBinaryParticlesOneSort(f,vp,BEAM_ELECTRON,nt);
+
+		 return 0;
+	  }
+
 	  virtual void InitBinaryParticles(char *fn,thrust::host_vector<Particle>& vp,int nt)
 	  {
 	     FILE *f;
-	     double *buf;
-	     struct sysinfo info;
-	     int err;
-//
-//	     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//	     if((f = fopen(fn,"rb")) == NULL) return;
-//	     struct sysinfo info;
-//
-//	     sysinfo(&info);
-//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-//	     readFortranBinaryArray(f,buf);
-//	     sysinfo(&info);
-//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-//	     readFortranBinaryArray(f,buf);
-//	     sysinfo(&info);
-//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-//
-//	     readFortranBinaryArray(f,buf);
-//	     sysinfo(&info);
-//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-//
-//	     readFortranBinaryArray(f,buf);
-//	     sysinfo(&info);
-//	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-//
-//	     readFortranBinaryArray(f,buf);
-//	     readFortranBinaryArray(f,buf);
-//
-//	     readFortranBinaryArray(f,buf);
-//	     readFortranBinaryArray(f,buf);
-//	     readFortranBinaryArray(f,buf);
-//
-//	     readFortranBinaryArray(f,buf);
-//	     readFortranBinaryArray(f,buf);
-//	     readFortranBinaryArray(f,buf);
-//	     int err;
-////--------------------------------------------
-//	     err = ferror(f);
+
 		 if((f = readPreliminary3Darrays(fn,nt)) == NULL) return;
 
-	     readBinaryParticlesOneSort(f,vp,ION,nt);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	     err = ferror(f);
-
-	     readBinaryParticlesOneSort(f,vp,PLASMA_ELECTRON,nt);
-	     err = ferror(f);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-         err = ferror(f);
-	     readBinaryParticlesOneSort(f,vp,BEAM_ELECTRON,nt);
+		 readParticles(f,vp,nt);
 //--------------------------------------------
 
 	     fclose(f);
