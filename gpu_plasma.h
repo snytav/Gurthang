@@ -2984,7 +2984,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 double *buf;
 		 struct sysinfo info;
 		 int err;
-		 thrust::host_vector<Particle> vp;
+//		 thrust::host_vector<Particle> vp;
 
 		 readBinaryParticlesOneSort(f,ION,nt);
 		 sysinfo(&info);
