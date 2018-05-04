@@ -2863,15 +2863,8 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
  		          pz   = dbg_pz[i];
 
 
- 			      Particle p;// = new Particle(x,y,z,px,py,pz,m,q_m);
- 			      p.x   = x;
- 			      p.y   = y;
- 			      p.z   = z;
- 			      p.pu  = px;
- 			      p.pv  = py;
- 			      p.pw  = pz;
- 			      p.m   = *m;
- 			      p.q_m = *q_m;
+ 			      Particle p(x,y,z,px,py,pz,*m,*q_m);
+
  			      p.fortran_number = i+1;
  			      p.sort = sort;
 
