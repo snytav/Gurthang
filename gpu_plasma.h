@@ -2789,36 +2789,13 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		    err = ferror(f);
 		    for(int i = 0; i < total_particles;i++)
 		     {
-
-		    	  if((err = ferror(f)) != 0)
-		    	  {
-		    		 // int qq = 0;
-		    	  }
-		          
-		         // if(i%getSize() != 0) continue;
-		      //    printf("rank %d part %d \n",getRank(),i);
-		          
 		    	  x   = dbg_x[i];
-//		    	  if(i  == 269 && sort == ION)
-//		    	  {
-//		    		  int qq = 0;
-//		    		  qq = 0;
-//		    		 // printf("number %5d x %25.15e \n",i,x);
-//		    	  }
-
-
 		          y   = dbg_y[i];
 		          z   = dbg_z[i];
   		          px   = dbg_px[i];
 		          py   = dbg_py[i];
 		          pz   = dbg_pz[i];
 
-//		          if(i+1 == 138)
-//		          {
-//		        	  int qq = 0;
-//		          }
-
-		         // if(sort == PLASMA_ELECTRON) continue;
 
 			      Particle p;// = new Particle(x,y,z,px,py,pz,m,q_m);
 			      p.x   = x;
@@ -2829,20 +2806,9 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			      p.pw  = pz;
 			      p.m   = m;
 			      p.q_m = q_m;
-
-		    	  if((err = ferror(f)) != 0)
-		    	  {
-		    		  //int qq = 0;
-		    	  }
-
-//			      if(n == 829)
-//			      {
-////			    	  int qq = 0;
-////			    	  qq = 1;
-//			      }
 			      p.fortran_number = i+1;
 			      p.sort = sort;
-//////////////////////////////////////////////////
+
 			      double3 d;
 			      d.x = x;
 			      d.y = y;
@@ -2851,15 +2817,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			      n = c0.getPointCell(d);
 
 			      Cell<Particle> & c = (*AllCells)[n];
-		    	  if((err = ferror(f)) != 0)
-		    	  {
-		    		  int qq = 0;
-		    	  }
-
-		    	  if(i == 3189003 && sort == PLASMA_ELECTRON)
-		    	  {
-		    		  int qq = 0;
-		    	  }
 
 
    			      if(c.Insert(p) == true)
@@ -2874,18 +2831,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		             //if((i+1) == 10000) exit(0);
 #endif
 			      }
-   			   if((err = ferror(f)) != 0)
-   			  		    	  {
-   			  		    		 // int qq = 0;
-   			  		    	  }
-
-//		#define GPU_PARTICLE ///////////////////////
-
 		     }// END total_particles LOOP
-	    	  if((err = ferror(f)) != 0)
-	    	  {
-	    		  //int qq = 0;
-	    	  }
 
 		    err = ferror(f);
 		    free(dbg_x);
@@ -2895,10 +2841,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			free(dbg_py);
 			free(dbg_pz);
 			err = ferror(f);
-			 if((err = ferror(f)) != 0)
-					    	  {
-					    		//  int qq = 0;
-					    	  }
 
              pn_min = 1000000000;
              pn_max = 0;
@@ -2912,10 +2854,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		    	 if(pn_max < c.number_of_particles) pn_max = c.number_of_particles;
 
 		     }
-		     if((err = ferror(f)) != 0)
-		    		    	  {
-		    		    		  //int qq = 0;
-		    		    	  }
 		     err = ferror(f);
 		     pn_sum = pn_ave;
 		     pn_ave /= (*AllCells).size();
@@ -2924,14 +2862,11 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		    		 m,            q_m,       total_particles,pn_sum,
 		    		 (*AllCells).size(),
 		    		 pn_min,pn_max,pn_ave);
-		     if((err = ferror(f)) != 0)
-		    		    	  {
-		    		    		 // int qq = 0;
-		    		    	  }
 
 		     err = ferror(f);
-			//exit(0);
 	  }
+
+
 
 	  FILE *readPreliminary3Darrays(char *fn,int nt)
 	  {
