@@ -2829,6 +2829,42 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
       }
 
+      int convertParticleArraysToSTLvector(
+    		  double *dbg_x,
+    		  double *dbg_y,
+			  double *dbg_z,
+			  double *dbg_px,
+			  double *dbg_py,
+			  double *dbg_pz,
+			  double q_m,
+			  double m,
+			  int total_particles,
+			  particle_sorts sort,
+    		  std::vector<Particle> & vp
+    		  )
+      {
+    	  double x,y,z,px,py,pz;
+
+    	  for(int i = 0; i < total_particles;i++)
+    	  {
+			  x   = dbg_x[i];
+			  y   = dbg_y[i];
+			  z   = dbg_z[i];
+			  px   = dbg_px[i];
+			  py   = dbg_py[i];
+			  pz   = dbg_pz[i];
+
+
+			  Particle p(x,y,z,px,py,pz,m,q_m);
+
+			  p.fortran_number = i+1;
+			  p.sort = sort;
+
+			  vp.push_back(p);
+
+    	  }
+      }
+
       int getParticlesOneSortFromFile(
     		                          FILE *f,
                                       particle_sorts sort,
@@ -2854,24 +2890,27 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
  		     real_number_of_particle[(int)sort] = total_particles;
 
  		     if((err = ferror(f)) != 0) return 1;
- 		    for(int i = 0; i < total_particles;i++)
- 		     {
- 		    	  x   = dbg_x[i];
- 		          y   = dbg_y[i];
- 		          z   = dbg_z[i];
-   		          px   = dbg_px[i];
- 		          py   = dbg_py[i];
- 		          pz   = dbg_pz[i];
+ 		     convertParticleArraysToSTLvector(dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz,*q_m,*m,
+ 		    			  total_particles,sort,vp);
 
-
- 			      Particle p(x,y,z,px,py,pz,*m,*q_m);
-
- 			      p.fortran_number = i+1;
- 			      p.sort = sort;
-
- 			      vp.push_back(p);
-
- 		     }
+// 		    for(int i = 0; i < total_particles;i++)
+// 		     {
+// 		    	  x   = dbg_x[i];
+// 		          y   = dbg_y[i];
+// 		          z   = dbg_z[i];
+//   		          px   = dbg_px[i];
+// 		          py   = dbg_py[i];
+// 		          pz   = dbg_pz[i];
+//
+//
+// 			      Particle p(x,y,z,px,py,pz,*m,*q_m);
+//
+// 			      p.fortran_number = i+1;
+// 			      p.sort = sort;
+//
+// 			      vp.push_back(p);
+//
+// 		     }
       }
 
 	  virtual void readBinaryParticlesOneSort(FILE *f,//thrust::host_vector<Particle>& vp,
