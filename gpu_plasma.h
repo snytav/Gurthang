@@ -2766,6 +2766,34 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 	return total_particles;
       }
 
+      void printPICstatitstics(double m,double q_m, int total_particles)
+      {
+    	  int pn_min,pn_ave,pn_max,pn_sum,err;
+
+              pn_min = 1000000000;
+              pn_max = 0;
+              pn_ave = 0;
+ 		     for(int n = 0;n < (*AllCells).size();n++)
+ 		     {
+ 		    	 Cell<Particle> & c = (*AllCells)[n];
+
+ 		    	 pn_ave += c.number_of_particles;
+ 		    	 if(pn_min > c.number_of_particles) pn_min = c.number_of_particles;
+ 		    	 if(pn_max < c.number_of_particles) pn_max = c.number_of_particles;
+
+ 		     }
+
+ 		     pn_sum = pn_ave;
+ 		     pn_ave /= (*AllCells).size();
+
+ 		     printf("SORT m %15.5e q_m %15.5e %10d (sum %10d) particles in %8d cells: MIN %10d MAX %10d average %10d \n",
+ 		    		 m,            q_m,       total_particles,pn_sum,
+ 		    		 (*AllCells).size(),
+ 		    		 pn_min,pn_max,pn_ave);
+
+
+      }
+
 	  virtual void readBinaryParticlesOneSort(FILE *f,//thrust::host_vector<Particle>& vp,
 			                                  particle_sorts sort,int nt)
 
@@ -2842,28 +2870,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			free(dbg_pz);
 			err = ferror(f);
 
-             pn_min = 1000000000;
-             pn_max = 0;
-             pn_ave = 0;
-		     for(int n = 0;n < (*AllCells).size();n++)
-		     {
-		    	 Cell<Particle> & c = (*AllCells)[n];
-
-		    	 pn_ave += c.number_of_particles;
-		    	 if(pn_min > c.number_of_particles) pn_min = c.number_of_particles;
-		    	 if(pn_max < c.number_of_particles) pn_max = c.number_of_particles;
-
-		     }
-		     err = ferror(f);
-		     pn_sum = pn_ave;
-		     pn_ave /= (*AllCells).size();
-
-		     printf("SORT m %15.5e q_m %15.5e %10d (sum %10d) particles in %8d cells: MIN %10d MAX %10d average %10d \n",
-		    		 m,            q_m,       total_particles,pn_sum,
-		    		 (*AllCells).size(),
-		    		 pn_min,pn_max,pn_ave);
-
-		     err = ferror(f);
+			printPICstatitstics(m,q_m,total_particles);
 	  }
 
 
