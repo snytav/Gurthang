@@ -2838,11 +2838,12 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
                                       double *m
                                       )
       {
-     	     char str[1000];
+     	    // char str[1000];
  		     double x,y,z,px,py,pz;//,q_m,m;
- 		     int n = 0;//,t;
- 		     Cell<Particle> c0 = (*AllCells)[0];
- 		     int pn_min,pn_ave,pn_max,pn_sum,err;
+ 		     //int n = 0;//,t;
+// 		     Cell<Particle> c0 = (*AllCells)[0];
+// 		     int pn_min,pn_ave,pn_max,pn_sum,
+ 		     int err;
 
  		     if((err = ferror(f)) != 0) return 1;
 
@@ -2852,7 +2853,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
  		     real_number_of_particle[(int)sort] = total_particles;
 
- 		    err = ferror(f);
+ 		     if((err = ferror(f)) != 0) return 1;
  		    for(int i = 0; i < total_particles;i++)
  		     {
  		    	  x   = dbg_x[i];
