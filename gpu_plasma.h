@@ -2874,11 +2874,8 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
                                       double *m
                                       )
       {
-     	    // char str[1000];
- 		     double x,y,z,px,py,pz;//,q_m,m;
- 		     //int n = 0;//,t;
-// 		     Cell<Particle> c0 = (*AllCells)[0];
-// 		     int pn_min,pn_ave,pn_max,pn_sum,
+ 		     double x,y,z,px,py,pz;
+
  		     int err;
 
  		     if((err = ferror(f)) != 0) return 1;
@@ -2893,37 +2890,17 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
  		     convertParticleArraysToSTLvector(dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz,*q_m,*m,
  		    			  total_particles,sort,vp);
 
-// 		    for(int i = 0; i < total_particles;i++)
-// 		     {
-// 		    	  x   = dbg_x[i];
-// 		          y   = dbg_y[i];
-// 		          z   = dbg_z[i];
-//   		          px   = dbg_px[i];
-// 		          py   = dbg_py[i];
-// 		          pz   = dbg_pz[i];
-//
-//
-// 			      Particle p(x,y,z,px,py,pz,*m,*q_m);
-//
-// 			      p.fortran_number = i+1;
-// 			      p.sort = sort;
-//
-// 			      vp.push_back(p);
-//
-// 		     }
       }
 
 	  virtual void readBinaryParticlesOneSort(FILE *f,std::vector<Particle> & vp,
 			                                  particle_sorts sort,int nt)
 
 	  {
-		     double q_m,m;
-		     int err;
-//		     std::vector<Particle> vp;
+		    double q_m,m;
+		    int err;
+		    getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
 
-		     getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
-
-		     addParticleListToCells(vp);
+		    addParticleListToCells(vp);
 
 		    err = ferror(f);
 		    free(dbg_x);
@@ -2992,9 +2969,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 	  int readParticles(FILE *f,int nt)
 	  {
-//		 double *buf;
-//		 struct sysinfo info;
-//		 int err;
 		 std:vector<Particle> ion_vp,el_vp,beam_vp;
 
 		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
@@ -3011,7 +2985,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 if((f = readPreliminary3Darrays(fn,nt)) == NULL) return;
 
 		 readParticles(f,nt);
-//--------------------------------------------
 
 	     fclose(f);
 
