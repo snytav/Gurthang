@@ -2934,6 +2934,11 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			free(dbg_pz);
 			err = ferror(f);
 
+			struct sysinfo info;
+            sysinfo(&info);
+			printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+			err = ferror(f);
+
 			printPICstatitstics(m,q_m,total_particles);
 	  }
 
@@ -2993,15 +2998,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 std:vector<Particle> ion_vp,el_vp,beam_vp;
 
 		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
-		 sysinfo(&info);
-		 printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-		 err = ferror(f);
-
 		 readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
-		 err = ferror(f);
-		 sysinfo(&info);
-		 printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-		 err = ferror(f);
 		 readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
 
 		 return 0;
