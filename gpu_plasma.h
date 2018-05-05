@@ -2992,9 +2992,9 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 	  int readParticles(FILE *f,int nt)
 	  {
-		 double *buf;
-		 struct sysinfo info;
-		 int err;
+//		 double *buf;
+//		 struct sysinfo info;
+//		 int err;
 		 std:vector<Particle> ion_vp,el_vp,beam_vp;
 
 		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
