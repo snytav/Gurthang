@@ -2913,19 +2913,13 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 // 		     }
       }
 
-	  virtual void readBinaryParticlesOneSort(FILE *f,//thrust::host_vector<Particle>& vp,
+	  virtual void readBinaryParticlesOneSort(FILE *f,std::vector<Particle> & vp,
 			                                  particle_sorts sort,int nt)
 
 	  {
-
-//		     char str[1000];
-//		     double x,y,z,px,py,pz
 		     double q_m,m;
-//		     int n = 0;//,t;
-//		     Cell<Particle> c0 = (*AllCells)[0];
-//		     int pn_min,pn_ave,pn_max,pn_sum
 		     int err;
-		     std::vector<Particle> vp;
+//		     std::vector<Particle> vp;
 
 		     getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
 
@@ -2996,19 +2990,19 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 double *buf;
 		 struct sysinfo info;
 		 int err;
-//		 thrust::host_vector<Particle> vp;
+		 std:vector<Particle> ion_vp,el_vp,beam_vp;
 
-		 readBinaryParticlesOneSort(f,ION,nt);
+		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
 		 sysinfo(&info);
 		 printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
 		 err = ferror(f);
 
-		 readBinaryParticlesOneSort(f,PLASMA_ELECTRON,nt);
+		 readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
 		 err = ferror(f);
 		 sysinfo(&info);
 		 printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
 		 err = ferror(f);
-		 readBinaryParticlesOneSort(f,BEAM_ELECTRON,nt);
+		 readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
 
 		 return 0;
 	  }
