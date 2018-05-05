@@ -2900,8 +2900,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		    int err;
 		    getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
 
-		    addParticleListToCells(vp);
-
 		    err = ferror(f);
 		    free(dbg_x);
 			free(dbg_y);
@@ -2972,8 +2970,11 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 std:vector<Particle> ion_vp,el_vp,beam_vp;
 
 		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
+		 addParticleListToCells(ion_vp);
 		 readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
+		 addParticleListToCells(el_vp);
 		 readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
+		 addParticleListToCells(beam_vp);
 
 		 return 0;
 	  }
