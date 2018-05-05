@@ -2919,47 +2919,14 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 	  {
 
 //		     char str[1000];
-		     double x,y,z,px,py,pz,q_m,m;
-		     int n = 0;//,t;
-		     Cell<Particle> c0 = (*AllCells)[0];
-		     int pn_min,pn_ave,pn_max,pn_sum,err;
+//		     double x,y,z,px,py,pz
+		     double q_m,m;
+//		     int n = 0;//,t;
+//		     Cell<Particle> c0 = (*AllCells)[0];
+//		     int pn_min,pn_ave,pn_max,pn_sum
+		     int err;
 		     std::vector<Particle> vp;
 
-
-//		     if((err = ferror(f)) != 0) return;
-//
-//		     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
-//		    		                                             &dbg_px,&dbg_py,&dbg_pz,&q_m,&m,nt,
-//		    		                                             sort);
-//
-//		     real_number_of_particle[(int)sort] = total_particles;
-//
-//		    err = ferror(f);
-//		    for(int i = 0; i < total_particles;i++)
-//		     {
-//		    	  x   = dbg_x[i];
-//		          y   = dbg_y[i];
-//		          z   = dbg_z[i];
-//  		          px   = dbg_px[i];
-//		          py   = dbg_py[i];
-//		          pz   = dbg_pz[i];
-//
-//
-//			      Particle p;// = new Particle(x,y,z,px,py,pz,m,q_m);
-//			      p.x   = x;
-//			      p.y   = y;
-//			      p.z   = z;
-//			      p.pu  = px;
-//			      p.pv  = py;
-//			      p.pw  = pz;
-//			      p.m   = m;
-//			      p.q_m = q_m;
-//			      p.fortran_number = i+1;
-//			      p.sort = sort;
-//
-//			      vp.push_back(p);
-//
-//		     }
 		     getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
 
 		     addParticleListToCells(vp);
