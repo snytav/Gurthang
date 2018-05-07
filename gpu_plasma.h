@@ -3000,7 +3000,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 return 0;
 	  }
 
-	  string getBInaryFileName(int nt)
+	  string getBinaryFileName(int nt)
 	  {
 		  char part_name[100];
 		  string s;
@@ -3015,7 +3015,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 	  virtual void InitBinaryParticles(int nt)
 	  {
 	     FILE *f;
-	     string part_name = getBInaryFileName(nt);
+	     string part_name = getBinaryFileName(nt);
 
 		 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return;
 
@@ -3891,16 +3891,31 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	  int LoadParticleData(int nt,int part_nt)
 	  {
 
-		 char part_name[100];
+//		 char part_name[100];
 
 		 if(nt > 1)
 		 {
 			 ClearAllParticles();
 		 }
 
-		 sprintf(part_name,"mumu000%08d.dat",part_nt);
+//		 sprintf(part_name,"mumu000%08d.dat",part_nt);
 
-		 InitBinaryParticles(part_nt);
+		 FILE *f;
+
+		 string part_name = getBinaryFileName(nt);
+
+		 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return 1;
+
+		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+
+		 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
+
+		 fclose(f);
+
+		 addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
+
+
+	     magf = 1;
 
 		 return 0;
 	  }
