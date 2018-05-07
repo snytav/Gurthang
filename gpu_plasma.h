@@ -2976,15 +2976,29 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 			 return 0;
 	  }
 
+	  int readBinaryParticlesAllSorts(FILE *f,int nt,
+			                          std::vector<Particle> & ion_vp,
+                                      std::vector<Particle> & el_vp,
+                                      std::vector<Particle> & beam_vp)
+	  {
+		  readBinaryParticlesOneSort(f,ion_vp,ION,nt);
+          readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
+    	  readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
+
+    	  return 0;
+	  }
+
 	  int readParticles(FILE *f,int nt)
 	  {
 		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
-		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
+		 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
+
+//		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
 //		 addParticleListToCells(ion_vp);
-		 readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
+//		 readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
 //		 addParticleListToCells(el_vp);
-		 readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
+//		 readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
 //		 addParticleListToCells(beam_vp);
 
 		 addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
