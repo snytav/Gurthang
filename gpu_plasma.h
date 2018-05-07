@@ -3918,9 +3918,13 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		 return 0;
 	  }
 
-	  void LoadTestData(int nt,int part_nt)
+	  void LoadTestData(int nt,
+			            int part_nt,
+			            std::vector<Particle> & ion_vp,
+			            std::vector<Particle> & el_vp,
+			            std::vector<Particle> & beam_vp)
 	  {
-		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+//		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
 	     LoadMeshData(nt);
 
@@ -4878,11 +4882,11 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	   virtual void InitializeCPU()
 	   {
-	      thrust::host_vector<Particle> vp;
+		  std::vector<Particle> ion_vp,el_vp,beam_vp;
 
 	      initMeshArrays();
 
-	      LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER);
+	      LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER, ion_vp,el_vp,beam_vp);
 
 	      copyCellsWithParticlesToGPU();
 	   }
