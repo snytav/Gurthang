@@ -2994,12 +2994,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 		 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
 
-//		 readBinaryParticlesOneSort(f,ion_vp,ION,nt);
-//		 addParticleListToCells(ion_vp);
-//		 readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
-//		 addParticleListToCells(el_vp);
-//		 readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
-//		 addParticleListToCells(beam_vp);
 
 		 addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
 
@@ -3012,7 +3006,12 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 		 if((f = readPreliminary3Darrays(fn,nt)) == NULL) return;
 
-		 readParticles(f,nt);
+		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+
+		 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
+
+
+		 addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
 
 	     fclose(f);
 
