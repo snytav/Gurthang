@@ -3888,17 +3888,15 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		 return 0;
 	  }
 
-	  int LoadParticleData(int nt,int part_nt)
+	  int LoadParticleData(int nt,
+			               std::vector<Particle> & ion_vp,
+			               std::vector<Particle> & el_vp,
+			               std::vector<Particle> & beam_vp)
 	  {
-
-//		 char part_name[100];
-
 		 if(nt > 1)
 		 {
 			 ClearAllParticles();
 		 }
-
-//		 sprintf(part_name,"mumu000%08d.dat",part_nt);
 
 		 FILE *f;
 
@@ -3906,13 +3904,13 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 		 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return 1;
 
-		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+//		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
 		 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
 
 		 fclose(f);
 
-		 addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
+
 
 
 	     magf = 1;
@@ -3922,9 +3920,13 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 	  void LoadTestData(int nt,int part_nt)
 	  {
+		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+
 	     LoadMeshData(nt);
 
-	     LoadParticleData(nt,part_nt);
+	     LoadParticleData(nt,ion_vp,el_vp,beam_vp);
+
+	     addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
 
          AssignArraysToCells();
 	  }
