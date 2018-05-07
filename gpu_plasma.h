@@ -3000,11 +3000,14 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 return 0;
 	  }
 
-	  virtual void InitBinaryParticles(char *fn,int nt)
+	  virtual void InitBinaryParticles(int nt)
 	  {
 	     FILE *f;
+	     char part_name[100];
 
-		 if((f = readPreliminary3Darrays(fn,nt)) == NULL) return;
+	     sprintf(part_name,"mumu000%08d.dat",nt);
+
+		 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return;
 
 		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
@@ -3887,7 +3890,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 		 sprintf(part_name,"mumu000%08d.dat",part_nt);
 
-		 InitBinaryParticles(part_name,part_nt);
+		 InitBinaryParticles(part_nt);
 
 		 return 0;
 	  }
