@@ -2919,14 +2919,14 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 
 
-	  FILE *readPreliminary3Darrays(char *fn,int nt)
+	  FILE *readPreliminary3Darrays(string fn,int nt)
 	  {
 		     double *buf;
 		     FILE *f;
 
 		     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
-		     if((f = fopen(fn,"rb")) == NULL) return NULL;
+		     if((f = fopen(fn.c_str(),"rb")) == NULL) return NULL;
 		     struct sysinfo info;
 
 		     sysinfo(&info);
@@ -3000,12 +3000,22 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		 return 0;
 	  }
 
+	  string getBInaryFileName(int nt)
+	  {
+		  char part_name[100];
+		  string s;
+
+		  sprintf(part_name,"mumu000%08d.dat",nt);
+
+		  s = part_name;
+
+		  return s;
+	  }
+
 	  virtual void InitBinaryParticles(int nt)
 	  {
 	     FILE *f;
-	     char part_name[100];
-
-	     sprintf(part_name,"mumu000%08d.dat",nt);
+	     string part_name = getBInaryFileName(nt);
 
 		 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return;
 
