@@ -1900,17 +1900,9 @@ void  ComputeField_FirstHalfStep(
 		   double *locQx,double *locQy,double *locQz)
 {
 	 double t_check[15];
-//	 double *locQx,*locQy,*locQz;
-//	 static int first = 0;
-//
-//	 if(first == 0)
-//	 {
-//		 locQx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//		 locQy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//		 locQz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//		 first = 1;
-//	 }
+
+	 memory_monitor("beforeComputeField_FirstHalfStep",nt);
+
 	 CPU_field = 0;
 	 if(CPU_field == 0)
 	 {
@@ -2277,9 +2269,8 @@ int readStartPoint(int nt)
 
 		readStartPoint(nt);
 
-	    memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
-             CPU_field = 0;
+
 			 ComputeField_FirstHalfStep(
 					  Ex,Ey,Ez,
 					  nt,
