@@ -1977,6 +1977,9 @@ virtual void ComputeField_SecondHalfStep(
 		   double *loc_npJx,double *loc_npJy,double *loc_npJz,
 		   double *locQx,double *locQy,double *locQz)
 {
+	 memory_monitor("before275",nt);
+
+
 #ifdef CPU_DEBUG_RUN
 
 #ifdef CONTROL_POINT_CHECK
@@ -2023,7 +2026,7 @@ virtual void ComputeField_SecondHalfStep(
     	checkControlPoint(600,nt,0);
     }
 #endif
-
+    memory_monitor("after_ComputeField_SecondHalfStep",nt);
 
 }
 
@@ -2273,28 +2276,19 @@ int readStartPoint(int nt)
 
         ComputeField_FirstHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
 
+        AssignCellsToArraysGPU();
+		PushParticles(nt);
+
+		checkParticleAttributes(nt);
+
+		checkControlPoint(270,nt,1);
 
 
-			  AssignCellsToArraysGPU();
-			  PushParticles(nt);
 
 
-
-		      checkParticleAttributes(nt);
-
-			  checkControlPoint(270,nt,1);
-
-	   memory_monitor("before270",nt);
+		ComputeField_SecondHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
 
 
-		      ComputeField_SecondHalfStep(
-					  Ex,Ey,Ez,
-					  nt,
-					  Hx,Hy,Hz,
-					  npJx,npJy,npJz,
-					  Qx,Qy,Qz);
-
-	   memory_monitor("after_ComputeField_SecondHalfStep",nt);
 
 
 		    CPU_field = 0;
