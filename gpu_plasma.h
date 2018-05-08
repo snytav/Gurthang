@@ -2253,24 +2253,31 @@ int PushParticles(int nt)
 }
 
 
+int readStartPoint(int nt)
+{
+	char fn[100];
+
+	 if(nt == START_STEP_NUMBER)
+	 {
+		 readControlPoint(NULL,fn,0,nt,0,1,Ex,Ey,Ez,Hx,Hy,Hz,Jx,Jy,Jz,Qx,Qy,Qz,
+							   dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz
+			 );
+		copyFieldsToGPU();
+	 }
+
+     checkControlPoint(0,nt,1);
+
+	 return 0;
+}
+
+
 
 	void Step(int nt)
 	 {
-		 char fn[100];
 
- 		 if(nt == START_STEP_NUMBER)
- 		 {
- 			 readControlPoint(NULL,fn,0,nt,0,1,Ex,Ey,Ez,Hx,Hy,Hz,Jx,Jy,Jz,Qx,Qy,Qz,
- 		                           dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz
-				 );
- 			copyFieldsToGPU();
- 		 }
+		readStartPoint(nt);
 
-
-		checkControlPoint(0,nt,1);
-
-
-	   memory_monitor("beforeComputeField_FirstHalfStep",nt);
+	    memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
              CPU_field = 0;
 			 ComputeField_FirstHalfStep(
@@ -2279,10 +2286,6 @@ int PushParticles(int nt)
 					  Hx,Hy,Hz,
 					  npJx,npJy,npJz,
 					  Qx,Qy,Qz);
-
-//				memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//			    memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//			    memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 		memory_monitor("afterComputeField_FirstHalfStep",nt);
 
