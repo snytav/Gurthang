@@ -5169,6 +5169,17 @@ puts("Jy");
         dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43],t1.Jz.t[3],dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43]);
 	}
 
+int SetCurrentArraysToZero()
+{
+	memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	return 0;
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5180,13 +5191,13 @@ puts("Jy");
 
 		memory_monitor("CellOrder_StepAllCells1",nt);
 
-
-		memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-		memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-		memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-		cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-		cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	 	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+		SetCurrentArraysToZero();
+//		memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//		memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//		memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//		cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//		cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	 	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 
 		char name[100];
