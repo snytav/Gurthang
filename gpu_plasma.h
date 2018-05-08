@@ -2027,7 +2027,7 @@ virtual void ComputeField_SecondHalfStep(
     }
 #endif
     memory_monitor("after_ComputeField_SecondHalfStep",nt);
-
+    CPU_field = 0;
 }
 
 void eme(double *locEx,double *locEy,double *locEz,
@@ -2283,17 +2283,7 @@ int readStartPoint(int nt)
 
 		checkControlPoint(270,nt,1);
 
-
-
-
 		ComputeField_SecondHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
-
-
-
-
-		    CPU_field = 0;
-
-
 
 		 Diagnose(nt);
 
