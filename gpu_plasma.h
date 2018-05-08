@@ -2245,8 +2245,6 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 	 {
 		 char fn[100];
 
-		// printGPUParticle(14536,2);
-
  		 if(nt == START_STEP_NUMBER)
  		 {
  			 readControlPoint(NULL,fn,0,nt,0,1,Ex,Ey,Ez,Hx,Hy,Hz,Jx,Jy,Jz,Qx,Qy,Qz,
@@ -2255,21 +2253,11 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
  			copyFieldsToGPU();
  		 }
 
-		// printGPUParticle(14536,2);
-
-		// readControlFile(nt);
 #ifdef CONTROL_POINT_CHECK
 		checkControlPoint(0,nt,1);
 #endif
-	//	 printGPUParticle(14536,2);
 		 if(flagCPUandGPUrun)
 		 {
-		   // StepAllCells();
-
-		     //FortranOrder_StepAllCells(nt);
-//			 CellOrder_StepAllCells(nt);
-//  			  checkCurrents(nt);
-   			 // exit(0);
 	   memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
              CPU_field = 0;
@@ -2287,28 +2275,15 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		memory_monitor("afterComputeField_FirstHalfStep",nt);
 
 
-//		        cudaMemcpy(d_Jx,Jx,sizeof(double)*(Nx+2)*(Nx+2)*(Nx+2),cudaMemcpyHostToDevice);
-//		        cudaMemcpy(d_Jy,Jy,sizeof(double)*(Nx+2)*(Nx+2)*(Nx+2),cudaMemcpyHostToDevice);
-//		        cudaMemcpy(d_Jz,Jz,sizeof(double)*(Nx+2)*(Nx+2)*(Nx+2),cudaMemcpyHostToDevice);
-#ifdef CONTROL_POINT_CHECK
-//			  checkControlPoint(55,nt,1);
-#endif
-//			  checkFirstHalfstepFields(nt);
-//			  checkFirstHalfstepGPUElectricFields(nt);
 			  AssignCellsToArraysGPU();
-		//	  printGPUParticle(14536,2);
 			  memory_monitor("before_CellOrder_StepAllCells",nt);
-//			  getWrongCurrentCellList(270,nt);
 
 			  double mass = -1.0/1836.0,q_mass = -1.0;
 		      CellOrder_StepAllCells(nt,	mass,q_mass,1);
 
-//		      getWrongCurrentCellList(270,nt);
 		      memory_monitor("after_CellOrder_StepAllCells",nt);
 
-		      //cudaThreadSynchronize();
 
-		    //  exit(0);
 #ifdef ATTRIBUTES_CHECK
 		      checkParticleAttributes(nt);
 #endif
@@ -2330,18 +2305,10 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 	   memory_monitor("after_ComputeField_SecondHalfStep",nt);
 
-		   //   checkControlPoint(600,nt,1);
 
 		    CPU_field = 0;
-//		    ComputeField_SecondHalfStep(
-//		   	   					  d_Ex,d_Ey,d_Ez,
-//		   	   					  nt+1,
-//		   	   					  d_Hx,d_Hy,d_Hz,
-//		   	   					  d_Jx,d_Jy,d_Jz,
-//		   	   					  d_Qx,d_Qy,d_Qz);
 		 }
 
-		//  StepAllCells();
 
 		 Diagnose(nt);
 
