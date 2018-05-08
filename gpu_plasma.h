@@ -1966,6 +1966,8 @@ void  ComputeField_FirstHalfStep(
 	 //CheckArray(dbg_Qx,locQx);
 
 //	 exit(0);
+	 memory_monitor("afterComputeField_FirstHalfStep",nt);
+
 }
 
 virtual void ComputeField_SecondHalfStep(
@@ -2278,7 +2280,6 @@ int readStartPoint(int nt)
 					  npJx,npJy,npJz,
 					  Qx,Qy,Qz);
 
-		memory_monitor("afterComputeField_FirstHalfStep",nt);
 
 
 			  AssignCellsToArraysGPU();
