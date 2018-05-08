@@ -2253,10 +2253,10 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
  			copyFieldsToGPU();
  		 }
 
-#ifdef CONTROL_POINT_CHECK
+
 		checkControlPoint(0,nt,1);
-#endif
-		 if(flagCPUandGPUrun)
+
+		if(flagCPUandGPUrun)
 		 {
 	   memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
@@ -2288,9 +2288,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		      checkParticleAttributes(nt);
 #endif
 
-#ifdef CONTROL_POINT_CHECK
 			  checkControlPoint(270,nt,1);
-#endif
 
 	   memory_monitor("before270",nt);
 
@@ -4150,6 +4148,10 @@ void checkControlPoint(int num,int nt,int check_part)
 {
 	 double t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,t_jx,t_jy,t_jz;
 	 double t_qx,t_qy,t_qz,t_njx,t_njy,t_njz;
+
+#ifndef CONTROL_POINT_CHECK
+	 return;
+#endif
 
 	 FILE *f;
 	 char fn_copy[100];
