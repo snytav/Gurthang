@@ -2240,6 +2240,19 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 }
 
 
+int PushParticles(int nt)
+{
+    memory_monitor("before_CellOrder_StepAllCells",nt);
+
+	double mass = -1.0/1836.0,q_mass = -1.0;
+    CellOrder_StepAllCells(nt,	mass,q_mass,1);
+
+	memory_monitor("after_CellOrder_StepAllCells",nt);
+
+	return 0;
+}
+
+
 
 	void Step(int nt)
 	 {
@@ -2275,17 +2288,11 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 
 			  AssignCellsToArraysGPU();
-			  memory_monitor("before_CellOrder_StepAllCells",nt);
-
-			  double mass = -1.0/1836.0,q_mass = -1.0;
-		      CellOrder_StepAllCells(nt,	mass,q_mass,1);
-
-		      memory_monitor("after_CellOrder_StepAllCells",nt);
+			  PushParticles(nt);
 
 
-#ifdef ATTRIBUTES_CHECK
+
 		      checkParticleAttributes(nt);
-#endif
 
 			  checkControlPoint(270,nt,1);
 
