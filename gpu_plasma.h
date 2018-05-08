@@ -5189,6 +5189,15 @@ puts("Jy");
 		return 0;
 	}
 
+	int SetAllCurrentsToZero()
+	{
+		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlockExt(CellExtent,CellExtent,CellExtent);
+
+		GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
+
+		return 0;
+	}
+
 	int PushAndComputeCurrent(int nt,double mass,double q_mass,int first)
 	{
 		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
@@ -5196,7 +5205,8 @@ puts("Jy");
 				dim3 dimGridBulk(Nx,Ny,Nz);
 		char name[200];
 
-	    GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
+	    SetAllCurrentsToZero();
+
 	    memory_monitor("CellOrder_StepAllCells3",nt);
 
 		sprintf(name,"before_step_%03d.dat",nt);
