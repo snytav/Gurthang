@@ -5169,83 +5169,84 @@ puts("Jy");
         dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43],t1.Jz.t[3],dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43]);
 	}
 
-
-	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
+	int StepAllCellsPrepare(int nt)
 	{
-
-//		struct timeval tv1,tv2;
-		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
-				dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
-		dim3 dimGridBulk(Nx,Ny,Nz);
-
 		memory_monitor("CellOrder_StepAllCells1",nt);
-
 
 		memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 		memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 		memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 		cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 		cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	 	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+		cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 
 		char name[100];
 
 		sprintf(name,"before_set_to_zero_%03d.dat",nt);
 		write3D_GPUArray(name,d_Jx);
-//		printCellCurrents(270,nt,"jx","set_to_zero");
 
+		return 0;
+	}
 
-		    GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
-		    memory_monitor("CellOrder_StepAllCells3",nt);
+	int PushAndComputeCurrent(int nt,double mass,double q_mass,int first)
+	{
+		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
+						dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
+				dim3 dimGridBulk(Nx,Ny,Nz);
+		char name[200];
 
-			sprintf(name,"before_step_%03d.dat",nt);
-			write3D_GPUArray(name,d_Jx);
+	    GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
+	    memory_monitor("CellOrder_StepAllCells3",nt);
+
+		sprintf(name,"before_step_%03d.dat",nt);
+		write3D_GPUArray(name,d_Jx);
 //			printCellCurrents(270,nt,"jx","step");
-			ListAllParticles(nt,"bStepAllCells");
+		ListAllParticles(nt,"bStepAllCells");
 
-		    cudaDeviceSynchronize();
+	    cudaDeviceSynchronize();
 
-            GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0/*,d_jx,d_jy,d_jz*/,d_Jx,
-            		     		                          mass,q_mass,d_ctrlParticles,jmp,nt);
-            
-            cudaDeviceSynchronize();
+        GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0/*,d_jx,d_jy,d_jz*/,d_Jx,
+        		     		                          mass,q_mass,d_ctrlParticles,jmp,nt);
 
-            memory_monitor("CellOrder_StepAllCells4",nt);
+        cudaDeviceSynchronize();
 
-            ListAllParticles(nt,"aStepAllCells");
+        memory_monitor("CellOrder_StepAllCells4",nt);
 
-
-		    cudaError_t err1 = cudaGetLastError();
-		    cudaDeviceSynchronize();
-		    cudaError_t err2 = cudaGetLastError();
-		    char err_s[200];
-		    strcpy(err_s,cudaGetErrorString(err2));
+        ListAllParticles(nt,"aStepAllCells");
 
 
-			sprintf(name,"before_write_currents_%03d.dat",nt);
-			write3D_GPUArray(name,d_Jx);
+	    cudaError_t err1 = cudaGetLastError();
+	    cudaDeviceSynchronize();
+	    cudaError_t err2 = cudaGetLastError();
+	    char err_s[200];
+	    strcpy(err_s,cudaGetErrorString(err2));
+
+
+		sprintf(name,"before_write_currents_%03d.dat",nt);
+		write3D_GPUArray(name,d_Jx);
 //			printCellCurrents(270,nt,"jx","write");
 
-		    dim3 dimExt(CellExtent,CellExtent,CellExtent);
- 		    GPU_WriteAllCurrents<<<dimGrid, dimExt,16000>>>(d_CellArray,0,d_Jx,d_Jy,d_Jz,d_Rho);
+	    dim3 dimExt(CellExtent,CellExtent,CellExtent);
+		    GPU_WriteAllCurrents<<<dimGrid, dimExt,16000>>>(d_CellArray,0,d_Jx,d_Jy,d_Jz,d_Rho);
 
- 		   memory_monitor("CellOrder_StepAllCells5",nt);
+		   memory_monitor("CellOrder_StepAllCells5",nt);
 
- 			            sprintf(name,"after_write_currents_%03d.dat",nt);
- 						write3D_GPUArray(name,d_Jx);
-#ifdef PRINT_CELL_CURRENTS
-// 						printCellCurrents(270,nt,"jx","after_write");
-#endif
- 		    
-//                    cudaMemcpy(Jx,d_Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//                    cudaMemcpy(Jy,d_Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//                    cudaMemcpy(Jz,d_Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//
-//
-//                    cudaMemcpy(d_Jx,Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
-//                    cudaMemcpy(d_Jy,Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
-//                    cudaMemcpy(d_Jz,Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+			            sprintf(name,"after_write_currents_%03d.dat",nt);
+						write3D_GPUArray(name,d_Jx);
+	}
+
+
+	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
+	{
+
+		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
+				dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
+		dim3 dimGridBulk(Nx,Ny,Nz);
+
+		StepAllCellsPrepare(nt);
+
+
 
  						memory_monitor("CellOrder_StepAllCells6",nt);
 
