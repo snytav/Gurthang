@@ -2271,14 +2271,7 @@ int readStartPoint(int nt)
 
 		readStartPoint(nt);
 
-
-
-			 ComputeField_FirstHalfStep(
-					  Ex,Ey,Ez,
-					  nt,
-					  Hx,Hy,Hz,
-					  npJx,npJy,npJz,
-					  Qx,Qy,Qz);
+        ComputeField_FirstHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
 
 
 
