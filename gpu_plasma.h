@@ -2256,8 +2256,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 		checkControlPoint(0,nt,1);
 
-		if(flagCPUandGPUrun)
-		 {
+
 	   memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
              CPU_field = 0;
@@ -2292,20 +2291,19 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 	   memory_monitor("before270",nt);
 
-#ifdef CPU_DEBUG_RUN
+
 		      ComputeField_SecondHalfStep(
 					  Ex,Ey,Ez,
 					  nt,
 					  Hx,Hy,Hz,
 					  npJx,npJy,npJz,
 					  Qx,Qy,Qz);
-#endif
 
 	   memory_monitor("after_ComputeField_SecondHalfStep",nt);
 
 
 		    CPU_field = 0;
-		 }
+
 
 
 		 Diagnose(nt);
