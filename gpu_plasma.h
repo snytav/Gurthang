@@ -2241,12 +2241,17 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 
 int PushParticles(int nt)
 {
-    memory_monitor("before_CellOrder_StepAllCells",nt);
-
 	double mass = -1.0/1836.0,q_mass = -1.0;
+
+	memory_monitor("before_CellOrder_StepAllCells",nt);
+
     CellOrder_StepAllCells(nt,	mass,q_mass,1);
 
 	memory_monitor("after_CellOrder_StepAllCells",nt);
+
+	checkParticleAttributes(nt);
+
+	checkControlPoint(270,nt,1);
 
 	return 0;
 }
@@ -2274,16 +2279,12 @@ int readStartPoint(int nt)
 	void Step(int nt)
 	 {
 
-		readStartPoint(nt);
-
-        ComputeField_FirstHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
+		ComputeField_FirstHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
 
 
 		PushParticles(nt);
 
-		checkParticleAttributes(nt);
 
-		checkControlPoint(270,nt,1);
 
 		ComputeField_SecondHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
 
