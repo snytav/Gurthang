@@ -1240,6 +1240,7 @@ int InitializeGPU()
 void Initialize()
 {
 	InitializeCPU();
+	copyCellsWithParticlesToGPU();
 	InitializeGPU();
 }
 
@@ -3926,8 +3927,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 			            std::vector<Particle> & el_vp,
 			            std::vector<Particle> & beam_vp)
 	  {
-//		 std::vector<Particle> ion_vp,el_vp,beam_vp;
-
 	     LoadMeshData(nt);
 
 	     LoadParticleData(nt,ion_vp,el_vp,beam_vp);
@@ -4892,7 +4891,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	      AssignArraysToCells();
 
-	      copyCellsWithParticlesToGPU();
+
 	   }
 
 	   void Free();
