@@ -2280,9 +2280,9 @@ int PushParticles(int nt)
 					  npJx,npJy,npJz,
 					  Qx,Qy,Qz);
 
-				memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-			    memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-			    memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//				memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//			    memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//			    memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 		memory_monitor("afterComputeField_FirstHalfStep",nt);
 
