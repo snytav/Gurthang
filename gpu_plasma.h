@@ -1968,6 +1968,8 @@ void  ComputeField_FirstHalfStep(
 //	 exit(0);
 	 memory_monitor("afterComputeField_FirstHalfStep",nt);
 
+	 AssignCellsToArraysGPU();
+
 }
 
 virtual void ComputeField_SecondHalfStep(
@@ -2276,7 +2278,7 @@ int readStartPoint(int nt)
 
         ComputeField_FirstHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
 
-        AssignCellsToArraysGPU();
+
 		PushParticles(nt);
 
 		checkParticleAttributes(nt);
