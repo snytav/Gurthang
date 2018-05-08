@@ -5947,6 +5947,23 @@ int memory_monitor(char *legend,int nt)
 
 }
 
+int memory_status_print()
+{
+	size_t m_free,m_total;
+	struct sysinfo info;
+
+
+	cudaMemGetInfo(&m_free,&m_total);
+	sysinfo(&info);
+
+	#ifdef MEMORY_PRINTS
+    printf("before Step  %10d CPU memory free %10u GPU memory total %10d free %10d\n",
+ 		   nt,info.freeram/1024/1024,m_total/1024/1024,m_free/1024/1024);
+#endif
+
+	return 0;
+}
+
 
 int Compute()
 {
