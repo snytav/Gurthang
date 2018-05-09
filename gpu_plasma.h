@@ -5220,6 +5220,40 @@ int push(int nt,double mass,double q_mass)
 	   return 0;
 }
 
+int StepAllCells_post_diagnostic(int nt)
+{
+	  memory_monitor("CellOrder_StepAllCells4",nt);
+
+      ListAllParticles(nt,"aStepAllCells");
+      cudaError_t err2 = cudaGetLastError();
+	  char err_s[200];
+      strcpy(err_s,cudaGetErrorString(err2));
+
+      return (int)err2;
+}
+
+
+int WriteCurrentsFromCellsToArrays(int nt)
+{
+	char name[100];
+	dim3 dimGrid(Nx+2,Ny+2,Nz+2);
+
+	sprintf(name,"before_write_currents_%03d.dat",nt);
+	write3D_GPUArray(name,d_Jx);
+
+    dim3 dimExt(CellExtent,CellExtent,CellExtent);
+    GPU_WriteAllCurrents<<<dimGrid, dimExt,16000>>>(d_CellArray,0,d_Jx,d_Jy,d_Jz,d_Rho);
+
+    memory_monitor("CellOrder_StepAllCells5",nt);
+
+    sprintf(name,"after_write_currents_%03d.dat",nt);
+	write3D_GPUArray(name,d_Jx);
+
+	memory_monitor("CellOrder_StepAllCells6",nt);
+
+	return 0;
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5245,31 +5279,9 @@ int push(int nt,double mass,double q_mass)
 
 		push(nt,mass,q_mass);
 
-            memory_monitor("CellOrder_StepAllCells4",nt);
+        StepAllCells_post_diagnostic(nt);
 
-            ListAllParticles(nt,"aStepAllCells");
-
-
-//		    cudaError_t err1 = cudaGetLastError();
-//		    cudaDeviceSynchronize();
-		    cudaError_t err2 = cudaGetLastError();
-		    char err_s[200];
-		    strcpy(err_s,cudaGetErrorString(err2));
-
-
-			sprintf(name,"before_write_currents_%03d.dat",nt);
-			write3D_GPUArray(name,d_Jx);
-//			printCellCurrents(270,nt,"jx","write");
-
-		    dim3 dimExt(CellExtent,CellExtent,CellExtent);
- 		    GPU_WriteAllCurrents<<<dimGrid, dimExt,16000>>>(d_CellArray,0,d_Jx,d_Jy,d_Jz,d_Rho);
-
- 		   memory_monitor("CellOrder_StepAllCells5",nt);
-
- 			            sprintf(name,"after_write_currents_%03d.dat",nt);
- 						write3D_GPUArray(name,d_Jx);
-
- 						memory_monitor("CellOrder_StepAllCells6",nt);
+        WriteCurrentsFromCellsToArrays(nt);
 
  						cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
                           before_ArrangeFlights,after_ArrangeFlights;
