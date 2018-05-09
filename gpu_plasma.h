@@ -5193,6 +5193,20 @@ int SetCurrentsInCellsToZero(int nt)
 	return 0;
 }
 
+int StepAllCells_fore_diagnostic(int nt)
+{
+	char name[100];
+
+	memory_monitor("CellOrder_StepAllCells3",nt);
+
+	sprintf(name,"before_step_%03d.dat",nt);
+	write3D_GPUArray(name,d_Jx);
+	//			printCellCurrents(270,nt,"jx","step");
+	ListAllParticles(nt,"bStepAllCells");
+
+	return 0;
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5201,24 +5215,20 @@ int SetCurrentsInCellsToZero(int nt)
 		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
 				dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
 		dim3 dimGridBulk(Nx,Ny,Nz);
+		char name[100];
 
 		memory_monitor("CellOrder_StepAllCells1",nt);
 
 		SetCurrentArraysToZero();
-		char name[100];
 
-		sprintf(name,"before_set_to_zero_%03d.dat",nt);
+
+//		sprintf(name,"before_set_to_zero_%03d.dat",nt);
 
 //		printCellCurrents(270,nt,"jx","set_to_zero");
 
 		SetCurrentsInCellsToZero(nt);
 
-		    memory_monitor("CellOrder_StepAllCells3",nt);
-
-			sprintf(name,"before_step_%03d.dat",nt);
-			write3D_GPUArray(name,d_Jx);
-//			printCellCurrents(270,nt,"jx","step");
-			ListAllParticles(nt,"bStepAllCells");
+		StepAllCells_fore_diagnostic(nt);
 
 		    cudaDeviceSynchronize();
 
