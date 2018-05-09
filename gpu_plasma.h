@@ -5180,6 +5180,19 @@ int SetCurrentArraysToZero()
 	return 0;
 }
 
+int SetCurrentsInCellsToZero(int nt)
+{
+	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlockExt(CellExtent,CellExtent,CellExtent);
+	char name[100];
+	sprintf(name,"before_set_to_zero_%03d.dat",nt);
+
+	write3D_GPUArray(name,d_Jx);
+
+	GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
+
+	return 0;
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5192,22 +5205,14 @@ int SetCurrentArraysToZero()
 		memory_monitor("CellOrder_StepAllCells1",nt);
 
 		SetCurrentArraysToZero();
-//		memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//		memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//		memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//		cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//		cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	 	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-
 		char name[100];
 
 		sprintf(name,"before_set_to_zero_%03d.dat",nt);
-		write3D_GPUArray(name,d_Jx);
+
 //		printCellCurrents(270,nt,"jx","set_to_zero");
 
+		SetCurrentsInCellsToZero(nt);
 
-		    GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
 		    memory_monitor("CellOrder_StepAllCells3",nt);
 
 			sprintf(name,"before_step_%03d.dat",nt);
