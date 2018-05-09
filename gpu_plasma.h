@@ -5207,6 +5207,19 @@ int StepAllCells_fore_diagnostic(int nt)
 	return 0;
 }
 
+int push(int nt,double mass,double q_mass)
+{
+	   dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlock(512,1,1);
+	   cudaDeviceSynchronize();
+
+	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
+	            		     		                 mass,q_mass,d_ctrlParticles,jmp,nt);
+
+	   cudaDeviceSynchronize();
+
+	   return 0;
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5230,12 +5243,7 @@ int StepAllCells_fore_diagnostic(int nt)
 
 		StepAllCells_fore_diagnostic(nt);
 
-		    cudaDeviceSynchronize();
-
-            GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0/*,d_jx,d_jy,d_jz*/,d_Jx,
-            		     		                          mass,q_mass,d_ctrlParticles,jmp,nt);
-            
-            cudaDeviceSynchronize();
+		push(nt,mass,q_mass);
 
             memory_monitor("CellOrder_StepAllCells4",nt);
 
