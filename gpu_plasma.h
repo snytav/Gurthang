@@ -5322,6 +5322,15 @@ int reorder_particles(int nt)
     return (int)err;
 }
 
+int Push(int nt,double mass,double q_mass)
+{
+	StepAllCells_fore_diagnostic(nt);
+
+	push(nt,mass,q_mass);
+
+	return StepAllCells_post_diagnostic(nt);
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5330,11 +5339,7 @@ int reorder_particles(int nt)
 
 		SetCurrentsInCellsToZero(nt);
 
-		StepAllCells_fore_diagnostic(nt);
-
-		push(nt,mass,q_mass);
-
-        StepAllCells_post_diagnostic(nt);
+		Push(nt,mass,q_mass);
 
         WriteCurrentsFromCellsToArrays(nt);
 
