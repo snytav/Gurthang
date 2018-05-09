@@ -5250,8 +5250,8 @@ int push(int nt,double mass,double q_mass)
             ListAllParticles(nt,"aStepAllCells");
 
 
-		    cudaError_t err1 = cudaGetLastError();
-		    cudaDeviceSynchronize();
+//		    cudaError_t err1 = cudaGetLastError();
+//		    cudaDeviceSynchronize();
 		    cudaError_t err2 = cudaGetLastError();
 		    char err_s[200];
 		    strcpy(err_s,cudaGetErrorString(err2));
@@ -5268,18 +5268,6 @@ int push(int nt,double mass,double q_mass)
 
  			            sprintf(name,"after_write_currents_%03d.dat",nt);
  						write3D_GPUArray(name,d_Jx);
-#ifdef PRINT_CELL_CURRENTS
-// 						printCellCurrents(270,nt,"jx","after_write");
-#endif
- 		    
-//                    cudaMemcpy(Jx,d_Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//                    cudaMemcpy(Jy,d_Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//                    cudaMemcpy(Jz,d_Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//
-//
-//                    cudaMemcpy(d_Jx,Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
-//                    cudaMemcpy(d_Jy,Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
-//                    cudaMemcpy(d_Jz,Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
 
  						memory_monitor("CellOrder_StepAllCells6",nt);
 
