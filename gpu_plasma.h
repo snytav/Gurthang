@@ -5326,14 +5326,6 @@ int reorder_particles(int nt)
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
 
-//		struct timeval tv1,tv2;
-//		dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
-//				dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
-//		dim3 dimGridBulk(Nx,Ny,Nz);
-//		char name[100];
-
-		memory_monitor("CellOrder_StepAllCells1",nt);
-
 		SetCurrentArraysToZero();
 
 		SetCurrentsInCellsToZero(nt);
