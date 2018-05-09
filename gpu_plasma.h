@@ -5254,6 +5254,74 @@ int WriteCurrentsFromCellsToArrays(int nt)
 	return 0;
 }
 
+int reorder_particles(int nt)
+{
+	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
+	     dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
+	dim3 dimGridBulk(Nx,Ny,Nz);
+	cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
+      before_ArrangeFlights,after_ArrangeFlights;
+
+#ifdef BALANCING_PRINTS
+    before_MakeDepartureLists = cudaGetLastError();
+    printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
+    cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
+#endif
+
+    int stage[4000],stage1[4000],*d_stage,*d_stage1;
+    cudaMalloc(&d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+    cudaMalloc(&d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+
+    GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,d_stage);
+    after_MakeDepartureLists = cudaGetLastError();
+#ifdef BALANCING_PRINTS
+    printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
+#endif
+
+    cudaDeviceSynchronize();
+    cudaError_t err = cudaMemcpy(stage,d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+    if(err != cudaSuccess)
+    {
+       puts("copy error");
+       exit(0);
+    }
+
+    if(stage[0] == TOO_MANY_PARTICLES)
+    {
+       printf("too many particles flying to (%d,%d,%d) from (%d,%d,%d) \n",
+	          stage[1],stage[2],stage[3],stage[4],stage[5],stage[6]);
+       exit(0);
+    }
+
+    ListAllParticles(nt,"aMakeDepartureLists");
+#ifdef BALANCING_PRINTS
+    before_ArrangeFlights = cudaGetLastError();
+    printf("before_ArrangeFlights %d %s\n",before_ArrangeFlights,cudaGetErrorString(before_ArrangeFlights));
+#endif
+
+
+    cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+
+    GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
+    after_ArrangeFlights = cudaGetLastError();
+#ifdef BALANCING_PRINTS
+    printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
+            cudaDeviceSynchronize();
+#endif
+
+    err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+    if(err != cudaSuccess)
+    {
+       puts("copy error");
+       exit(0);
+    }
+    ListAllParticles(nt,"aArrangeFlights");
+
+
+    memory_monitor("CellOrder_StepAllCells7",nt);
+    return (int)err;
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
@@ -5283,73 +5351,75 @@ int WriteCurrentsFromCellsToArrays(int nt)
 
         WriteCurrentsFromCellsToArrays(nt);
 
- 						cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
-                          before_ArrangeFlights,after_ArrangeFlights;
+        reorder_particles(nt);
 
-
-#ifdef BALANCING_PRINTS
-              before_MakeDepartureLists = cudaGetLastError();
-              printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
-            		  cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
-#endif
-
-              int stage[4000],stage1[4000],*d_stage,*d_stage1;
-              cudaMalloc(&d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
-              cudaMalloc(&d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
-
-              GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,d_stage);
-              after_MakeDepartureLists = cudaGetLastError();
-#ifdef BALANCING_PRINTS
-              printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
-#endif
-
-                                cudaDeviceSynchronize();
-              cudaError_t err = cudaMemcpy(stage,d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-              if(err != cudaSuccess)
-              {
-            	  puts("copy error");
-            	  exit(0);
-              }
-              if(stage[0] == TOO_MANY_PARTICLES)
-              {
-            	  printf("too many particles flying to (%d,%d,%d) from (%d,%d,%d) \n",
-            			  stage[1],stage[2],stage[3],
-            			  stage[4],stage[5],stage[6]);
-            	  exit(0);
-              }
-//              for(int j = 0;j < (Nx+2)*(Ny+2)*(Nz+2);j++)
-//		      {
-//		    	  printf("cell %5d  of %d reached %d stage \n",j,(Nx+2)*(Ny+2)*(Nz+2),stage[j]);
-//		    	  fflush(stdout);
-//		      }
-
-              ListAllParticles(nt,"aMakeDepartureLists");
-              //exit(0);
-#ifdef BALANCING_PRINTS
-              before_ArrangeFlights = cudaGetLastError();
-              printf("before_ArrangeFlights %d %s\n",before_ArrangeFlights,cudaGetErrorString(before_ArrangeFlights));
-#endif
-
-
-              cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
-
-              GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
-              after_ArrangeFlights = cudaGetLastError();
-#ifdef BALANCING_PRINTS
-              printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
-                                cudaDeviceSynchronize();
-#endif
-
-              err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-                                              if(err != cudaSuccess)
-                                              {
-                                            	  puts("copy error");
-                                            	  exit(0);
-                                              }
-              ListAllParticles(nt,"aArrangeFlights");
-
-
-              memory_monitor("CellOrder_StepAllCells7",nt);
+// 						cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
+//                          before_ArrangeFlights,after_ArrangeFlights;
+//
+//
+//#ifdef BALANCING_PRINTS
+//              before_MakeDepartureLists = cudaGetLastError();
+//              printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
+//            		  cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
+//#endif
+//
+//              int stage[4000],stage1[4000],*d_stage,*d_stage1;
+//              cudaMalloc(&d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+//              cudaMalloc(&d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//              GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,d_stage);
+//              after_MakeDepartureLists = cudaGetLastError();
+//#ifdef BALANCING_PRINTS
+//              printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
+//#endif
+//
+//                                cudaDeviceSynchronize();
+//              cudaError_t err = cudaMemcpy(stage,d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+//              if(err != cudaSuccess)
+//              {
+//            	  puts("copy error");
+//            	  exit(0);
+//              }
+//              if(stage[0] == TOO_MANY_PARTICLES)
+//              {
+//            	  printf("too many particles flying to (%d,%d,%d) from (%d,%d,%d) \n",
+//            			  stage[1],stage[2],stage[3],
+//            			  stage[4],stage[5],stage[6]);
+//            	  exit(0);
+//              }
+////              for(int j = 0;j < (Nx+2)*(Ny+2)*(Nz+2);j++)
+////		      {
+////		    	  printf("cell %5d  of %d reached %d stage \n",j,(Nx+2)*(Ny+2)*(Nz+2),stage[j]);
+////		    	  fflush(stdout);
+////		      }
+//
+//              ListAllParticles(nt,"aMakeDepartureLists");
+//              //exit(0);
+//#ifdef BALANCING_PRINTS
+//              before_ArrangeFlights = cudaGetLastError();
+//              printf("before_ArrangeFlights %d %s\n",before_ArrangeFlights,cudaGetErrorString(before_ArrangeFlights));
+//#endif
+//
+//
+//              cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//              GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
+//              after_ArrangeFlights = cudaGetLastError();
+//#ifdef BALANCING_PRINTS
+//              printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
+//                                cudaDeviceSynchronize();
+//#endif
+//
+//              err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+//                                              if(err != cudaSuccess)
+//                                              {
+//                                            	  puts("copy error");
+//                                            	  exit(0);
+//                                              }
+//              ListAllParticles(nt,"aArrangeFlights");
+//
+//
+//              memory_monitor("CellOrder_StepAllCells7",nt);
 
 
 	}
