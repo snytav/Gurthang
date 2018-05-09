@@ -5331,13 +5331,17 @@ int Push(int nt,double mass,double q_mass)
 	return StepAllCells_post_diagnostic(nt);
 }
 
+int SetCurrentsToZero(int nt)
+{
+	SetCurrentArraysToZero();
+
+	return SetCurrentsInCellsToZero(nt);
+}
+
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
-
-		SetCurrentArraysToZero();
-
-		SetCurrentsInCellsToZero(nt);
+		SetCurrentsToZero(nt);
 
 		Push(nt,mass,q_mass);
 
