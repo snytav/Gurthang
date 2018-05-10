@@ -5299,6 +5299,24 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
     return (int)err;
 }
 
+int inter_stage_diagnostic(int *stage,int nt)
+{
+	   if(stage[0] == TOO_MANY_PARTICLES)
+	    {
+	       printf("too many particles flying to (%d,%d,%d) from (%d,%d,%d) \n",
+		          stage[1],stage[2],stage[3],stage[4],stage[5],stage[6]);
+	       exit(0);
+	    }
+
+	    ListAllParticles(nt,"aMakeDepartureLists");
+#ifdef BALANCING_PRINTS
+	    before_ArrangeFlights = cudaGetLastError();
+	    printf("before_ArrangeFlights %d %s\n",before_ArrangeFlights,cudaGetErrorString(before_ArrangeFlights));
+#endif
+
+	    return 0;
+}
+
 int reorder_particles(int nt)
 {
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
@@ -5317,19 +5335,7 @@ int reorder_particles(int nt)
        exit(0);
     }
 
-    if(stage[0] == TOO_MANY_PARTICLES)
-    {
-       printf("too many particles flying to (%d,%d,%d) from (%d,%d,%d) \n",
-	          stage[1],stage[2],stage[3],stage[4],stage[5],stage[6]);
-       exit(0);
-    }
-
-    ListAllParticles(nt,"aMakeDepartureLists");
-#ifdef BALANCING_PRINTS
-    before_ArrangeFlights = cudaGetLastError();
-    printf("before_ArrangeFlights %d %s\n",before_ArrangeFlights,cudaGetErrorString(before_ArrangeFlights));
-#endif
-
+    inter_stage_diagnostic(stage,nt);
 
     cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
