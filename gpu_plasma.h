@@ -5276,13 +5276,25 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
     GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,*d_stage);
 
     after_MakeDepartureLists = cudaGetLastError();
-#ifdef BALANCING_PRINTS
-    printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
-#endif
+    if(after_MakeDepartureLists != cudaSuccess)
+    {
+       printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
+    }
 
     cudaDeviceSynchronize();
-    cudaError_t err = cudaMemcpy(stage,d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
 
+    cudaError_t err = cudaGetLastError();
+
+    if(err != cudaSuccess)
+        {
+           printf("MakeParticleList sync error %d %s\n",err,cudaGetErrorString(err));
+        }
+    err = cudaMemcpy(stage,*d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+
+    if(err != cudaSuccess)
+    {
+       printf("MakeParticleList error %d %s\n",err,cudaGetErrorString(err));
+    }
 
     return (int)err;
 }
@@ -5297,7 +5309,7 @@ int reorder_particles(int nt)
     int stage[4000],stage1[4000],*d_stage,*d_stage1,err;
 
 
-    MakeParticleList(nt,d_stage,d_stage1,&d_stage,&d_stage1);
+    MakeParticleList(nt,stage,stage1,&d_stage,&d_stage1);
 
     if(err != cudaSuccess)
     {
