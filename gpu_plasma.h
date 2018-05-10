@@ -5254,7 +5254,7 @@ int WriteCurrentsFromCellsToArrays(int nt)
 	return 0;
 }
 
-int reorder_particles(int nt)
+int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
 {
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
 	     dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
@@ -5268,11 +5268,39 @@ int reorder_particles(int nt)
     cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
 #endif
 
-    int stage[4000],stage1[4000],*d_stage,*d_stage1;
-    cudaMalloc(&d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
-    cudaMalloc(&d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+//    int stage[4000],stage1[4000];//,*d_stage,*d_stage1;
+    cudaMalloc(d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
-    GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,d_stage);
+    cudaMalloc(d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+
+    GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,*d_stage);
+
+    return 0;
+}
+
+int reorder_particles(int nt)
+{
+	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
+	     dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
+	dim3 dimGridBulk(Nx,Ny,Nz);
+	cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
+      before_ArrangeFlights,after_ArrangeFlights;
+    int stage[4000],stage1[4000],*d_stage,*d_stage1;
+
+
+//#ifdef BALANCING_PRINTS
+//    before_MakeDepartureLists = cudaGetLastError();
+//    printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
+//    cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
+//#endif
+//
+//    int stage[4000],stage1[4000],*d_stage,*d_stage1;
+//    cudaMalloc(&d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+//    cudaMalloc(&d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//    GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,d_stage);
+    MakeParticleList(nt,d_stage,d_stage1,&d_stage,&d_stage1);
+
     after_MakeDepartureLists = cudaGetLastError();
 #ifdef BALANCING_PRINTS
     printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
