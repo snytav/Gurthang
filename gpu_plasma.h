@@ -5294,6 +5294,7 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
     if(err != cudaSuccess)
     {
        printf("MakeParticleList error %d %s\n",err,cudaGetErrorString(err));
+       exit(0);
     }
 
     return (int)err;
@@ -5317,6 +5318,29 @@ int inter_stage_diagnostic(int *stage,int nt)
 	    return 0;
 }
 
+int reallyPassParticlesToAnotherCells(int nt,int *stage1,int *d_stage1)
+{
+    int err,after_ArrangeFlights;
+    dim3 dimGridBulk(Nx,Ny,Nz),dimBlockOne(1,1,1);
+	cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
+
+	    GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
+	    after_ArrangeFlights = cudaGetLastError();
+	err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+	if(err != cudaSuccess)
+	{
+	   puts("copy error");
+	   exit(0);
+	}
+	ListAllParticles(nt,"aArrangeFlights");
+
+
+	memory_monitor("CellOrder_StepAllCells7",nt);
+	return (int)err;
+
+	return 0;
+}
+
 int reorder_particles(int nt)
 {
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
@@ -5329,33 +5353,29 @@ int reorder_particles(int nt)
 
     MakeParticleList(nt,stage,stage1,&d_stage,&d_stage1);
 
-    if(err != cudaSuccess)
-    {
-       puts("copy error");
-       exit(0);
-    }
+
 
     inter_stage_diagnostic(stage,nt);
 
-    cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
-    GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
-    after_ArrangeFlights = cudaGetLastError();
 #ifdef BALANCING_PRINTS
     printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
             cudaDeviceSynchronize();
 #endif
 
-    err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-    if(err != cudaSuccess)
-    {
-       puts("copy error");
-       exit(0);
-    }
-    ListAllParticles(nt,"aArrangeFlights");
+//    err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+//    if(err != cudaSuccess)
+//    {
+//       puts("copy error");
+//       exit(0);
+//    }
+//    ListAllParticles(nt,"aArrangeFlights");
+//
+//
+//    memory_monitor("CellOrder_StepAllCells7",nt);
 
+    err = reallyPassParticlesToAnotherCells(nt,stage1,d_stage1);
 
-    memory_monitor("CellOrder_StepAllCells7",nt);
     return (int)err;
 }
 
