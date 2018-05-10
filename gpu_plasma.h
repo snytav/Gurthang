@@ -5275,7 +5275,16 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
 
     GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,*d_stage);
 
-    return 0;
+    after_MakeDepartureLists = cudaGetLastError();
+#ifdef BALANCING_PRINTS
+    printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
+#endif
+
+    cudaDeviceSynchronize();
+    cudaError_t err = cudaMemcpy(stage,d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+
+
+    return (int)err;
 }
 
 int reorder_particles(int nt)
@@ -5285,29 +5294,11 @@ int reorder_particles(int nt)
 	dim3 dimGridBulk(Nx,Ny,Nz);
 	cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
       before_ArrangeFlights,after_ArrangeFlights;
-    int stage[4000],stage1[4000],*d_stage,*d_stage1;
+    int stage[4000],stage1[4000],*d_stage,*d_stage1,err;
 
 
-//#ifdef BALANCING_PRINTS
-//    before_MakeDepartureLists = cudaGetLastError();
-//    printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
-//    cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
-//#endif
-//
-//    int stage[4000],stage1[4000],*d_stage,*d_stage1;
-//    cudaMalloc(&d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
-//    cudaMalloc(&d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//    GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,d_stage);
     MakeParticleList(nt,d_stage,d_stage1,&d_stage,&d_stage1);
 
-    after_MakeDepartureLists = cudaGetLastError();
-#ifdef BALANCING_PRINTS
-    printf("after_MakeDepartureLists %d %s\n",after_MakeDepartureLists,cudaGetErrorString(after_MakeDepartureLists));
-#endif
-
-    cudaDeviceSynchronize();
-    cudaError_t err = cudaMemcpy(stage,d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
     if(err != cudaSuccess)
     {
        puts("copy error");
