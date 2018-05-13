@@ -1892,6 +1892,25 @@ else
     return 0;
   }
 
+int checkFields_beforeMagneticStageOne(double *t_Ex,double *t_Ey,double *t_Ez,
+		                               double *t_Hx,double *t_Hy,double *t_Hz,
+		                               double *t_Qx,double *t_Qy,double *t_Qz,
+		                               double *t_check,int nt)
+{
+	         t_check[0] = checkControlMatrix("emh1",nt,"qx",t_Qx);
+			 t_check[1] = checkControlMatrix("emh1",nt,"qy",t_Qy);
+			 t_check[2] = checkControlMatrix("emh1",nt,"qz",t_Qz);
+
+			 t_check[3] = checkControlMatrix("emh1",nt,"ex",t_Ex);
+			 t_check[4] = checkControlMatrix("emh1",nt,"ey",t_Ey);
+			 t_check[5] = checkControlMatrix("emh1",nt,"ez",t_Ez);
+
+			 t_check[6] = checkControlMatrix("emh1",nt,"hx",t_Hx);
+			 t_check[7] = checkControlMatrix("emh1",nt,"hy",t_Hy);
+			 t_check[8] = checkControlMatrix("emh1",nt,"hz",t_Hz);
+	return 0;
+}
+
 void  ComputeField_FirstHalfStep(
 		   double *locEx,double *locEy,double *locEz,
 		   int nt,
@@ -1906,17 +1925,21 @@ void  ComputeField_FirstHalfStep(
 	 CPU_field = 0;
 	 if(CPU_field == 0)
 	 {
-		 t_check[0] = checkControlMatrix("emh1",nt,"qx",d_Qx);
-		 t_check[1] = checkControlMatrix("emh1",nt,"qy",d_Qy);
-		 t_check[2] = checkControlMatrix("emh1",nt,"qz",d_Qz);
-
-		 t_check[3] = checkControlMatrix("emh1",nt,"ex",d_Ex);
-		 t_check[4] = checkControlMatrix("emh1",nt,"ey",d_Ey);
-		 t_check[5] = checkControlMatrix("emh1",nt,"ez",d_Ez);
-
-		 t_check[6] = checkControlMatrix("emh1",nt,"hx",d_Hx);
-		 t_check[7] = checkControlMatrix("emh1",nt,"hy",d_Hy);
-		 t_check[8] = checkControlMatrix("emh1",nt,"hz",d_Hz);
+		 checkFields_beforeMagneticStageOne(d_Ex,d_Ey,d_Ez,
+		 		                               d_Hx,d_Hy,d_Hz,
+		 		                               d_Qx,d_Qy,d_Qz,
+		 		                               t_check,nt);
+//		 t_check[0] = checkControlMatrix("emh1",nt,"qx",d_Qx);
+//		 t_check[1] = checkControlMatrix("emh1",nt,"qy",d_Qy);
+//		 t_check[2] = checkControlMatrix("emh1",nt,"qz",d_Qz);
+//
+//		 t_check[3] = checkControlMatrix("emh1",nt,"ex",d_Ex);
+//		 t_check[4] = checkControlMatrix("emh1",nt,"ey",d_Ey);
+//		 t_check[5] = checkControlMatrix("emh1",nt,"ez",d_Ez);
+//
+//		 t_check[6] = checkControlMatrix("emh1",nt,"hx",d_Hx);
+//		 t_check[7] = checkControlMatrix("emh1",nt,"hy",d_Hy);
+//		 t_check[8] = checkControlMatrix("emh1",nt,"hz",d_Hz);
 
 		 emh1(d_Qx,d_Qy,d_Qz,d_Hx,d_Hy,d_Hz,nt,d_Ex,d_Ey,d_Ez);
 
