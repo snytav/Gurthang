@@ -5324,8 +5324,15 @@ int reallyPassParticlesToAnotherCells(int nt,int *stage1,int *d_stage1)
     dim3 dimGridBulk(Nx,Ny,Nz),dimBlockOne(1,1,1);
 	cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
+
 	    GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
 	    after_ArrangeFlights = cudaGetLastError();
+
+#ifdef BALANCING_PRINTS
+    printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
+            cudaDeviceSynchronize();
+#endif
+
 	err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
 	if(err != cudaSuccess)
 	{
@@ -5358,21 +5365,7 @@ int reorder_particles(int nt)
     inter_stage_diagnostic(stage,nt);
 
 
-#ifdef BALANCING_PRINTS
-    printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
-            cudaDeviceSynchronize();
-#endif
 
-//    err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-//    if(err != cudaSuccess)
-//    {
-//       puts("copy error");
-//       exit(0);
-//    }
-//    ListAllParticles(nt,"aArrangeFlights");
-//
-//
-//    memory_monitor("CellOrder_StepAllCells7",nt);
 
     err = reallyPassParticlesToAnotherCells(nt,stage1,d_stage1);
 
