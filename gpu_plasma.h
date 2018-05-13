@@ -5207,7 +5207,7 @@ int StepAllCells_fore_diagnostic(int nt)
 	return 0;
 }
 
-int push(int nt,double mass,double q_mass)
+int StepAllCells(int nt,double mass,double q_mass)
 {
 	   dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlock(512,1,1);
 	   cudaDeviceSynchronize();
@@ -5365,7 +5365,7 @@ int Push(int nt,double mass,double q_mass)
 {
 	StepAllCells_fore_diagnostic(nt);
 
-	push(nt,mass,q_mass);
+	StepAllCells(nt,mass,q_mass);
 
 	return StepAllCells_post_diagnostic(nt);
 }
