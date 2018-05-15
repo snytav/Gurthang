@@ -1936,9 +1936,9 @@ void  ComputeField_FirstHalfStep(
 
 	 memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
-	 CPU_field = 0;
-	 if(CPU_field == 0)
-	 {
+//	 CPU_field = 0;
+//	 if(CPU_field == 0)
+//	 {
 		 checkFields_beforeMagneticStageOne(d_Ex,d_Ey,d_Ez,
 		 		                               d_Hx,d_Hy,d_Hz,
 		 		                               d_Qx,d_Qy,d_Qz,
@@ -1951,7 +1951,7 @@ void  ComputeField_FirstHalfStep(
 		 		                           d_Qx,d_Qy,d_Qz,
 		 		                           t_check,nt);
 
-	 }
+//	 }
 
 
 	 CPU_field = 1;
