@@ -1976,7 +1976,7 @@ virtual void ComputeField_SecondHalfStep(
 
      emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
 
-  	 checkControlPoint(500,nt,0);
+
 
 
 	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
@@ -2193,6 +2193,7 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
     SimpleMagneticFieldTrace(c,locQz,locHz,Nx,Ny,Nz+1);
     //CheckArray(locHz,dbgHz);
 
+    checkControlPoint(500,nt,0);
 }
 
 
