@@ -1972,7 +1972,7 @@ virtual void ComputeField_SecondHalfStep(
 
      SetPeriodicCurrents(nt);
 
-	 checkControlPoint(400,nt,0);
+
 
 	 CPU_field = 0;
 
@@ -3765,6 +3765,8 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 //	     readDebugArray("jybe",dbg,nt,5);
 //	     t_hx = CheckArray(Jy,dbg);
+
+	     checkControlPoint(400,nt,0);
 
 	   }
 
