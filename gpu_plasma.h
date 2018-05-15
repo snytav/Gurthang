@@ -1971,13 +1971,10 @@ virtual void ComputeField_SecondHalfStep(
 {
 	 memory_monitor("before275",nt);
 
-
-
      checkControlPoint(275,nt,0);
      SetPeriodicCurrents(nt);
 
 	 checkControlPoint(400,nt,0);
-//	 emh2(locHx,locHy,locHz,nt,locQx,locQy,locQz);
 
 	 CPU_field = 0;
 
@@ -1987,18 +1984,17 @@ virtual void ComputeField_SecondHalfStep(
 
 	 checkControlPoint(500,nt,0);
 
-	     CPU_field = 0;
-			 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
+	 CPU_field = 0;
+	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
 
-			  checkGPUSecondHalfstepFields(nt);
+	 checkGPUSecondHalfstepFields(nt);
 
-		 CPU_field = 1;
-		// eme(locEx,locEy,locEz,nt,locHx,locHy,locHz,loc_npJx,loc_npJy,loc_npJz);
-		 checkControlPoint(600,nt,0);
-
+	 CPU_field = 1;
+	 checkControlPoint(600,nt,0);
 
 
-    	checkControlPoint(600,nt,0);
+
+//     checkControlPoint(600,nt,0);
 
 
     memory_monitor("after_ComputeField_SecondHalfStep",nt);
