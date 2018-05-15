@@ -1979,12 +1979,12 @@ virtual void ComputeField_SecondHalfStep(
 
 
 
-	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
+     ElectricFieldEvaluate(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
 
 
 }
 
-void eme(double *locEx,double *locEy,double *locEz,
+void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 		   int nt,
 		   double *locHx,double *locHy,double *locHz,
 		   double *loc_npJx,double *loc_npJy,double *loc_npJz)
