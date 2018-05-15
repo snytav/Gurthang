@@ -2009,28 +2009,14 @@ void eme(double *locEx,double *locEy,double *locEz,
     		  dbgEy0,npEy,dbgHx,
     		  dbgHz,dbgJy,1,c31,c11,tau);
 
-//       CheckArray(locEy,dbgEy);
-      //PeriodicBoundaries(Ey,0,1,Nz,0,Ny,Nx);
        PeriodicBoundaries(locEy,0,0,Ny,1,Nz,Nx);
-       //CheckArray(locEy,dbgEy);
        PeriodicBoundaries(locEy,2,0,Nx+1,0,Ny,Nz);
-       //CheckArray(locEy,dbgEy);
        SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
-       //CheckArray(locEy,dbgEy);
-
-
-
       ElectricFieldTrace("ezlg",nt,locEz,locHy,locHx,loc_npJz,
     		  dbgEz0,npEz,dbgHy,
     		  dbgHx,dbgJz,2,c11,c21,tau);
-//      if(CPU_field == 1)
-//      {
-       //  CheckArray(locEz,dbgEz);
          PeriodicBoundaries(locEz,0,1,Ny,0,Nz,Nx);
-         //CheckArray(locEz,dbgEz);
          PeriodicBoundaries(locEz,1,0,Nx+1,0,Nz,Ny);
-         //CheckArray(locEz,dbgEz);
-     // }
 
          checkControlPoint(600,nt,0);
 
