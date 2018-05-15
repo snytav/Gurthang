@@ -1974,14 +1974,10 @@ virtual void ComputeField_SecondHalfStep(
 
 #ifdef CPU_DEBUG_RUN
 
-#ifdef CONTROL_POINT_CHECK
      checkControlPoint(275,nt,0);
-#endif
      SetPeriodicCurrents(nt);
 
-#ifdef CONTROL_POINT_CHECK
 	 checkControlPoint(400,nt,0);
-#endif
 	 emh2(locHx,locHy,locHz,nt,locQx,locQy,locQz);
 #endif
 
