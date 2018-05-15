@@ -1978,7 +1978,7 @@ virtual void ComputeField_SecondHalfStep(
 
   	 checkControlPoint(500,nt,0);
 
-	 CPU_field = 0;
+
 	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
 
 	 CPU_field = 1;
@@ -1993,6 +1993,7 @@ void eme(double *locEx,double *locEy,double *locEz,
 		   double *locHx,double *locHy,double *locHz,
 		   double *loc_npJx,double *loc_npJy,double *loc_npJz)
 {
+	 CPU_field = 0;
       Cell<Particle> c = (*AllCells)[0];
       double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
       double c11 = tau/hx,c21 = tau/hy,c31 = tau/hz;
