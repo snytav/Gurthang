@@ -1997,16 +1997,11 @@ void eme(double *locEx,double *locEy,double *locEz,
       ElectricFieldTrace("exlg",nt,locEx,locHz,locHy,loc_npJx,
     		  dbgEx0,npEx,dbgHz,
     		  dbgHy,dbgJx,0,c21,c31,tau);
-     // if(CPU_field == 1)
-      //{
-        // CheckArray(Ex,dbgEx);
+
 
 
        PeriodicBoundaries(locEx,1,0,Nx,1,Nz,Ny);
-       //CheckArray(locEx,dbgEx);
        PeriodicBoundaries(locEx,2,0,Nx,0,Ny+1,Nz);
-       //CheckArray(locEx,dbgEx);
-     // }
 
 
 
