@@ -1981,9 +1981,7 @@ virtual void ComputeField_SecondHalfStep(
 
 	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
 
-	 checkControlPoint(600,nt,0);
 
-     memory_monitor("after_ComputeField_SecondHalfStep",nt);
 }
 
 void eme(double *locEx,double *locEy,double *locEz,
@@ -2086,6 +2084,10 @@ void eme(double *locEx,double *locEy,double *locEz,
          PeriodicBoundaries(locEz,1,0,Nx+1,0,Nz,Ny);
          //CheckArray(locEz,dbgEz);
      // }
+
+         checkControlPoint(600,nt,0);
+
+         memory_monitor("after_ComputeField_SecondHalfStep",nt);
 }
 
 
