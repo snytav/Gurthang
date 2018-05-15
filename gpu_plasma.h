@@ -1969,9 +1969,7 @@ virtual void ComputeField_SecondHalfStep(
 		   double *loc_npJx,double *loc_npJy,double *loc_npJz,
 		   double *locQx,double *locQy,double *locQz)
 {
-	 memory_monitor("before275",nt);
 
-     checkControlPoint(275,nt,0);
      SetPeriodicCurrents(nt);
 
 	 checkControlPoint(400,nt,0);
@@ -3679,6 +3677,11 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 	  void SetPeriodicCurrents(int nt)
 	  {
+
+		  memory_monitor("before275",nt);
+
+		  checkControlPoint(275,nt,0);
+
 	//#ifdef DEBUG_PLASMA
 	//           CheckArray(Jx, dbgJx);
 	//	   CheckArray(Jy, dbgJy);
