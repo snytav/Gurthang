@@ -1977,19 +1977,13 @@ virtual void ComputeField_SecondHalfStep(
      SetPeriodicCurrents(nt);
 
 	 checkControlPoint(400,nt,0);
-	 emh2(locHx,locHy,locHz,nt,locQx,locQy,locQz);
+//	 emh2(locHx,locHy,locHz,nt,locQx,locQy,locQz);
 
 	 CPU_field = 0;
 
-//	 if(CPU_field == 0)
-//	 {
-		emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
+     emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
 
-
-
-	    checkFirstHalfstep_emh2_GPUMagneticFields(nt);
-//	 }
-
+     checkFirstHalfstep_emh2_GPUMagneticFields(nt);
 
 	 checkControlPoint(500,nt,0);
 
