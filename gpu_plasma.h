@@ -1946,24 +1946,17 @@ void  ComputeField_FirstHalfStep(
 {
 	 double t_check[15];
 
-
-
-
-		 checkFields_beforeMagneticStageOne(d_Ex,d_Ey,d_Ez,
+     checkFields_beforeMagneticStageOne(d_Ex,d_Ey,d_Ez,
 		 		                               d_Hx,d_Hy,d_Hz,
 		 		                               d_Qx,d_Qy,d_Qz,
 		 		                               t_check,nt);
 
 
-		 emh1(d_Qx,d_Qy,d_Qz,d_Hx,d_Hy,d_Hz,nt,d_Ex,d_Ey,d_Ez);
+	 MagneticStageOne(d_Qx,d_Qy,d_Qz,d_Hx,d_Hy,d_Hz,nt,d_Ex,d_Ey,d_Ez);
 
-		 checkFields_afterMagneticStageOne(d_Hx,d_Hy,d_Hz,
+	 checkFields_afterMagneticStageOne(d_Hx,d_Hy,d_Hz,
 		 		                           d_Qx,d_Qy,d_Qz,
 		 		                           t_check,nt);
-
-
-
-
 	 AssignCellsToArraysGPU();
 
 }
@@ -2130,7 +2123,7 @@ void eme(double *locEx,double *locEy,double *locEz,
 }
 
 
-virtual void emh1(
+virtual void MagneticStageOne(
                   double *locQx,double *locQy,double *locQz,
                   double *locHx,double *locHy,double *locHz,
 		            int nt,
