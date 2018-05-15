@@ -1999,12 +1999,11 @@ virtual void ComputeField_SecondHalfStep(
 		// eme(locEx,locEy,locEz,nt,locHx,locHy,locHz,loc_npJx,loc_npJy,loc_npJz);
 		 checkControlPoint(600,nt,0);
 
-#ifdef FINAL_
-    if(nt == TOTAL_STEPS)
-    {
+
+
     	checkControlPoint(600,nt,0);
-    }
-#endif
+
+
     memory_monitor("after_ComputeField_SecondHalfStep",nt);
     CPU_field = 0;
 }
@@ -4109,9 +4108,12 @@ void checkControlPoint(int num,int nt,int check_part)
 	 double t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,t_jx,t_jy,t_jz;
 	 double t_qx,t_qy,t_qz,t_njx,t_njy,t_njz;
 
+	 if((nt != TOTAL_STEPS) && (num == 600))
+	 {
 #ifndef CONTROL_POINT_CHECK
-	 return;
+	     return;
 #endif
+	 }
 
 	 FILE *f;
 	 char fn_copy[100];
