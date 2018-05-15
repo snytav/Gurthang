@@ -1980,9 +1980,7 @@ virtual void ComputeField_SecondHalfStep(
 
      emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
 
-     checkFirstHalfstep_emh2_GPUMagneticFields(nt);
-
-	 checkControlPoint(500,nt,0);
+  	 checkControlPoint(500,nt,0);
 
 	 CPU_field = 0;
 	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
