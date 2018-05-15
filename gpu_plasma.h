@@ -1993,54 +1993,6 @@ void eme(double *locEx,double *locEy,double *locEz,
       Cell<Particle> c = (*AllCells)[0];
       double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
       double c11 = tau/hx,c21 = tau/hy,c31 = tau/hz;
-//      double *d_locEx,*d_locEy, *d_locEz,
-//      		    *d_locHx, *d_locHy, *d_locHz,
-//      		    *d_loc_npJx, *d_loc_npJy, *d_loc_npJz;
-
-      //int nt = 2*d_nt;
-
-#ifdef DEBUG_PLASMA_STEP_FIELDS
-//      d_locEx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      d_locEy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      d_locEz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//      d_locHx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      d_locHy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      d_locHz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//      d_loc_npJx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      d_loc_npJy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      d_loc_npJz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//      readDebugArray("dnex",d_locEx,2*d_nt-2);
-//      readDebugArray("dney",d_locEy,2*d_nt-2);
-//      readDebugArray("dnez",d_locEz,2*d_nt-2);
-//      CheckArray(d_locEx,locEx);
-//      CheckArray(d_locEy,locEy);
-//      CheckArray(d_locEz,locEz);
-//
-//      readDebugArray("dnhx",d_locHx,2*d_nt-1);
-//      readDebugArray("dnhy",d_locHy,2*d_nt-1);
-//      readDebugArray("dnhz",d_locHz,2*d_nt-1);
-//      CheckArray(d_locHx,locHx);
-//      CheckArray(d_locHy,locHy);
-//      CheckArray(d_locHz,locHz);
-//
-//      readDebugArray("dnex",dbgEx,2*d_nt-1);
-//      readDebugArray("dney",dbgEy,2*d_nt-1);
-//      readDebugArray("dnez",dbgEz,2*d_nt-1);
-//
-//      readDebugArray("npjx",d_loc_npJx,2*d_nt);
-//      readDebugArray("npjy",d_loc_npJy,2*d_nt);
-//      readDebugArray("npjz",d_loc_npJz,2*d_nt);
-//      CheckArray(d_loc_npJx,loc_npJx);
-//      CheckArray(d_loc_npJy,loc_npJy);
-//      CheckArray(d_loc_npJz,loc_npJz);
-//
-//      readDebugArray("exlg",npEx,2*d_nt-1);
-//      readDebugArray("eylg",npEy,2*d_nt-1);
-//      readDebugArray("ezlg",npEz,2*d_nt-1);
-#endif
 
       ElectricFieldTrace("exlg",nt,locEx,locHz,locHy,loc_npJx,
     		  dbgEx0,npEx,dbgHz,
