@@ -1925,6 +1925,15 @@ int checkFields_afterMagneticStageOne(double *t_Hx,double *t_Hy,double *t_Hz,
 			 t_check[12] = checkControlMatrix("emh1",nt,"hx",t_Hx);
 			 t_check[13] = checkControlMatrix("emh1",nt,"hy",t_Hy);
 			 t_check[14] = checkControlMatrix("emh1",nt,"hz",t_Hz);
+
+
+			 CPU_field = 1;
+
+
+
+			 checkControlPoint(50,nt,0);
+			 memory_monitor("afterComputeField_FirstHalfStep",nt);
+
 	return 0;
 }
 
@@ -1954,12 +1963,6 @@ void  ComputeField_FirstHalfStep(
 
 
 
-	 CPU_field = 1;
-
-
-
-	 checkControlPoint(50,nt,0);
-	 memory_monitor("afterComputeField_FirstHalfStep",nt);
 
 	 AssignCellsToArraysGPU();
 
