@@ -1985,7 +1985,7 @@ virtual void ComputeField_SecondHalfStep(
 	 checkControlPoint(600,nt,0);
 
      memory_monitor("after_ComputeField_SecondHalfStep",nt);
-     CPU_field = 0;
+//     CPU_field = 0;
 }
 
 void eme(double *locEx,double *locEy,double *locEz,
