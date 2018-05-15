@@ -1897,6 +1897,9 @@ int checkFields_beforeMagneticStageOne(double *t_Ex,double *t_Ey,double *t_Ez,
 		                               double *t_Qx,double *t_Qy,double *t_Qz,
 		                               double *t_check,int nt)
 {
+
+	 memory_monitor("beforeComputeField_FirstHalfStep",nt);
+
 	         t_check[0] = checkControlMatrix("emh1",nt,"qx",t_Qx);
 			 t_check[1] = checkControlMatrix("emh1",nt,"qy",t_Qy);
 			 t_check[2] = checkControlMatrix("emh1",nt,"qz",t_Qz);
@@ -1934,11 +1937,9 @@ void  ComputeField_FirstHalfStep(
 {
 	 double t_check[15];
 
-	 memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
-//	 CPU_field = 0;
-//	 if(CPU_field == 0)
-//	 {
+
+
 		 checkFields_beforeMagneticStageOne(d_Ex,d_Ey,d_Ez,
 		 		                               d_Hx,d_Hy,d_Hz,
 		 		                               d_Qx,d_Qy,d_Qz,
@@ -1951,7 +1952,6 @@ void  ComputeField_FirstHalfStep(
 		 		                           d_Qx,d_Qy,d_Qz,
 		 		                           t_check,nt);
 
-//	 }
 
 
 	 CPU_field = 1;
