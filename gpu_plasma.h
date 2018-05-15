@@ -1956,37 +1956,9 @@ void  ComputeField_FirstHalfStep(
 
 	 CPU_field = 1;
 
-//	 emh1(locQx,locQy,locQz,locHx,locHy,locHz,nt,locEx,locEy,locEz);
 
-	 //checkFirstHalfstep_emh1_MagneticFields(nt,locQx,locQy,locQz,locHx,locHy,locHz);
-#ifdef CONTROL_POINT_CHECK
+
 	 checkControlPoint(50,nt,0);
-#endif
-
-
-	// copyFieldsToGPU();
-//	 CPU_field = 0;
-//	 if(CPU_field == 0)
-//	 {
-//		// copyFieldsToGPU();
-//		 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_npJx,d_npJy,d_npJz);
-//		  checkFirstHalfstepGPUElectricFields(nt);
-//	 }
-//	 CPU_field = 1;
-//	 eme(locEx,locEy,locEz,nt,locHx,locHy,locHz,loc_npJx,loc_npJy,loc_npJz);
-
-#ifdef CPU_DEBUG_RUN
-
-//	 checkGPUArray(locHx,d_Hx);
-//	 checkGPUArray(locQx,d_Qx);
-//	 checkGPUArray(locHy,d_Hy);
-//	 checkGPUArray(locQy,d_Qy);
-//	 checkGPUArray(locHz,d_Hz);
-//	 checkGPUArray(locQz,d_Qz);
-#endif
-	 //CheckArray(dbg_Qx,locQx);
-
-//	 exit(0);
 	 memory_monitor("afterComputeField_FirstHalfStep",nt);
 
 	 AssignCellsToArraysGPU();
