@@ -1987,18 +1987,11 @@ virtual void ComputeField_SecondHalfStep(
 	 CPU_field = 0;
 	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
 
-	 checkGPUSecondHalfstepFields(nt);
-
 	 CPU_field = 1;
 	 checkControlPoint(600,nt,0);
 
-
-
-//     checkControlPoint(600,nt,0);
-
-
-    memory_monitor("after_ComputeField_SecondHalfStep",nt);
-    CPU_field = 0;
+     memory_monitor("after_ComputeField_SecondHalfStep",nt);
+     CPU_field = 0;
 }
 
 void eme(double *locEx,double *locEy,double *locEz,
