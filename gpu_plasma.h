@@ -1938,11 +1938,12 @@ int checkFields_afterMagneticStageOne(double *t_Hx,double *t_Hy,double *t_Hz,
 }
 
 void  ComputeField_FirstHalfStep(
-		   double *locEx,double *locEy,double *locEz,
-		   int nt,
-		   double *locHx,double *locHy,double *locHz,
-		   double *loc_npJx,double *loc_npJy,double *loc_npJz,
-		   double *locQx,double *locQy,double *locQz)
+//		   double *locEx,double *locEy,double *locEz,
+		   int nt//,
+//		   double *locHx,double *locHy,double *locHz,
+//		   double *loc_npJx,double *loc_npJy,double *loc_npJz,
+//		   double *locQx,double *locQy,double *locQz
+		   )
 {
 	 double t_check[15];
 
@@ -2268,7 +2269,10 @@ int readStartPoint(int nt)
 	void Step(int nt)
 	 {
 
-		ComputeField_FirstHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
+		ComputeField_FirstHalfStep(//Ex,Ey,Ez,
+				nt
+				//,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz
+				);
 
 
 		PushParticles(nt);
