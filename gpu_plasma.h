@@ -1974,8 +1974,6 @@ virtual void ComputeField_SecondHalfStep(
 
 
 
-	 CPU_field = 0;
-
      emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
 
   	 checkControlPoint(500,nt,0);
@@ -2164,6 +2162,8 @@ virtual void emh2(double *locHx,double *locHy,double *locHz,
 		            int nt,
 		            double *locQx,double *locQy,double *locQz)
 {
+	CPU_field = 0;
+
     Cell<Particle> c = (*AllCells)[0];
    // double *d_locQx,*d_locQy, *d_locQz,*d_locHx, *d_locHy, *d_locHz;
 
