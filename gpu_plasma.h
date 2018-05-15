@@ -1972,14 +1972,12 @@ virtual void ComputeField_SecondHalfStep(
 	 memory_monitor("before275",nt);
 
 
-#ifdef CPU_DEBUG_RUN
 
      checkControlPoint(275,nt,0);
      SetPeriodicCurrents(nt);
 
 	 checkControlPoint(400,nt,0);
 	 emh2(locHx,locHy,locHz,nt,locQx,locQy,locQz);
-#endif
 
 	 CPU_field = 0;
 	 if(CPU_field == 0)
