@@ -1983,9 +1983,8 @@ virtual void ComputeField_SecondHalfStep(
 	 if(CPU_field == 0)
 	 {
 		emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
-#ifdef CPU_DEBUG_RUN
+
 	    checkFirstHalfstep_emh2_GPUMagneticFields(nt);
-#endif
 	 }
 
 
@@ -1998,9 +1997,7 @@ virtual void ComputeField_SecondHalfStep(
 
 		 CPU_field = 1;
 		// eme(locEx,locEy,locEz,nt,locHx,locHy,locHz,loc_npJx,loc_npJy,loc_npJz);
-#ifdef CONTROL_POINT_CHECK
 		 checkControlPoint(600,nt,0);
-#endif
 #endif
 
 #ifdef FINAL_
