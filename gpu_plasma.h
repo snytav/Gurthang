@@ -1953,9 +1953,9 @@ void  ComputeField_FirstHalfStep(
 
 	 }
 
-//
-//	 CPU_field = 1;
-//
+
+	 CPU_field = 1;
+
 //	 emh1(locQx,locQy,locQz,locHx,locHy,locHz,nt,locEx,locEy,locEz);
 
 	 //checkFirstHalfstep_emh1_MagneticFields(nt,locQx,locQy,locQz,locHx,locHy,locHz);
