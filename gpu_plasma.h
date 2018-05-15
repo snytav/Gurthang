@@ -1981,7 +1981,7 @@ virtual void ComputeField_SecondHalfStep(
 
 	 eme(d_Ex,d_Ey,d_Ez,nt,d_Hx,d_Hy,d_Hz,d_Jx,d_Jy,d_Jz);
 
-	 CPU_field = 1;
+	 //CPU_field = 1;
 	 checkControlPoint(600,nt,0);
 
      memory_monitor("after_ComputeField_SecondHalfStep",nt);
