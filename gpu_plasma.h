@@ -1988,18 +1988,17 @@ void ElectricFieldComponentEvaluate(char *lname,int nt,
 		  double *E,double *H1,double *H2,double *J,
 		  double *dbg_E0,double *dbg_E,double *dbg_H1,
 		  double *dbg_H2,double *dbg_J,int dir,
-		  double c1,double c2,double tau
+		  double c1,double c2,double tau,
+		  int dir_1,int start1_1,int end1_1,int start2_1,int end2_1,int N_1,
+		  int dir_2,int start1_2,int end1_2,int start2_2,int end2_2,int N_2
 		  )
 
 {
     ElectricFieldTrace(lname,nt,
     		  E,H1,H2,J,dbg_E0,dbg_E,dbg_H1,dbg_H2,dbg_J,dir,c1,c2,tau);
 
-
-
-
-     PeriodicBoundaries(E,1,0,Nx,1,Nz,Ny);
-     PeriodicBoundaries(E,2,0,Nx,0,Ny+1,Nz);
+     PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
+     PeriodicBoundaries(E, dir_2,start1_2,end1_2,start2_2,end2_2,N_2);
 }
 
 void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
@@ -2014,12 +2013,9 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 
       ElectricFieldComponentEvaluate("exlg",nt,locEx,locHz,locHy,loc_npJx,
     		  dbgEx0,npEx,dbgHz,
-    		  dbgHy,dbgJx,0,c21,c31,tau);
-
-
-
-//       PeriodicBoundaries(locEx,1,0,Nx,1,Nz,Ny);
-//       PeriodicBoundaries(locEx,2,0,Nx,0,Ny+1,Nz);
+    		  dbgHy,dbgJx,0,c21,c31,tau,
+              1,0,Nx,1,Nz,Ny,
+              2,0,Nx,0,Ny+1,Nz);
 
 
 
