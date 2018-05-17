@@ -1748,16 +1748,16 @@ int virtual ElectricFieldTrace(char *lname,int nt,
 
 
 #ifdef DEBUG_PLASMA_EFIELDS
-      dbg_E_aper = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//      dbg_E_aper = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
-      read3DarrayLog(logname, dbg_E_aper,50,8);
-
-
-
-      Jloc = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-      ldH1 = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-      ldH2 = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-      ldE  = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//      read3DarrayLog(logname, dbg_E_aper,50,8);
+//
+//
+//
+//      Jloc = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//      ldH1 = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//      ldH2 = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//      ldE  = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 
       char dbg_fnex[100];
