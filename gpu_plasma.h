@@ -2019,12 +2019,12 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 
 
 
-      ElectricFieldTrace("eylg",nt,locEy,locHx,locHz,loc_npJy,
+      ElectricFieldComponentEvaluate("eylg",nt,locEy,locHx,locHz,loc_npJy,
     		  dbgEy0,npEy,dbgHx,
-    		  dbgHz,dbgJy,1,c31,c11,tau);
+    		  dbgHz,dbgJy,1,c31,c11,tau,
+              0,0,Ny,1,Nz,Nx,
+              2,0,Nx+1,0,Ny,Nz);
 
-       PeriodicBoundaries(locEy,0,0,Ny,1,Nz,Nx);
-       PeriodicBoundaries(locEy,2,0,Nx+1,0,Ny,Nz);
        SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
       ElectricFieldTrace("ezlg",nt,locEz,locHy,locHx,loc_npJz,
     		  dbgEz0,npEz,dbgHy,
