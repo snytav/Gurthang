@@ -1760,47 +1760,47 @@ int virtual ElectricFieldTrace(char *lname,int nt,
 //      ldE  = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 
-      char dbg_fnex[100];
+//      char dbg_fnex[100];
 
-     read3DarrayLog(logname, ldE,50,0);
-     read3DarrayLog(logname, ldH1,50,1);
-     read3DarrayLog(logname, ldH2,50,3);
-     read3DarrayLog(logname, Jloc,50,5);
+//     read3DarrayLog(logname, ldE,50,0);
+//     read3DarrayLog(logname, ldH1,50,1);
+//     read3DarrayLog(logname, ldH2,50,3);
+//     read3DarrayLog(logname, Jloc,50,5);
 //
 //     sprintf(dbg_fnex,"dnex%06d.dat",5);
 //     read3Darray(dbg_fnex, dbgEx);
 //     CheckArray(E,dbgEx);
-if(CPU_field)
-{
-     CheckArray(E,ldE);
-     puts("Ex prev");
-     //exit(0);
-     CheckArray(Jloc,dbg_J);
-     CheckArray(J,dbg_J);
-     CheckArray(J,Jloc);
-     puts("Jx");
-     //exit(0);
-     CheckArray(H1,ldH1);
-     puts("H1");
-     //exit(0);
-     CheckArray(H2,ldH2);
-     puts("H2");
-     //exit(0);
-}
-else
-{
-    checkGPUArray(ldE,E);
-    puts("Ex prev");
-    //exit(0);
-    checkGPUArray(Jloc,J);
-    puts("Jx");
-    //exit(0);
-    checkGPUArray(ldH1,H1);
-    puts("H1");
-    //exit(0);
-    checkGPUArray(ldH2,H2);
-    puts("H2");
-}
+//if(CPU_field)
+//{
+//     CheckArray(E,ldE);
+//     puts("Ex prev");
+//     //exit(0);
+//     CheckArray(Jloc,dbg_J);
+//     CheckArray(J,dbg_J);
+//     CheckArray(J,Jloc);
+//     puts("Jx");
+//     //exit(0);
+//     CheckArray(H1,ldH1);
+//     puts("H1");
+//     //exit(0);
+//     CheckArray(H2,ldH2);
+//     puts("H2");
+//     //exit(0);
+//}
+//else
+//{
+//    checkGPUArray(ldE,E);
+//    puts("Ex prev");
+//    //exit(0);
+//    checkGPUArray(Jloc,J);
+//    puts("Jx");
+//    //exit(0);
+//    checkGPUArray(ldH1,H1);
+//    puts("H1");
+//    //exit(0);
+//    checkGPUArray(ldH2,H2);
+//    puts("H2");
+//}
 #endif
 
       i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
@@ -1815,20 +1815,20 @@ else
       dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
       dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
 
-      if(CPU_field)
-      {
-         emeIterate(i_start,Nx,l_start,Ny,k_start,Nz,
-    		                E,H1,H2,
-      		    	  		J,c1,c2,tau,
-      		    	  		dx1,dy1,dz1,dx2,dy2,dz2);
-      }
-      else
-      {
+//      if(CPU_field)
+//      {
+//         emeIterate(i_start,Nx,l_start,Ny,k_start,Nz,
+//    		                E,H1,H2,
+//      		    	  		J,c1,c2,tau,
+//      		    	  		dx1,dy1,dz1,dx2,dy2,dz2);
+//      }
+//      else
+//      {
          emeGPUIterate(i_start,Nx,l_start,Ny,k_start,Nz,
     	      		                E,H1,H2,
     	        		    	  		J,c1,c2,tau,
     	        		    	  		dx1,dy1,dz1,dx2,dy2,dz2);
-      }
+//      }
 
 //      for(int i = i_start;i <= Nx;i++)
 //      {
