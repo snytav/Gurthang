@@ -2026,11 +2026,12 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
               2,0,Nx+1,0,Ny,Nz);
 
        SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
-      ElectricFieldTrace("ezlg",nt,locEz,locHy,locHx,loc_npJz,
+
+      ElectricFieldComponentEvaluate("ezlg",nt,locEz,locHy,locHx,loc_npJz,
     		  dbgEz0,npEz,dbgHy,
-    		  dbgHx,dbgJz,2,c11,c21,tau);
-         PeriodicBoundaries(locEz,0,1,Ny,0,Nz,Nx);
-         PeriodicBoundaries(locEz,1,0,Nx+1,0,Nz,Ny);
+    		  dbgHx,dbgJz,2,c11,c21,tau,
+              0,1,Ny,0,Nz,Nx,
+              1,0,Nx+1,0,Nz,Ny);
 
          checkControlPoint(600,nt,0);
 
