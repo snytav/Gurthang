@@ -1748,59 +1748,6 @@ int virtual ElectricFieldTrace(char *lname,int nt,
 
 
 #ifdef DEBUG_PLASMA_EFIELDS
-//      dbg_E_aper = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-//      read3DarrayLog(logname, dbg_E_aper,50,8);
-//
-//
-//
-//      Jloc = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      ldH1 = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      ldH2 = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//      ldE  = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-
-//      char dbg_fnex[100];
-
-//     read3DarrayLog(logname, ldE,50,0);
-//     read3DarrayLog(logname, ldH1,50,1);
-//     read3DarrayLog(logname, ldH2,50,3);
-//     read3DarrayLog(logname, Jloc,50,5);
-//
-//     sprintf(dbg_fnex,"dnex%06d.dat",5);
-//     read3Darray(dbg_fnex, dbgEx);
-//     CheckArray(E,dbgEx);
-//if(CPU_field)
-//{
-//     CheckArray(E,ldE);
-//     puts("Ex prev");
-//     //exit(0);
-//     CheckArray(Jloc,dbg_J);
-//     CheckArray(J,dbg_J);
-//     CheckArray(J,Jloc);
-//     puts("Jx");
-//     //exit(0);
-//     CheckArray(H1,ldH1);
-//     puts("H1");
-//     //exit(0);
-//     CheckArray(H2,ldH2);
-//     puts("H2");
-//     //exit(0);
-//}
-//else
-//{
-//    checkGPUArray(ldE,E);
-//    puts("Ex prev");
-//    //exit(0);
-//    checkGPUArray(Jloc,J);
-//    puts("Jx");
-//    //exit(0);
-//    checkGPUArray(ldH1,H1);
-//    puts("H1");
-//    //exit(0);
-//    checkGPUArray(ldH2,H2);
-//    puts("H2");
-//}
 #endif
 
       i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
