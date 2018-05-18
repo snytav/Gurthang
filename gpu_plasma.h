@@ -1762,15 +1762,7 @@ int virtual ElectricFieldTrace(char *lname,int nt,
       dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
       dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
 
-//      if(CPU_field)
-//      {
-//         emeIterate(i_start,Nx,l_start,Ny,k_start,Nz,
-//    		                E,H1,H2,
-//      		    	  		J,c1,c2,tau,
-//      		    	  		dx1,dy1,dz1,dx2,dy2,dz2);
-//      }
-//      else
-//      {
+
          emeGPUIterate(i_start,Nx,l_start,Ny,k_start,Nz,
     	      		                E,H1,H2,
     	        		    	  		J,c1,c2,tau,
