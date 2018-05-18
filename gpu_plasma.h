@@ -1767,55 +1767,6 @@ int virtual ElectricFieldTrace(char *lname,int nt,
     	      		                E,H1,H2,
     	        		    	  		J,c1,c2,tau,
     	        		    	  		dx1,dy1,dz1,dx2,dy2,dz2);
-//      }
-
-//      for(int i = i_start;i <= Nx;i++)
-//      {
-//	  for(int l = l_start;l <= Ny;l++)
-//	  {
-//	      for(int k = k_start;k <= Nz;k++)
-//	      {
-//		  int n  = c.getGlobalCellNumber(i,l,k);
-//		  int n1 = c.getGlobalCellNumber(i+dx1,l+dy1,k+dz1);
-//		  int n2 = c.getGlobalCellNumber(i+dx2,l+dy2,k+dz2);
-//
-//#ifdef DEBUG_PLASMA
-//		  double h1_n  = H1[n];
-//		  double h1_n1 = H1[n1];
-//		  double h2_n  = H2[n];
-//		  double h2_n2 = H2[n2];
-//		  double E_n =   E[n];
-//		  double J_n   = J[n];
-//		  double term1 = c1*(H1[n] - H1[n1]);
-//		  double term2 = c2*(H2[n] - H2[n2]);
-//#endif
-//		  E[n] += c1*(H1[n] - H1[n1]) - c2*(H2[n] - H2[n2]) - tau*J[n];
-//#ifdef DEBUG_PLASMA
-//		  t = fabs(E[n]-dbg_E[n]);
-//
-//		  std::cout << i << " " << l << " " << k << " " << t << std::endl;
-//		  if((t > TOLERANCE) && ((i == 10 ) && (l == 10) && (k == 0)))
-//		  {
-//		     printf("WRONG i %3d l %3d k %3d %15.5e dbg %15.5e\n",i,l,k,t,dbg_E[n]);
-//		  }
-//
-
-//#endif
-//
-//	      }
-//	  }
-//      }
-
-    //  double check_E_final;//  = CheckArray(E,dbg_E_aper);
-//      if(CPU_field == 1)
-//      {
-//    	  check_E_final  = CheckArray(E,dbg_E_aper);
-//      }
-//      else
-//      {
-//
-//            check_E_final = checkGPUArray(dbg_E_aper,E);
-//      }
 #ifdef DEBUG_PLASMA
      // int check_E_final;
 #ifdef DEBUG_PLASMA_EFIELDS
