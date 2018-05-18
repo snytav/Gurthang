@@ -1740,14 +1740,6 @@ int virtual ElectricFieldTrace(char *lname,int nt,
   double *E,double *H1,double *H2,double *J,double *dbg_E0,double *dbg_E,double *dbg_H1,double *dbg_H2,double *dbg_J,int dir,double c1,double c2,double tau)
   {
       int i_start,l_start,k_start,dx1,dy1,dz1,dx2,dy2,dz2;
-      //int check_E_local;
-//      double *dbg_E_aper;
-//      char logname[100];
-//
-//      sprintf(logname,"%s%03d.dat",lname,nt);
-
-
-
 
       i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
       l_start = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*1;
