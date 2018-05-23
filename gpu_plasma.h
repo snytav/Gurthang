@@ -1736,7 +1736,33 @@ void virtual emeGPUIterate(int i_s,int i_f,int l_s,int l_f,int k_s,int k_f,
 
 }
 
-int virtual ElectricFieldTrace(//char *lname,int nt,
+void GetElectricFieldStartsDirs(
+		int *i_start,
+		int *l_start,
+		int *k_start,
+		int *dx1,
+		int *dy1,
+		int *dz1,
+		int *dx2,
+		int *dy2,
+		int *dz2,
+		int dir
+		)
+{
+      *i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
+      *l_start = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*1;
+      *k_start = (dir == 0)*1 + (dir == 1)*1 + (dir == 2)*0;
+
+      *dx1 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
+      *dy1 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
+      *dz1 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
+
+      *dx2 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
+      *dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
+      *dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
+}
+
+int virtual ElectricFieldTrace(
   double *E,double *H1,double *H2,double *J,
   int dir,double c1,double c2,double tau)
   {
@@ -1754,6 +1780,7 @@ int virtual ElectricFieldTrace(//char *lname,int nt,
       dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
       dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
 
+      GetElectricFieldStartsDirs(&i_start,&l_start,&k_start,&dx1,&dy1,&dz1,&dx2,&dy2,&dz2,dir);
 
          emeGPUIterate(i_start,Nx,l_start,Ny,k_start,Nz,
     	      		                E,H1,H2,
@@ -1865,8 +1892,7 @@ void ElectricFieldComponentEvaluate(char *lname,int nt,
 		  )
 
 {
-    ElectricFieldTrace(//lname,nt,
-    		  E,H1,H2,J,dir,c1,c2,tau);
+    ElectricFieldTrace(E,H1,H2,J,dir,c1,c2,tau);
 
      PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
      PeriodicBoundaries(E, dir_2,start1_2,end1_2,start2_2,end2_2,N_2);
