@@ -1738,8 +1738,6 @@ void virtual emeGPUIterate(int i_s,int i_f,int l_s,int l_f,int k_s,int k_f,
 
 int virtual ElectricFieldTrace(char *lname,int nt,
   double *E,double *H1,double *H2,double *J,
-  //double *dbg_E0,
-  //double *dbg_E,double *dbg_H1,double *dbg_H2,double *dbg_J,
   int dir,double c1,double c2,double tau)
   {
       int i_start,l_start,k_start,dx1,dy1,dz1,dx2,dy2,dz2;
