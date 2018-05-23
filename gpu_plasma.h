@@ -1736,7 +1736,7 @@ void virtual emeGPUIterate(int i_s,int i_f,int l_s,int l_f,int k_s,int k_f,
 
 }
 
-int virtual ElectricFieldTrace(char *lname,int nt,
+int virtual ElectricFieldTrace(//char *lname,int nt,
   double *E,double *H1,double *H2,double *J,
   int dir,double c1,double c2,double tau)
   {
@@ -1865,7 +1865,7 @@ void ElectricFieldComponentEvaluate(char *lname,int nt,
 		  )
 
 {
-    ElectricFieldTrace(lname,nt,
+    ElectricFieldTrace(//lname,nt,
     		  E,H1,H2,J,dir,c1,c2,tau);
 
      PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
