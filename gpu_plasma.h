@@ -1768,17 +1768,17 @@ int virtual ElectricFieldTrace(
   {
       int i_start,l_start,k_start,dx1,dy1,dz1,dx2,dy2,dz2;
 
-      i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
-      l_start = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*1;
-      k_start = (dir == 0)*1 + (dir == 1)*1 + (dir == 2)*0;
-
-      dx1 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
-      dy1 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
-      dz1 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
-
-      dx2 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
-      dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
-      dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
+//      i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
+//      l_start = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*1;
+//      k_start = (dir == 0)*1 + (dir == 1)*1 + (dir == 2)*0;
+//
+//      dx1 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
+//      dy1 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
+//      dz1 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
+//
+//      dx2 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
+//      dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
+//      dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
 
       GetElectricFieldStartsDirs(&i_start,&l_start,&k_start,&dx1,&dy1,&dz1,&dx2,&dy2,&dz2,dir);
 
