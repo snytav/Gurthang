@@ -1975,7 +1975,7 @@ virtual void MagneticFieldStageTwo(double *locHx,double *locHy,double *locHz,
 		            int nt,
 		            double *locQx,double *locQy,double *locQz)
 {
-	CPU_field = 0;
+
 
     Cell<Particle> c = (*AllCells)[0];
 
@@ -3071,33 +3071,16 @@ int readStartPoint(int nt)
 	int SimpleMagneticFieldTrace(Cell<Particle> &c,double *Q,double *H,int i_end,int l_end,int k_end)
 	{
 
-		if(CPU_field == 0)
-		{
+
 		   		dim3 dimGrid(i_end+1,l_end+1,k_end+1),dimBlock(1,1,1);
 
 			    GPU_emh2<<<dimGrid,dimBlock>>>(d_CellArray,0,0,0,Q,H);
-		}
-		else
-		{
-	      for(int i = 0;i <= i_end;i++)
-	      {
-		  for(int l = 0;l <= l_end;l++)
-		  {
-		      for(int k = 0;k <= k_end;k++)
-		      {
-			  int n = c.getGlobalCellNumber(i,l,k);
-			  //double t,t1;
 
-		//	  t = H[n];
-			  H[n] += Q[n];
-			//  t = H[n];
-		      }
-		  }
-	      }
-		}
 
 	      return 0;
 	  }
+
+
 	  int PeriodicBoundaries(double *E,int dir,int start1,int end1,int start2,int end2,int N)
 	  {
 	      Cell<Particle>  c = (*AllCells)[0];
