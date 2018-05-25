@@ -1975,8 +1975,6 @@ virtual void MagneticFieldStageTwo(double *locHx,double *locHy,double *locHz,
 		            int nt,
 		            double *locQx,double *locQy,double *locQz)
 {
-
-
     Cell<Particle> c = (*AllCells)[0];
 
     SimpleMagneticFieldTrace(c,locQx,locHx,Nx+1,Ny,Nz);
@@ -3455,61 +3453,24 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 		  checkControlPoint(275,nt,0);
 
-	//#ifdef DEBUG_PLASMA
-	//           CheckArray(Jx, dbgJx);
-	//	   CheckArray(Jy, dbgJy);
-	//	   CheckArray(Jz, dbgJz);
-	//
-	//      InitCurrents("dnjx000002.dat","dnjy000002.dat","dnjz000002.dat",
-	//    		       "npjx000002.dat","npjy000002.dat","npjz000002.dat",1);
-	//
-	//      CheckArray(Jx, dbgJx);
-	//      CheckArray(Jy, dbgJy);
-	//      CheckArray(Jz, dbgJz);
-	//      InitCurrents("dnjx000002.dat","dnjy000002.dat","dnjz000002.dat",
-	//          		   "dnjx000002.dat","dnjy000002.dat","dnjz000002.dat",1);
-	//#endif
+
           double *dbg = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
 
           checkGPUArray(Jx,d_Jx);
-//	      CheckArray(Jx, dbgJx);
-//	      readDebugArray("npjx",dbg,nt,5);
-//	      	    t_hx = CheckArray(Jx,dbg);
-//	      readDebugArray("jxmo",dbg,nt,5);
-//	      	    t_hx = CheckArray(Jx,dbg);
-//	  	      readDebugArray("jxap",dbg,nt,5);
-//	  	      	    t_hx = CheckArray(Jx,dbg);
 	      PeriodicCurrentBoundaries(Jx,dbgJx,0,0, 0,Ny+1, 0,Nz+1);
 
 	      dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
 	      int N = getBoundaryLimit(0);
 
-	    //  cudaPrintfInit();
 	      GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jx,0,0,0,0,Nx+2);
-//	      cudaDeviceSynchronize();
-//	      cudaPrintfDisplay(stdout, true);
-//	      cudaPrintfEnd();
 
 	      checkGPUArray(Jx,d_Jx);
-	      //exit(0);
-
-//	                CheckArray(Jx, dbgJx);
-//	                readDebugArray("jx1p",dbg,nt,5);
-//	                	    t_hx = CheckArray(Jx,dbg);
 	     PeriodicCurrentBoundaries(Jx,dbgJx,0,1,0,Nx+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jx,0,1,0,0,Ny+2);
 	          checkGPUArray(Jx, d_Jx);
-//	          readDebugArray("jx2p",dbg,nt,5);
-//	          	    t_hx = CheckArray(Jx,dbg);
 	     PeriodicCurrentBoundaries(Jx,dbgJx,0,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jx,0,2,0,0,Nz+2);
 	     	          checkGPUArray(Jx, d_Jx);
-//	          CheckArray(Jx, dbgJx);
-//	          readDebugArray("jxbe",dbg,nt,5);
-//	          	    t_hx = CheckArray(Jx,dbg);
-
-	  //   PeriodicCurrentBoundaries(Jx,dbgJx,0,0,0,Ny+1,0,Nz+1);
-	   //       CheckArray(Jx, dbgJx);
 
 	     checkGPUArray(Jy, d_Jy);
 	     PeriodicCurrentBoundaries(Jy,dbgJy,1,0,0,Ny+1,0,Nz+1);
@@ -3523,8 +3484,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	     checkGPUArray(Jy, d_Jy);
 
 
-//	     readDebugArray("jybe",dbg,nt,5);
-	   //  t_hx = CheckArray(Jy,dbg);
 	     checkGPUArray(Jz, d_Jz);
 	     PeriodicCurrentBoundaries(Jz,dbgJz,2,0,0,Ny+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jz,2,0,0,0,Nx+2);
@@ -3535,9 +3494,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	     PeriodicCurrentBoundaries(Jz,dbgJz,2,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jz,2,2,0,0,Nz+2);
 	     checkGPUArray(Jz, d_Jz);
-
-//	     readDebugArray("jybe",dbg,nt,5);
-//	     t_hx = CheckArray(Jy,dbg);
 
 	     checkControlPoint(400,nt,0);
 
