@@ -3454,9 +3454,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		  checkControlPoint(275,nt,0);
 
 
-        //  double *dbg = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
 
-//          checkGPUArray(Jx,d_Jx);
 	      PeriodicCurrentBoundaries(Jx,dbgJx,0,0, 0,Ny+1, 0,Nz+1);
 
 	      dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
@@ -3464,36 +3462,24 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 	      GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jx,0,0,0,0,Nx+2);
 
-//	      checkGPUArray(Jx,d_Jx);
 	     PeriodicCurrentBoundaries(Jx,dbgJx,0,1,0,Nx+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jx,0,1,0,0,Ny+2);
-//	          checkGPUArray(Jx, d_Jx);
 	     PeriodicCurrentBoundaries(Jx,dbgJx,0,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jx,0,2,0,0,Nz+2);
-//	     	          checkGPUArray(Jx, d_Jx);
 
-//	     checkGPUArray(Jy, d_Jy);
 	     PeriodicCurrentBoundaries(Jy,dbgJy,1,0,0,Ny+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jy,1,0,0,0,Nx+2);
-//	     checkGPUArray(Jy, d_Jy);
 	     PeriodicCurrentBoundaries(Jy,dbgJy,1,1,0,Nx+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jy,1,1,0,0,Ny+2);
-//	     checkGPUArray(Jy, d_Jy);
 	     PeriodicCurrentBoundaries(Jy,dbgJy,1,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jy,1,2,0,0,Nz+2);
-//	     checkGPUArray(Jy, d_Jy);
 
-
-//	     checkGPUArray(Jz, d_Jz);
 	     PeriodicCurrentBoundaries(Jz,dbgJz,2,0,0,Ny+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jz,2,0,0,0,Nx+2);
-//	     checkGPUArray(Jz, d_Jz);
 	     PeriodicCurrentBoundaries(Jz,dbgJz,2,1,0,Nx+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jz,2,1,0,0,Ny+2);
-//	     checkGPUArray(Jz, d_Jz);
 	     PeriodicCurrentBoundaries(Jz,dbgJz,2,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jz,2,2,0,0,Nz+2);
-//	     checkGPUArray(Jz, d_Jz);
 
 	     checkControlPoint(400,nt,0);
 
@@ -4381,18 +4367,11 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	#ifdef DEBUG_PLASMA
 		      int3 n1_3 = c.getCellTripletNumber(n1);
 		      int3 n_Nm1_3 = c.getCellTripletNumber(n_Nm1);
-//		      if(fabs(E[n_Nm1]) > TOLERANCE)
-//		      {
-//			  int g = 0;
-//		      }
 	#endif
 		      if(dir != dirE)
 		      {
 		         E[n1] += E[n_Nm1];
-#ifdef PERIODIC_DEBUG_PRINTS
-			      printf("to (%d,%d,%d) is added (%d,%d,%d): %15.5e += %15.5e \n",
-			    		  n1_3.x+1,n1_3.y+1,n1_3.z+1,n_Nm1_3.x+1,n_Nm1_3.y+1,n_Nm1_3.z+1,E[n1],E[n_Nm1]);
-#endif
+
 
 		      }
 		      if(dir != 1 || dirE != 1)
@@ -4401,10 +4380,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 		      }
 	#ifdef DEBUG_PLASMA
 	              int n1_check = CheckValue(E,dbg_E,n1);
-		      if(n1_check == 0)
-		      {
-//			 int k = 0;
-		      }
 	#endif
 
 		      int n_Nm2 = c.getGlobalBoundaryCellNumber(i,k,dir,N-2);
@@ -4412,34 +4387,16 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	#ifdef DEBUG_PLASMA
 		      int3 n0_3 = c.getCellTripletNumber(n0);
 		      int3 n_Nm2_3 = c.getCellTripletNumber(n_Nm2);
-//		      if(fabs(E[n0]) > TOLERANCE)
-//		      {
-//			  int g = 0;
-//		      }
 	#endif
 
 		      E[n0] += E[n_Nm2];
-#ifdef PERIODIC_DEBUG_PRINTS
-		      printf("to (%d,%d,%d) is added (%d,%d,%d): %15.5e += %15.5e \n",
-		    		  n0_3.x+1,n0_3.y+1,n0_3.z+1,n_Nm2_3.x+1,n_Nm2_3.y+1,n_Nm2_3.z+1,E[n0],E[n_Nm2]);
-#endif
-		      E[n_Nm2] = E[n0];
-	#ifdef DEBUG_PLASMA
-	              int n_Nm2_check = CheckValue(E,dbg_E,n_Nm2);
-//		      if(n_Nm2_check == 0)
-//		      {
-//			 int k = 0;
-//		      }
 
-	#endif
+		      E[n_Nm2] = E[n0];
+
 
 		      //   E[n0] = E[n_Nm2];
 		      //   E[n_Nm1] = E[n1];
 
-	#ifdef DEBUG_PLASMA
-	              int n0_check    = CheckValue(E,dbg_E,n0);
-	              int n_Nm1_check = CheckValue(E,dbg_E,n_Nm1);
-	#endif
 
 		     // }
 		  }
