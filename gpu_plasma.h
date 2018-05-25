@@ -1839,7 +1839,7 @@ virtual void ComputeField_SecondHalfStep(
 
 
 
-     emh2(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
+     MagneticFieldStageTwo(d_Hx,d_Hy,d_Hz,nt,d_Qx,d_Qy,d_Qz);
 
 
 
@@ -1971,7 +1971,7 @@ virtual void MagneticStageOne(
     CheckArray(Hz,dbgHz);
 #endif
 }
-virtual void emh2(double *locHx,double *locHy,double *locHz,
+virtual void MagneticFieldStageTwo(double *locHx,double *locHy,double *locHz,
 		            int nt,
 		            double *locQx,double *locQy,double *locQz)
 {
