@@ -1735,29 +1735,23 @@ void virtual emeGPUIterate(int i_s,int i_f,int l_s,int l_f,int k_s,int k_f,
 }
 
 void GetElectricFieldStartsDirs(
-		int *i_start,
-		int *l_start,
-		int *k_start,
-		int *dx1,
-		int *dy1,
-		int *dz1,
-		int *dx2,
-		int *dy2,
-		int *dz2,
+		int3 *start,
+		int3 *d1,
+		int3 *d2,
 		int dir
 		)
 {
-      *i_start = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
-      *l_start = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*1;
-      *k_start = (dir == 0)*1 + (dir == 1)*1 + (dir == 2)*0;
+      start->x = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*1;
+      start->y  = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*1;
+      start->z = (dir == 0)*1 + (dir == 1)*1 + (dir == 2)*0;
 
-      *dx1 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
-      *dy1 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
-      *dz1 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
+      d1->x = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
+      d1->y = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
+      d1->z = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
 
-      *dx2 = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
-      *dy2 = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
-      *dz2 = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
+      d2->x = (dir == 0)*0    + (dir == 1)*(-1) + (dir == 2)*0;
+      d2->y = (dir == 0)*0    + (dir == 1)*0    + (dir == 2)*(-1);
+      d2->z = (dir == 0)*(-1) + (dir == 1)*0    + (dir == 2)*0;
 }
 
 int virtual ElectricFieldTrace(
@@ -1767,7 +1761,7 @@ int virtual ElectricFieldTrace(
       int3 start;
       int3 d1,d2;
 
-      GetElectricFieldStartsDirs(&(start.x),&(start.y),&(start.z),&(d1.x),&(d1.y),&(d1.z),&(d2.x),&(d2.y),&(d2.z),dir);
+      GetElectricFieldStartsDirs(&start,&d1,&d2,dir);
 
          emeGPUIterate(start.x,Nx,start.y,Ny,start.z,Nz,
     	      		                E,H1,H2,
