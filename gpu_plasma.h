@@ -3453,32 +3453,19 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 		  checkControlPoint(275,nt,0);
 
-
-
-//	      PeriodicCurrentBoundaries(Jx,0,0, 0,Ny+1, 0,Nz+1);
-
-	      dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
+		  dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
 	      int N = getBoundaryLimit(0);
 
-	      GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jx,0,0,0,0,Nx+2);
-
-//	     PeriodicCurrentBoundaries(Jx,0,1,0,Nx+1,0,Nz+1);
+         GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jx,0,0,0,0,Nx+2);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jx,0,1,0,0,Ny+2);
-//	     PeriodicCurrentBoundaries(Jx,0,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jx,0,2,0,0,Nz+2);
 
-//	     PeriodicCurrentBoundaries(Jy,1,0,0,Ny+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jy,1,0,0,0,Nx+2);
-//	     PeriodicCurrentBoundaries(Jy,1,1,0,Nx+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jy,1,1,0,0,Ny+2);
-//	     PeriodicCurrentBoundaries(Jy,1,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jy,1,2,0,0,Nz+2);
 
-//	     PeriodicCurrentBoundaries(Jz,2,0,0,Ny+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jz,2,0,0,0,Nx+2);
-//	     PeriodicCurrentBoundaries(Jz,2,1,0,Nx+1,0,Nz+1);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jz,2,1,0,0,Ny+2);
-//	     PeriodicCurrentBoundaries(Jz,2,2,0,Nx+1,0,Ny+1);
 	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jz,2,2,0,0,Nz+2);
 
 	     checkControlPoint(400,nt,0);
