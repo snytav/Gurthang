@@ -3446,6 +3446,13 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	  	  return 1.0;//(t_hx+t_hy+t_hz)/3.0;
 	    }
 
+	  int SetPeriodicCurrentComponent(Cell<Particle>  **cells,double *J,int dir,int Nx,int Ny,int Nz)
+	  {
+
+
+		  return 0;
+	  }
+
 	  void SetPeriodicCurrents(int nt)
 	  {
 
@@ -3454,7 +3461,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		  checkControlPoint(275,nt,0);
 
 		  dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
-	      int N = getBoundaryLimit(0);
+//	      int N = getBoundaryLimit(0);
 
          GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jx,0,0,0,0,Nx+2);
 	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jx,0,1,0,0,Ny+2);
