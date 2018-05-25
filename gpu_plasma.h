@@ -1131,10 +1131,10 @@ template <template <class Particle> class Cell >
 global_for_CUDA void GPU_eme(
 
 		            Cell<Particle>  **cells,
-		            int i_s,int l_s,int k_s,
+		            int3 s,
 					double *E,double *H1, double *H2,
 					double *J,double c1,double c2, double tau,
-					int dx1,int dy1,int dz1,int dx2,int dy2,int dz2
+					int3 d1,int3 d2
 		)
 {
 	unsigned int nx = blockIdx.x*blockDim.x + threadIdx.x;
@@ -1145,13 +1145,11 @@ global_for_CUDA void GPU_eme(
 
 
 
-	emeElement(c0,i_s+nx,l_s+ny,k_s+nz,E,H1,H2,
+	emeElement(c0,s.x+nx,s.y+ny,s.z+nz,E,H1,H2,
 			    	  		J,c1,c2,tau,
-			    	  		dx1,dy1,dz1,dx2,dy2,dz2);
+			    	  		d1.x,d1.y,d1.z,d2.x,d2.y,d2.z);
 
-//	cuPrintf("eme %3d %3d %3d  %3d %3d %3d %3d %3d %3d %25.15e \n",i_s,l_s,k_s,nx,ny,nz,
-//			i_s+nx+1,l_s+ny+1,k_s+nz+1,
-//			E[c0->getGlobalCellNumber(i_s+nx,l_s+ny,k_s+nz)]);
+
 }
 
 template <template <class Particle> class Cell >
@@ -1726,10 +1724,10 @@ void virtual emeGPUIterate(int3 s,int3 f,
 {
 	dim3 dimGrid(f.x-s.x+1,1,1),dimBlock(1,f.y-s.y+1,f.z-s.z+1);
 
-    GPU_eme<<<dimGrid,dimBlock>>>(d_CellArray,s.x,s.y,s.z,
+    GPU_eme<<<dimGrid,dimBlock>>>(d_CellArray,s,
     		                            E,H1,H2,
     					    	  		J,c1,c2,tau,
-    					    	  		d1.x,d1.y,d1.z,d2.x,d2.y,d2.z
+    					    	  		d1,d2
     		);
 
 }
