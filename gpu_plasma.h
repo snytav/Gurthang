@@ -1764,14 +1764,15 @@ int virtual ElectricFieldTrace(
   double *E,double *H1,double *H2,double *J,
   int dir,double c1,double c2,double tau)
   {
-      int i_start,l_start,k_start,dx1,dy1,dz1,dx2,dy2,dz2;
+      int3 start;
+      int3 d1,d2;
 
-      GetElectricFieldStartsDirs(&i_start,&l_start,&k_start,&dx1,&dy1,&dz1,&dx2,&dy2,&dz2,dir);
+      GetElectricFieldStartsDirs(&(start.x),&(start.y),&(start.z),&(d1.x),&(d1.y),&(d1.z),&(d2.x),&(d2.y),&(d2.z),dir);
 
-         emeGPUIterate(i_start,Nx,l_start,Ny,k_start,Nz,
+         emeGPUIterate(start.x,Nx,start.y,Ny,start.z,Nz,
     	      		                E,H1,H2,
     	        		    	  		J,c1,c2,tau,
-    	        		    	  		dx1,dy1,dz1,dx2,dy2,dz2);
+    	        		    	  		d1.x,d1.y,d1.z,d2.x,d2.y,d2.z);
 
     return 0;
   }
