@@ -1978,34 +1978,10 @@ virtual void MagneticFieldStageTwo(double *locHx,double *locHy,double *locHz,
 	CPU_field = 0;
 
     Cell<Particle> c = (*AllCells)[0];
-   // double *d_locQx,*d_locQy, *d_locQz,*d_locHx, *d_locHy, *d_locHz;
-
-#ifdef DEBUG_PLASMA_STEP_FIELDS_EMH2
-
-    readDebugArray("dnqx",dbg_Qx,nt,0);
-    readDebugArray("dnqy",dbg_Qy,nt,0);
-    readDebugArray("dnqz",dbg_Qz,nt,0);
-    CheckArray(dbg_Qx,locQx);
-    CheckArray(dbg_Qy,locQy);
-    CheckArray(dbg_Qz,locQz);
-
-    readDebugArray("dnhx",dbgHx,nt+1,0);
-    readDebugArray("dnhy",dbgHy,nt+1,0);
-    readDebugArray("dnhz",dbgHz,nt+1,0);
-
-
-    CheckArray(dbgHx,locHx);
-    CheckArray(dbgHy,locHy);
-    CheckArray(dbgHz,locHz);
-
-#endif
 
     SimpleMagneticFieldTrace(c,locQx,locHx,Nx+1,Ny,Nz);
-    //CheckArray(locHx,dbgHx);
     SimpleMagneticFieldTrace(c,locQy,locHy,Nx,Ny+1,Nz);
-    //CheckArray(locHy,dbgHy);
     SimpleMagneticFieldTrace(c,locQz,locHz,Nx,Ny,Nz+1);
-    //CheckArray(locHz,dbgHz);
 
     checkControlPoint(500,nt,0);
 }
