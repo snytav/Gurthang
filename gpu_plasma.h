@@ -1059,12 +1059,12 @@ void GPU_emh1(
 __host__ __device__
 	void emeElement(Cell<Particle> *c,int3 i,double *E,double *H1, double *H2,
 			double *J,double c1,double c2, double tau,
-			int dx1,int dy1,int dz1,int dx2,int dy2,int dz2
+			int3 d1,int3 d2
 			)
 	{
 	   int n  = c->getGlobalCellNumber(i.x,i.y,i.z);
-	  int n1 = c->getGlobalCellNumber(i.x+dx1,i.y+dy1,i.z+dz1);
-	  int n2 = c->getGlobalCellNumber(i.x+dx2,i.y+dy2,i.z+dz2);
+	  int n1 = c->getGlobalCellNumber(i.x+d1.x,i.y+d1.y,i.z+d1.z);
+	  int n2 = c->getGlobalCellNumber(i.x+d2.x,i.y+d2.y,i.z+d2.z);
 
 	  E[n] += c1*(H1[n] - H1[n1]) - c2*(H2[n] - H2[n2]) - tau*J[n];
 	}
@@ -1146,14 +1146,7 @@ global_for_CUDA void GPU_eme(
     s.y += ny;
     s.z += nz;
 
-
-
-
-	emeElement(c0,s,E,H1,H2,
-			    	  		J,c1,c2,tau,
-			    	  		d1.x,d1.y,d1.z,d2.x,d2.y,d2.z);
-
-
+    emeElement(c0,s,E,H1,H2,J,c1,c2,tau,d1,d2);
 }
 
 template <template <class Particle> class Cell >
@@ -1165,14 +1158,6 @@ global_for_CUDA void copy_pointers(Cell<Particle>  **cells,int *d_flags,double_p
 	c->d_wrong_current_particle_attributes = d_pointers[blockIdx.x];
 
 }
-
-
-
-//__host__ __device__
-//void writeParticleAttribute(int j,double ami,int num,double t)
-//{
-//	d_ctrlParticles[ParticleAttributePosition(j,ami,num)] = t;
-//}
 
 
 template <template <class Particle> class Cell >
