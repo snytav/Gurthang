@@ -1057,14 +1057,14 @@ void GPU_emh1(
 }
 
 __host__ __device__
-	void emeElement(Cell<Particle> *c,int i,int l,int k,double *E,double *H1, double *H2,
+	void emeElement(Cell<Particle> *c,int3 i,double *E,double *H1, double *H2,
 			double *J,double c1,double c2, double tau,
 			int dx1,int dy1,int dz1,int dx2,int dy2,int dz2
 			)
 	{
-	   int n  = c->getGlobalCellNumber(i,l,k);
-	  int n1 = c->getGlobalCellNumber(i+dx1,l+dy1,k+dz1);
-	  int n2 = c->getGlobalCellNumber(i+dx2,l+dy2,k+dz2);
+	   int n  = c->getGlobalCellNumber(i.x,i.y,i.z);
+	  int n1 = c->getGlobalCellNumber(i.x+dx1,i.y+dy1,i.z+dz1);
+	  int n2 = c->getGlobalCellNumber(i.x+dx2,i.y+dy2,i.z+dz2);
 
 	  E[n] += c1*(H1[n] - H1[n1]) - c2*(H2[n] - H2[n2]) - tau*J[n];
 	}
@@ -1142,10 +1142,14 @@ global_for_CUDA void GPU_eme(
 	unsigned int nz = blockIdx.z*blockDim.z + threadIdx.z;
 	Cell<Particle>  *c0 = cells[0];
 
+    s.x += nx;
+    s.y += ny;
+    s.z += nz;
 
 
 
-	emeElement(c0,s.x+nx,s.y+ny,s.z+nz,E,H1,H2,
+
+	emeElement(c0,s,E,H1,H2,
 			    	  		J,c1,c2,tau,
 			    	  		d1.x,d1.y,d1.z,d2.x,d2.y,d2.z);
 
@@ -2848,28 +2852,28 @@ int readStartPoint(int nt)
 
 
 
-	void virtual emeIterate(int i_s,int i_f,int l_s,int l_f,int k_s,int k_f,
-			double *E,double *H1, double *H2,
-			double *J,double c1,double c2, double tau,
-			int dx1,int dy1,int dz1,int dx2,int dy2,int dz2)
-	{
-		Cell<Particle>  c0 = (*AllCells)[0],*c;
-
-		c = &c0;
-
-		for(int i = i_s;i <= i_f;i++)
-		{
-			  for(int l = l_s;l <= i_f;l++)
-			  {
-			      for(int k = k_s;k <= k_f;k++)
-			      {
-			    	  emeElement(c,i,l,k,E,H1,H2,
-			    	  		J,c1,c2,tau,
-			    	  		dx1,dy1,dz1,dx2,dy2,dz2);
-			      }
-			  }
-		}
-	}
+//	void virtual emeIterate(int i_s,int i_f,int l_s,int l_f,int k_s,int k_f,
+//			double *E,double *H1, double *H2,
+//			double *J,double c1,double c2, double tau,
+//			int dx1,int dy1,int dz1,int dx2,int dy2,int dz2)
+//	{
+//		Cell<Particle>  c0 = (*AllCells)[0],*c;
+//
+//		c = &c0;
+//
+//		for(int i = i_s;i <= i_f;i++)
+//		{
+//			  for(int l = l_s;l <= i_f;l++)
+//			  {
+//			      for(int k = k_s;k <= k_f;k++)
+//			      {
+//			    	  emeElement(c,i,l,k,E,H1,H2,
+//			    	  		J,c1,c2,tau,
+//			    	  		dx1,dy1,dz1,dx2,dy2,dz2);
+//			      }
+//			  }
+//		}
+//	}
 
 	//  int virtual ElectricFieldTrace(Cell<Particle> &c,char *lname,int nt,
 	//  double *E,double *H1,double *H2,double *J,double *dbg_E0,double *dbg_E,double *dbg_H1,double *dbg_H2,double *dbg_J,int dir,double c1,double c2,double tau)
