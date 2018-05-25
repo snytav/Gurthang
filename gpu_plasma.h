@@ -1719,12 +1719,12 @@ public:
 //	 }
 //
 
-void virtual emeGPUIterate(int3 s,int i_f,int l_f,int k_f,
+void virtual emeGPUIterate(int3 s,int3 f,
 			double *E,double *H1, double *H2,
 			double *J,double c1,double c2, double tau,
 			int3 d1,int3 d2)
 {
-	dim3 dimGrid(i_f-s.x+1,1,1),dimBlock(1,l_f-s.y+1,k_f-s.z+1);
+	dim3 dimGrid(f.x-s.x+1,1,1),dimBlock(1,f.y-s.y+1,f.z-s.z+1);
 
     GPU_eme<<<dimGrid,dimBlock>>>(d_CellArray,s.x,s.y,s.z,
     		                            E,H1,H2,
@@ -1758,13 +1758,12 @@ int virtual ElectricFieldTrace(
   double *E,double *H1,double *H2,double *J,
   int dir,double c1,double c2,double tau)
   {
-      int3 start;
-      int3 d1,d2;
+      int3 start,d1,d2,finish = make_int3(Nx,Ny,Nz);
+
 
       GetElectricFieldStartsDirs(&start,&d1,&d2,dir);
 
-         emeGPUIterate(start,Nx,Ny,Nz,
-    	      		                E,H1,H2,
+         emeGPUIterate(start,finish,E,H1,H2,
     	        		    	  		J,c1,c2,tau,
     	        		    	  		d1,d2);
 
