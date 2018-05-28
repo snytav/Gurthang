@@ -1351,7 +1351,8 @@ double getWrongCurrentAttribute(int num_along_cell,int num_attr)
  #endif
 void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
-        int i,l,k,i1,l1,k1;
+        int i1,l1,k1;
+        int3 i;
 	double s1,s2,s3,s4,s5,s6,s11,s21,s31,s41,s51,s61;
 
 	    if(x.x < 0 || x.y < 0 || x.z < 0)
@@ -1360,17 +1361,17 @@ void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,Cell
 	    }
 
         InverseKernel(x,
-	  	              i,l,k,i1,l1,k1,
+	  	              i.x,i.y,i.z,i1,l1,k1,
 		              s1,s2,s3,s4,s5,s6,
 	                  s11,s21,s31,s41,s51,s61,p);
 
 
 
-        E = GetElectricField(i,l,k,i1,l1,k1,
+        E = GetElectricField(i.x,i.y,i.z,i1,l1,k1,
 			     s1,s2,s3,s4,s5,s6,
 			     s11,s21,s31,s41,s51,s61,p,Ex1,Ey1,Ez1);
 
-	    H = GetMagneticField(i,l,k,i1,l1,k1,
+	    H = GetMagneticField(i.x,i.y,i.z,i1,l1,k1,
 			     s1,s2,s3,s4,s5,s6,
 			     s11,s21,s31,s41,s51,s61,p,Hx1,Hy1,Hz1);
 }
