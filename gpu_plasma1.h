@@ -823,7 +823,7 @@ __global__ void GPU_StepAllCells(Cell<Particle>  **cells,
 	Cell<Particle>  *c,*c0 = cells[0];//,nc;
 	__shared__ extern CellDouble fd[9];
 	CellDouble *c_jx,*c_jy,*c_jz,*c_ex,*c_ey,*c_ez,*c_hx,*c_hy,*c_hz;
-	CurrentTensor t1,t2;//,loc_t1,loc_t2;
+	CurrentTensor t1,t2;
 	int pqr2;
 	Particle p;
 
@@ -846,8 +846,6 @@ __global__ void GPU_StepAllCells(Cell<Particle>  **cells,
 
 	while(index < CellExtent*CellExtent*CellExtent)
 	{
-//		if(index < 125) {
-
 		copyCellDouble(c_ex,c->Ex,index,blockIdx);
 		copyCellDouble(c_ey,c->Ey,index,blockIdx);
 		copyCellDouble(c_ez,c->Ez,index,blockIdx);
@@ -859,7 +857,7 @@ __global__ void GPU_StepAllCells(Cell<Particle>  **cells,
 		copyCellDouble(c_jx,c->Jx,index,blockIdx);
 		copyCellDouble(c_jy,c->Jy,index,blockIdx);
 		copyCellDouble(c_jz,c->Jz,index,blockIdx);
-		//}
+
 		index += blockDim.x;
 	}
 	__syncthreads();

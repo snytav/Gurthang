@@ -2356,55 +2356,17 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
      if(i >= number_of_particles) return 0;
      readParticleFromSurfaceDevice(i,&p);
      jmp = jmp_control;
-#ifdef ATTRIBUTES_CHECK
-    	     d_ctrlParticles = p_control;
-#endif
     		 x = p.GetX();
     		 GetField(x,E,H,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-#ifdef ATTRIBUTES_CHECK
-    		 p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,33)] = E.x;
-    		 p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,34)] = E.y;
-    		 p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,35)] = E.z;
-
-    		 p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,36)] = H.x;
-    		 p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,37)] = H.y;
-    		 p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,38)] = H.z;
-#endif
     		 p.Move(E,H,tau,p_control,jmp_control);
     		 m = p.GetMass();
 
    		     x1 = p.GetX();
-#ifdef ATTRIBUTES_CHECK
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,39)] = x1.x;
-   		     if(p.fortran_number == 32587 && p.sort == 2)
-   		     {
-   		    	 printf("32587 x1 %25.15e \n",x1.x);
-   		     }
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,40)] = x1.y;
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,41)] = x1.z;
-
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,42)] = p.pu;
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,43)] = p.pv;
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,44)] = p.pw;
-#endif
     		 q_m = p.GetQ2M();
-#ifdef PARTICLE_TRACE
-    		 if(p.fortran_number == 32587 && p.sort == 2)
-    		   		     {
-    		   		    	 printf("bCurrentToMesh 32587 x1 %25.15e \n",x1.x);
-    		   		     }
-#endif
     		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
 
 	         Reflect(&p);
-#ifdef ATTRIBUTES_CHECK
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,130)] = p.x;
-#endif
 
-	     //    flag = p.checkParticle();
-#ifdef ATTRIBUTES_CHECK
-   		     p_control[ParticleAttributePosition(jmp_control,p.fortran_number,p.sort,131)] = p.x;
-#endif
 
 
      writeParticleToSurface(i,&p);
