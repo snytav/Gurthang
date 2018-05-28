@@ -1117,14 +1117,14 @@ void InverseKernel(double3 x,int3 & i,int3 & i1,
 	s1 = s1_interpolate(x.x);          //i - s2;
 	s2 = s2_interpolate(x.x); //getCellCenterReminder(x,0.0,hx);    //i1 - 0.5 - s2;
 
-	s4   = getCellFraction(x.y,y0,hy);
+//	s4   = getCellFraction(x.y,y0,hy);
     i.y  = getCellNumber(x.y,y0,hy);            //(int) (s2 + 1.);
 	i1.y = getCellNumberCenter(x.y,y0,hy);      //(int) (s2 + 1.5);
 
 	s3 = s3_interpolate(x.y);//getCellReminder(y,y0,hy);          //i - s2;
 	s4 = s4_interpolate(x.y);//   getCellCenterReminder(y,y0,hy);    //i1 - 0.5 - s2;
 
-	s6   = getCellFraction(x.z,z0,hz);
+//	s6   = getCellFraction(x.z,z0,hz);
 	i.z  = getCellNumber(x.z,z0,hz);            //(int) (s2 + 1.);
 	i1.z = getCellNumberCenter(x.z,z0,hz);      //(int) (s2 + 1.5);
 	s5 = s5_interpolate(x.z); //getCellReminder(z,z0,hz);          //i - s2;
