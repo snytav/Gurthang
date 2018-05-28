@@ -1105,31 +1105,31 @@ __host__ __device__
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-void InverseKernel(double x,double y, double z,
+void InverseKernel(double3 x,
 			    int& i,int& l,int& k,int&  i1,int&  l1,int& k1,
 			    double& s1,double& s2,double& s3,double& s4,double& s5,double& s6,
 			    double& s11,double& s21,double& s31,double& s41,double& s51,double& s61,
 			    Particle *p
  			  )
 {
-        s2 = getCellFraction(x,0.0,hx);
-	i =  getCellNumber(x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
-	i1 = getCellNumberCenter(x,x0,hx);      //(int) (s2 + 1.5);
-	s1 = s1_interpolate(x);          //i - s2;
-	s2 = s2_interpolate(x); //getCellCenterReminder(x,0.0,hx);    //i1 - 0.5 - s2;
+        s2 = getCellFraction(x.x,0.0,hx);
+	i =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
+	i1 = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
+	s1 = s1_interpolate(x.x);          //i - s2;
+	s2 = s2_interpolate(x.x); //getCellCenterReminder(x,0.0,hx);    //i1 - 0.5 - s2;
 
-	s4 = getCellFraction(y,y0,hy);
-        l  = getCellNumber(y,y0,hy);            //(int) (s2 + 1.);
-	l1 = getCellNumberCenter(y,y0,hy);      //(int) (s2 + 1.5);
+	s4 = getCellFraction(x.y,y0,hy);
+        l  = getCellNumber(x.y,y0,hy);            //(int) (s2 + 1.);
+	l1 = getCellNumberCenter(x.y,y0,hy);      //(int) (s2 + 1.5);
 
-	s3 = s3_interpolate(y);//getCellReminder(y,y0,hy);          //i - s2;
-	s4 = s4_interpolate(y);//   getCellCenterReminder(y,y0,hy);    //i1 - 0.5 - s2;
+	s3 = s3_interpolate(x.y);//getCellReminder(y,y0,hy);          //i - s2;
+	s4 = s4_interpolate(x.y);//   getCellCenterReminder(y,y0,hy);    //i1 - 0.5 - s2;
 
-	s6 = getCellFraction(z,z0,hz);
-	k  = getCellNumber(z,z0,hz);            //(int) (s2 + 1.);
-	k1 = getCellNumberCenter(z,z0,hz);      //(int) (s2 + 1.5);
-	s5 = s5_interpolate(z); //getCellReminder(z,z0,hz);          //i - s2;
-	s6 = s6_interpolate(z); //getCellCenterReminder(z,z0,hz);    //i1 - 0.5 - s2;
+	s6 = getCellFraction(x.z,z0,hz);
+	k  = getCellNumber(x.z,z0,hz);            //(int) (s2 + 1.);
+	k1 = getCellNumberCenter(x.z,z0,hz);      //(int) (s2 + 1.5);
+	s5 = s5_interpolate(x.z); //getCellReminder(z,z0,hz);          //i - s2;
+	s6 = s6_interpolate(x.z); //getCellCenterReminder(z,z0,hz);    //i1 - 0.5 - s2;
 
 	s11 = 1. - s1;
 	s21 = 1. - s2;
@@ -1359,7 +1359,7 @@ void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,Cell
 	    	return;
 	    }
 
-        InverseKernel(x.x,x.y,x.z,
+        InverseKernel(x,
 	  	              i,l,k,i1,l1,k1,
 		              s1,s2,s3,s4,s5,s6,
 	                  s11,s21,s31,s41,s51,s61,p);
