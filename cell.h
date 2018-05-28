@@ -1113,48 +1113,14 @@ void InverseKernel(double x,double y, double z,
  			  )
 {
         s2 = getCellFraction(x,0.0,hx);
-        //printf("x0,y0,z0 %d %d %d  %e %e %e \n",this->i,this->l,this->k,x0,y0,z0);
-
-       // d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,29)] = ;
-#ifdef ATTRIBUTES_CHECK
-        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,31)] = y;
-        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,30)] = x;
-//        if(p->fortran_number == 1 && p->sort == 0)
-//        {
-//        	printf("sort %d jmp %10d fortran_number %d pos %10d atrX %25.15e \n",
-//        			p->sort,
-//        			jmp,
-//        			p->fortran_number,
-//        			ParticleAttributePosition(jmp,p->fortran_number,p->sort,30),
-//        			d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,30)]
-//        			);
-//        }
-        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,32)] = z;
-#endif
-    //s2 = getCellFraction(x,x0,hx);
 	i =  getCellNumber(x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
 	i1 = getCellNumberCenter(x,x0,hx);      //(int) (s2 + 1.5);
 	s1 = s1_interpolate(x);          //i - s2;
 	s2 = s2_interpolate(x); //getCellCenterReminder(x,0.0,hx);    //i1 - 0.5 - s2;
 
-#ifdef ATTRIBUTES_CHECK
-	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,29)] = i1+this->i-1;
-#endif
-//	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,34)] = s1;
-//	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,33)] = i+this->i-1;
-//	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,35)] = s2;
-
-//	if(i < 0 || i1 < 0)
-//	{
-//		int q = 0;
-//	}
 	s4 = getCellFraction(y,y0,hy);
         l  = getCellNumber(y,y0,hy);            //(int) (s2 + 1.);
 	l1 = getCellNumberCenter(y,y0,hy);      //(int) (s2 + 1.5);
-//    d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,47)] = (y)/hy;
-//    d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,48)] = l1+this->l-1;
-//    d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,51)] = l1;
-//    d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,52)] = this->l;
 
 	s3 = s3_interpolate(y);//getCellReminder(y,y0,hy);          //i - s2;
 	s4 = s4_interpolate(y);//   getCellCenterReminder(y,y0,hy);    //i1 - 0.5 - s2;
