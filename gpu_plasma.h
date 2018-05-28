@@ -1842,10 +1842,8 @@ virtual void ComputeField_SecondHalfStep(int nt)
 
 }
 
-void ElectricFieldComponentEvaluate(//char *lname,int nt,
+void ElectricFieldComponentEvaluate(
 		  double *E,double *H1,double *H2,double *J,
-//		  double *dbg_E0,double *dbg_E,double *dbg_H1,
-//		  double *dbg_H2,double *dbg_J,
 		  int dir,
 		  double c1,double c2,double tau,
 		  int dir_1,int start1_1,int end1_1,int start2_1,int end2_1,int N_1,
@@ -1865,35 +1863,27 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 		   double *loc_npJx,double *loc_npJy,double *loc_npJz)
 {
 	 CPU_field = 0;
-//      Cell<Particle> c = (*AllCells)[0];
-//      double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
       double3 c1 = getMagneticFieldTimeMeshFactors();
 
 
-      ElectricFieldComponentEvaluate(//"exlg",nt,
+      ElectricFieldComponentEvaluate(
     		  locEx,locHz,locHy,loc_npJx,
-    		//  dbgEx0,npEx,dbgHz,
-    		  //dbgHy,dbgJx,
     		  0,c1.y,c1.z,tau,
               1,0,Nx,1,Nz,Ny,
               2,0,Nx,0,Ny+1,Nz);
 
 
 
-      ElectricFieldComponentEvaluate(//"eylg",nt,
+      ElectricFieldComponentEvaluate(
     		  locEy,locHx,locHz,loc_npJy,
-//    		  dbgEy0,npEy,dbgHx,
-//    		  dbgHz,dbgJy,
     		  1,c1.z,c1.x,tau,
               0,0,Ny,1,Nz,Nx,
               2,0,Nx+1,0,Ny,Nz);
 
        SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
 
-      ElectricFieldComponentEvaluate(//"ezlg",nt,
+      ElectricFieldComponentEvaluate(
     		  locEz,locHy,locHx,loc_npJz,
-//    		  dbgEz0,npEz,dbgHy,
-//    		  dbgHx,dbgJz,
     		  2,c1.x,c1.y,tau,
               0,1,Ny,0,Nz,Nx,
               1,0,Nx+1,0,Nz,Ny);
