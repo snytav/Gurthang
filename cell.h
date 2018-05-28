@@ -1111,7 +1111,7 @@ void InverseKernel(double3 x,int3 & i,int3 & i1,
 			    Particle *p
  			  )
 {
-        s2 = getCellFraction(x.x,0.0,hx);
+       // s2 = getCellFraction(x.x,0.0,hx);
 	i.x =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
 	i1.x = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
 	s1 = s1_interpolate(x.x);          //i - s2;
@@ -1350,7 +1350,7 @@ double getWrongCurrentAttribute(int num_along_cell,int num_attr)
  #endif
 void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
-        int3 i,i1;
+    int3 i,i1;
 	double s1,s2,s3,s4,s5,s6,s11,s21,s31,s41,s51,s61;
 
 	    if(x.x < 0 || x.y < 0 || x.z < 0)
