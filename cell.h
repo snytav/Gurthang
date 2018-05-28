@@ -1398,34 +1398,6 @@ void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,Cell
 		              s1,s2,s3,s4,s5,s6,
 	                  s11,s21,s31,s41,s51,s61,p);
 
-#ifdef ATTRIBUTES_CHECK
-        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,7)] = i+this->i-1;
-        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,8)] = l1+this->l-1;
-        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,9)] = k1+this->k-1;
-
-//        d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,10)] = Ex->M[i][l1][k1];
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,10)] = Ex->M[i][l1][k1];
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,11)] = hx;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,12)] = hy;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,13)] = hz;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,14)] = x.x/hx;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,15)] = x.x/hx + 1.0;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,16)] = (int)(x.x/hx + 1.0);
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,17)] = s1_interpolate(x.x);
-
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,18)] = s1;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,19)] = s4;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,20)] = s6;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,21)] = s61;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,22)] = s41;
-
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,23)] = s2;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,24)] = s3;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,25)] = s21;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,26)] = s31;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,27)] = s5;
-    	d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,28)] = s51;
-#endif
 
 
         E = GetElectricField(i,l,k,i1,l1,k1,
