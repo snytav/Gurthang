@@ -1018,15 +1018,15 @@ void GPU_emh2(
 __host__ __device__
 void emh1_Element(
 		Cell<Particle> *c,
-		int i,int l,int k,
+		int3 i,
 		double *Q,double *H,double *E1, double *E2,
 		double c1,double c2,
-		int dx1,int dy1,int dz1,int dx2,int dy2,int dz2)
+		int3 d1,int3 d2)
 {
 
-    int n  = c->getGlobalCellNumber(i,l,k);
-	int n1 = c->getGlobalCellNumber(i+dx1,l+dy1,k+dz1);
-	int n2 = c->getGlobalCellNumber(i+dx2,l+dy2,k+dz2);
+    int n  = c->getGlobalCellNumber(i.x,i.y,i.z);
+	int n1 = c->getGlobalCellNumber(i.x+d1.x,i.y+d1.y,i.z+d1.z);
+	int n2 = c->getGlobalCellNumber(i.x+d2.x,i.y+d2.y,i.z+d2.z);
 
 	double e1_n1 = E1[n1];
 	double e1_n  = E1[n];
@@ -1042,18 +1042,16 @@ template <template <class Particle> class Cell >
 global_for_CUDA
 void GPU_emh1(
 		 Cell<Particle>  **cells,
-				            int i_s,int l_s,int k_s,
 							double *Q,double *H,double *E1, double *E2,
 							double c1,double c2,
-							int dx1,int dy1,int dz1,int dx2,int dy2,int dz2
+							int3 d1,int3 d2
 		)
 {
-	unsigned int nx = blockIdx.x;
-	unsigned int ny = blockIdx.y;
-	unsigned int nz = blockIdx.z;
+
+	int3 i3 = make_int3(blockIdx.x,blockIdx.y,blockIdx.z);
 	Cell<Particle>  *c0 = cells[0];
 
-	emh1_Element(c0,i_s+nx,l_s+ny,k_s+nz,Q,H,E1,E2,c1,c2,dx1,dy1,dz1,dx2,dy2,dz2);
+	emh1_Element(c0,i3,Q,H,E1,E2,c1,c2,d1,d2);
 }
 
 __host__ __device__
@@ -1818,7 +1816,7 @@ void  ComputeField_FirstHalfStep(
 		 		                               t_check,nt);
 
 
-	 MagneticStageOne(d_Qx,d_Qy,d_Qz,d_Hx,d_Hy,d_Hz,nt,d_Ex,d_Ey,d_Ez);
+	 MagneticStageOne(d_Qx,d_Qy,d_Qz,d_Hx,d_Hy,d_Hz,d_Ex,d_Ey,d_Ez);
 
 	 checkFields_afterMagneticStageOne(d_Hx,d_Hy,d_Hz,
 		 		                           d_Qx,d_Qy,d_Qz,
@@ -1827,12 +1825,7 @@ void  ComputeField_FirstHalfStep(
 
 }
 
-virtual void ComputeField_SecondHalfStep(
-		   double *locEx,double *locEy,double *locEz,
-		   int nt,
-		   double *locHx,double *locHy,double *locHz,
-		   double *loc_npJx,double *loc_npJy,double *loc_npJz,
-		   double *locQx,double *locQy,double *locQz)
+virtual void ComputeField_SecondHalfStep(int nt)
 {
 
      SetPeriodicCurrents(nt);
@@ -1871,13 +1864,14 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 		   double *loc_npJx,double *loc_npJy,double *loc_npJz)
 {
 	 CPU_field = 0;
-      Cell<Particle> c = (*AllCells)[0];
-      double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
-      double c11 = tau/hx,c21 = tau/hy,c31 = tau/hz;
+//      Cell<Particle> c = (*AllCells)[0];
+//      double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
+      double3 c1 = getMagneticFieldTimeMeshFactors();
+
 
       ElectricFieldComponentEvaluate("exlg",nt,locEx,locHz,locHy,loc_npJx,
     		  dbgEx0,npEx,dbgHz,
-    		  dbgHy,dbgJx,0,c21,c31,tau,
+    		  dbgHy,dbgJx,0,c1.y,c1.z,tau,
               1,0,Nx,1,Nz,Ny,
               2,0,Nx,0,Ny+1,Nz);
 
@@ -1885,7 +1879,7 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 
       ElectricFieldComponentEvaluate("eylg",nt,locEy,locHx,locHz,loc_npJy,
     		  dbgEy0,npEy,dbgHx,
-    		  dbgHz,dbgJy,1,c31,c11,tau,
+    		  dbgHz,dbgJy,1,c1.z,c1.x,tau,
               0,0,Ny,1,Nz,Nx,
               2,0,Nx+1,0,Ny,Nz);
 
@@ -1893,7 +1887,7 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 
       ElectricFieldComponentEvaluate("ezlg",nt,locEz,locHy,locHx,loc_npJz,
     		  dbgEz0,npEz,dbgHy,
-    		  dbgHx,dbgJz,2,c11,c21,tau,
+    		  dbgHx,dbgJz,2,c1.x,c1.y,tau,
               0,1,Ny,0,Nz,Nx,
               1,0,Nx+1,0,Nz,Ny);
 
@@ -1902,84 +1896,43 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
          memory_monitor("after_ComputeField_SecondHalfStep",nt);
 }
 
+double3 getMagneticFieldTimeMeshFactors()
+{
+    Cell<Particle> c = (*AllCells)[0];
+	double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
+	double3 d;
+    d.x = tau/(hx);
+    d.y = tau/(hy);
+    d.z = tau/hz;
+
+	return d;
+}
 
 virtual void MagneticStageOne(
-                  double *locQx,double *locQy,double *locQz,
-                  double *locHx,double *locHy,double *locHz,
-		            int nt,
-		            double *locEx,double *locEy,double *locEz
+                  double *Qx,double *Qy,double *Qz,
+                  double *Hx,double *Hy,double *Hz,
+   	              double *Ex,double *Ey,double *Ez
 		           )
 {
-    Cell<Particle> c = (*AllCells)[0];
-    double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
-    double c11 = tau/(hx),c21 = tau/(hy),c31 = tau/hz;
-   // double *d_locEx,*d_locEy, *d_locEz,*d_locHx, *d_locHy, *d_locHz;
+	double3 c1 = getMagneticFieldTimeMeshFactors();
 
-#ifdef DEBUG_PLASMA_STEP_FIELDS
-    d_locEx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    d_locEy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    d_locEz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    MagneticFieldTrace(Qx,Hx,Ey,Ez,Nx+1,Ny,Nz,c1.z,c1.y,0);
 
-    d_locHx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    d_locHy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    d_locHz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    MagneticFieldTrace(Qy,Hy,Ez,Ex,Nx,Ny+1,Nz,c1.x,c1.z,1);
 
-    readDebugArray("dnex",d_locEx,2*nt-2);
-    readDebugArray("dney",d_locEy,2*nt-2);
-    readDebugArray("dnez",d_locEz,2*nt-2);
-    CheckArray(d_locEx,locEx);
-    CheckArray(d_locEy,locEy);
-    CheckArray(d_locEz,locEz);
+    MagneticFieldTrace(Qz,Hz,Ex,Ey,Nx,Ny,Nz+1,c1.y,c1.x,2);
 
-    readDebugArray("dnqx",dbg_Qx,2*nt-1);
-    readDebugArray("dnqy",dbg_Qy,2*nt-1);
-    readDebugArray("dnqz",dbg_Qz,2*nt-1);
-
-    readDebugArray("dnhx",dbgHx,2*nt);
-    readDebugArray("dnhy",dbgHy,2*nt);
-    readDebugArray("dnhz",dbgHz,2*nt);
-
-    readDebugArray("dnhx",locHx,2*nt-1);
-    readDebugArray("dnhy",locHy,2*nt-1);
-    readDebugArray("dnhz",locHz,2*nt-1);
-
-    readDebugArray("dnhx",d_locHx,2*nt-1);
-    readDebugArray("dnhy",d_locHy,2*nt-1);
-    readDebugArray("dnhz",d_locHz,2*nt-1);
-    CheckArray(d_locHx,locHx);
-    CheckArray(d_locHy,locHy);
-    CheckArray(d_locHz,locHz);
-
-#endif
-
-     MagneticFieldTrace(c,"hxlg",nt,locQx,locHx,locEy,locEz,Nx+1,Ny,Nz,c31,c21,0);
-#ifdef DEBUG_PLASMA_STEP_FIELDS
-    CheckArray(Qx,dbg_Qx);
-    CheckArray(Hx,dbgHx);
-#endif
-
-//    // fortran c11 0.875350140056022E-01
-    MagneticFieldTrace(c,"hylg",nt,locQy,locHy,locEz,locEx,Nx,Ny+1,Nz,c11,c31,1);
-#ifdef DEBUG_PLASMA_STEP_FIELDS
-    CheckArray(Qy,dbg_Qy);
-    CheckArray(Hy,dbgHy);
-#endif
-
-    MagneticFieldTrace(c,"hzlg",nt,locQz,locHz,locEx,locEy,Nx,Ny,Nz+1,c21,c11,2);
-#ifdef DEBUG_PLASMA_STEP_FIELDS
-    CheckArray(Qz,dbg_Qz);
-    CheckArray(Hz,dbgHz);
-#endif
 }
-virtual void MagneticFieldStageTwo(double *locHx,double *locHy,double *locHz,
+
+virtual void MagneticFieldStageTwo(double *Hx,double *Hy,double *Hz,
 		            int nt,
-		            double *locQx,double *locQy,double *locQz)
+		            double *Qx,double *Qy,double *Qz)
 {
     Cell<Particle> c = (*AllCells)[0];
 
-    SimpleMagneticFieldTrace(c,locQx,locHx,Nx+1,Ny,Nz);
-    SimpleMagneticFieldTrace(c,locQy,locHy,Nx,Ny+1,Nz);
-    SimpleMagneticFieldTrace(c,locQz,locHz,Nx,Ny,Nz+1);
+    SimpleMagneticFieldTrace(c,Qx,Hx,Nx+1,Ny,Nz);
+    SimpleMagneticFieldTrace(c,Qy,Hy,Nx,Ny+1,Nz);
+    SimpleMagneticFieldTrace(c,Qz,Hz,Nx,Ny,Nz+1);
 
     checkControlPoint(500,nt,0);
 }
@@ -2024,18 +1977,11 @@ int readStartPoint(int nt)
 
 	void Step(int nt)
 	 {
-
-		ComputeField_FirstHalfStep(//Ex,Ey,Ez,
-				nt
-				//,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz
-				);
-
+		ComputeField_FirstHalfStep(nt);
 
 		PushParticles(nt);
 
-
-
-		ComputeField_SecondHalfStep(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz,Qx,Qy,Qz);
+		ComputeField_SecondHalfStep(nt);
 
 		 Diagnose(nt);
 
@@ -2954,118 +2900,33 @@ int readStartPoint(int nt)
 	//    return 0;
 	//  }
 
-	int MagneticFieldTrace(Cell<Particle> &c,char *lname,int nt,double *Q,double *H,double *E1,double *E2,int i_end,int l_end,int k_end,double c1,double c2,int dir)
+	int getMagneticFieldTraceShifts(int dir,int3 &d1,int3 &d2)
 	{
-	      int dx1,dy1,dz1,dy2,dx2,dz2;//,n0;
-	      double e1_n1,e1_n,e2_n2,e2_n,t;//,t1;
+	      d1.x = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*0;
+	      d1.y = (dir == 0)*0 + (dir == 1)*0 + (dir == 2)*1;
+	      d1.z = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*0;
 
-	#ifdef DEBUG_PLASMA_FIELDS
-	{    char logname[100];
-	     double *Hres,*ldQ,*ldH,*ldE1,*ldE2;
+	      d2.x = (dir == 0)*0 + (dir == 1)*0 + (dir == 2)*1;
+	      d2.y = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*0;
+	      d2.z = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*0;
 
-	     Hres = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
-	     ldQ  = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
-	     ldE1 = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
-	     ldE2 = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
-	     ldH  = (double *)malloc((Nx+2)*(Ny+2)*(Nz+2)*sizeof(double));
-
-	     sprintf(logname,"%s%03d.dat",lname,nt);
-
-	     read3DarrayLog(logname, ldQ,40,0);
-	     read3DarrayLog(logname, ldE1,40,2);
-	     CheckArray(E1,ldE1);
-	     //printf("E1[0] %15.5e \n",E1[0]);
-	     read3DarrayLog(logname, ldE2,40,4);
-	     CheckArray(E2,ldE2);
-	     //printf("E2[0] %15.5e \n",E2[0]);
-
-	     //read3DarrayLog("mlog002.dat", Q,40,5);
-	     read3DarrayLog(logname, ldH,40,5);
-	     CheckArray(H,ldH);
-	     n0 = c.getGlobalCellNumber(11,10,10);
-	     printf("%e \n",H[n0]);
-	     read3DarrayLog(logname, Hres,40,6);
-	     free(Hres);
-	     free(ldQ);
-	     free(ldH);
-	     free(ldE1);
-	     free(ldE2);
+	      return 0;
 	}
-	#endif
 
-	     //CheckArray(E1,Ey);
-	     //CheckArray(E2,Ez);
-	     //printf("E1[0] %15.5e \n",E1[0]);
-	      dx1 = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*0;
-	      dy1 = (dir == 0)*0 + (dir == 1)*0 + (dir == 2)*1;
-	      dz1 = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*0;
+	int MagneticFieldTrace(double *Q,double *H,double *E1,double *E2,int i_end,int l_end,int k_end,double c1,double c2,int dir)
+	{
+	      int3 d1,d2;
 
-	      dx2 = (dir == 0)*0 + (dir == 1)*0 + (dir == 2)*1;
-	      dy2 = (dir == 0)*1 + (dir == 1)*0 + (dir == 2)*0;
-	      dz2 = (dir == 0)*0 + (dir == 1)*1 + (dir == 2)*0;
-//	      n0 = c.getGlobalCellNumber(11,10,10);
-//	      printf("%e \n",H[n0]);
-	      //printf("E1[0] %15.5e \n",E1[0]);
+	      getMagneticFieldTraceShifts(dir,d1,d2);
 
-     if(CPU_field == 0)
-     {
    		dim3 dimGrid(i_end+1,l_end+1,k_end+1),dimBlock(1,1,1);
 
-	    GPU_emh1<<<dimGrid,dimBlock>>>(d_CellArray,0,0,0,Q,H,E1,E2,c1,c2,
-	    		dx1,dy1,dz1,dx2,dy2,dz2);
-     }
-     else
-     {
-
-	      for(int k = 0;k <= k_end;k++)
-	      {
-	   	    for(int l = 0;l <= l_end;l++)
-		    {
-		      for(int i = 0;i <= i_end;i++)
-		      {
-		    	//  printf("E1[0] %15.5e \n",E1[0]);
-			  int n  = c.getGlobalCellNumber(i,l,k);
-			  int n1 = c.getGlobalCellNumber(i+dx1,l+dy1,k+dz1);
-			  int n2 = c.getGlobalCellNumber(i+dx2,l+dy2,k+dz2);
-
-			  e1_n1 = E1[n1];
-			  e1_n  = E1[n];
-			  e2_n2 = E2[n2];
-			  e2_n  = E2[n];
-
-			  t  = 0.5*(c1*(e1_n1 - e1_n)- c2*(e2_n2 - e2_n));
-			  //printf("E1[0] %15.5e \n",E1[0]);
-	#ifdef FIELDS_DEBUG_OUTPUT
-			  std::cout << i << l << k << t << " " << Q[n] << " diff " << fabs(t - Q[n]) << std::endl;
-
-			  std::cout << "E1 " <<  E1[n] << " E2 " << E2[n] << " H  " << H[n] << std::endl;
-
-			  if((fabs(t - Q[n]) > TOLERANCE) || ((i == 0) && (l == 0) && (k == 10)))
-			  {
-			     printf("i %3d l %3d k %3d %15.5e dbg %15.5e\n",i+1,l+1,k+1,t,Q[n]);
-			  }
-			  //printf("E1[0] %15.5e \n",E1[0]);
-	//		  printf("i %3d l %3d k %3d n %5d %15.5e dbg %15.5e \n",
-		//			  i+1,l+1,k+1,      n,     t,         Q[n]);
-			  //printf("t %10.3e dbg %10.3e diff %10.3e \n",t, Q[n],fabs(t - Q[n]));
-
-
-	#endif
-			  Q[n] = t;
-#ifdef FIELDS_DEBUG_OUTPUT
-			  printf("%d %d %d %e %e \n",i,l,k,H[n],Q[n]);
-#endif
-			  H[n] += Q[n];
-			//  t1 = H[n];
-		      }
-		    }
-	      }
-     }
-//	      CheckArray(Q,ldQ);
-//	      CheckArray(H,Hres);
+	    GPU_emh1<<<dimGrid,dimBlock>>>(d_CellArray,Q,H,E1,E2,c1,c2,
+	    		d1,d2);
 
 	      return 0;
 	  }
+
 	int SimpleMagneticFieldTrace(Cell<Particle> &c,double *Q,double *H,int i_end,int l_end,int k_end)
 	{
 
@@ -3562,6 +3423,234 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 
 	  }
+	  virtual void readBinaryParticlesOneSort(FILE *f,thrust::host_vector<Particle>& vp,
+			                                  particle_sorts sort,int nt)
+
+	  {
+
+//		     char str[1000];
+		     double x,y,z,px,py,pz,q_m,m;
+		     int n = 0;//,t;
+		     Cell<Particle> c0 = (*AllCells)[0];
+		     int pn_min,pn_ave,pn_max,pn_sum,err;
+
+
+		     if((err = ferror(f)) != 0) return;
+
+		     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
+		    		                                             &dbg_px,&dbg_py,&dbg_pz,&q_m,&m,nt,
+		    		                                             sort);
+
+		     real_number_of_particle[(int)sort] = total_particles;
+
+		    err = ferror(f);
+		    for(int i = 0; i < total_particles;i++)
+		     {
+
+		    	  if((err = ferror(f)) != 0)
+		    	  {
+		    		 // int qq = 0;
+		    	  }
+
+		         // if(i%getSize() != 0) continue;
+		      //    printf("rank %d part %d \n",getRank(),i);
+
+		    	  x   = dbg_x[i];
+//		    	  if(i  == 269 && sort == ION)
+//		    	  {
+//		    		  int qq = 0;
+//		    		  qq = 0;
+//		    		 // printf("number %5d x %25.15e \n",i,x);
+//		    	  }
+
+
+		          y   = dbg_y[i];
+		          z   = dbg_z[i];
+  		          px   = dbg_px[i];
+		          py   = dbg_py[i];
+		          pz   = dbg_pz[i];
+
+//		          if(i+1 == 138)
+//		          {
+//		        	  int qq = 0;
+//		          }
+
+		         // if(sort == PLASMA_ELECTRON) continue;
+
+			      Particle p;// = new Particle(x,y,z,px,py,pz,m,q_m);
+			      p.x   = x;
+			      p.y   = y;
+			      p.z   = z;
+			      p.pu  = px;
+			      p.pv  = py;
+			      p.pw  = pz;
+			      p.m   = m;
+			      p.q_m = q_m;
+
+		    	  if((err = ferror(f)) != 0)
+		    	  {
+		    		  //int qq = 0;
+		    	  }
+
+//			      if(n == 829)
+//			      {
+////			    	  int qq = 0;
+////			    	  qq = 1;
+//			      }
+			      p.fortran_number = i+1;
+			      p.sort = sort;
+//////////////////////////////////////////////////
+			      double3 d;
+			      d.x = x;
+			      d.y = y;
+			      d.z = z;
+
+			      n = c0.getPointCell(d);
+
+			      Cell<Particle> & c = (*AllCells)[n];
+		    	  if((err = ferror(f)) != 0)
+		    	  {
+		    		  int qq = 0;
+		    	  }
+
+		    	  if(i == 3189003 && sort == PLASMA_ELECTRON)
+		    	  {
+		    		  int qq = 0;
+		    	  }
+
+
+   			      if(c.Insert(p) == true)
+			      {
+#ifdef PARTICLE_PRINTS1000
+		             if((i+1)%1000 == 0 )
+		             {
+		        	     printf("particle %d (%e,%e,%e) is number %d in cell (%d,%d,%d)\n",
+		        	    		 i+1,
+				    		x,y,z,c.number_of_particles,c.i,c.l,c.k);
+		             }
+		             //if((i+1) == 10000) exit(0);
+#endif
+			      }
+   			   if((err = ferror(f)) != 0)
+   			  		    	  {
+   			  		    		 // int qq = 0;
+   			  		    	  }
+
+//		#define GPU_PARTICLE ///////////////////////
+
+		     }// END total_particles LOOP
+	    	  if((err = ferror(f)) != 0)
+	    	  {
+	    		  //int qq = 0;
+	    	  }
+
+		    err = ferror(f);
+		    free(dbg_x);
+			free(dbg_y);
+			free(dbg_z);
+		    free(dbg_px);
+			free(dbg_py);
+			free(dbg_pz);
+			err = ferror(f);
+			 if((err = ferror(f)) != 0)
+					    	  {
+					    		//  int qq = 0;
+					    	  }
+
+             pn_min = 1000000000;
+             pn_max = 0;
+             pn_ave = 0;
+		     for(int n = 0;n < (*AllCells).size();n++)
+		     {
+		    	 Cell<Particle> & c = (*AllCells)[n];
+
+		    	 pn_ave += c.number_of_particles;
+		    	 if(pn_min > c.number_of_particles) pn_min = c.number_of_particles;
+		    	 if(pn_max < c.number_of_particles) pn_max = c.number_of_particles;
+
+		     }
+		     if((err = ferror(f)) != 0)
+		    		    	  {
+		    		    		  //int qq = 0;
+		    		    	  }
+		     err = ferror(f);
+		     pn_sum = pn_ave;
+		     pn_ave /= (*AllCells).size();
+
+		     printf("SORT m %15.5e q_m %15.5e %10d (sum %10d) particles in %8d cells: MIN %10d MAX %10d average %10d \n",
+		    		 m,            q_m,       total_particles,pn_sum,
+		    		 (*AllCells).size(),
+		    		 pn_min,pn_max,pn_ave);
+		     if((err = ferror(f)) != 0)
+		    		    	  {
+		    		    		 // int qq = 0;
+		    		    	  }
+
+		     err = ferror(f);
+			//exit(0);
+	  }
+
+
+	  virtual void InitBinaryParticles(char *fn,thrust::host_vector<Particle>& vp,int nt)
+	  {
+	     FILE *f;
+//	     char str[1000];
+	     double /*x,y,z,px,py,pz,q_m*/*buf;//,tp,m;
+//	     int n = 0,t;
+
+	     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+
+	     if((f = fopen(fn,"rb")) == NULL) return;
+	     struct sysinfo info;
+
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     readFortranBinaryArray(f,buf);
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     readFortranBinaryArray(f,buf);
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+
+	     readFortranBinaryArray(f,buf);
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+
+	     readFortranBinaryArray(f,buf);
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+
+	     readFortranBinaryArray(f,buf);
+	     readFortranBinaryArray(f,buf);
+
+	     readFortranBinaryArray(f,buf);
+	     readFortranBinaryArray(f,buf);
+	     readFortranBinaryArray(f,buf);
+
+	     readFortranBinaryArray(f,buf);
+	     readFortranBinaryArray(f,buf);
+	     readFortranBinaryArray(f,buf);
+	     int err;
+//--------------------------------------------
+	     err = ferror(f);
+	     readBinaryParticlesOneSort(f,vp,ION,nt);
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     err = ferror(f);
+
+	     readBinaryParticlesOneSort(f,vp,PLASMA_ELECTRON,nt);
+	     err = ferror(f);
+	     sysinfo(&info);
+	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+         err = ferror(f);
+	     readBinaryParticlesOneSort(f,vp,BEAM_ELECTRON,nt);
+//--------------------------------------------
+
+	     fclose(f);
+
+	     magf = 1;
+	  }
+
 
 void readParticles(char *pfile,char *nextpfile)
 {
