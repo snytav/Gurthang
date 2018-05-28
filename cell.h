@@ -842,7 +842,7 @@ virtual
  __host__ __device__
  #endif
 double3 GetElectricField(
-			    int i,int l,int k,int  i1,int  l1,int k1,
+			    int3 i,int3  i1,
 			    double& s1,double& s2,double& s3,double& s4,double& s5,double& s6,
 			    double& s11,double& s21,double& s31,double& s41,double& s51,double& s61,
 			    Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1
@@ -851,19 +851,19 @@ double3 GetElectricField(
         double3 E;
         int3 cell_num;
 
-    cell_num.x = i;
-    cell_num.y = l1;
-    cell_num.z = k1;
+    cell_num.x = i.x;
+    cell_num.y = i1.y;
+    cell_num.z = i1.z;
 	E.x =    Interpolate3D(Ex1,&cell_num,s1,s11,s4,s41,s6,s61,p,0);
 
-	cell_num.x = i1;
-	cell_num.y = l;
-	cell_num.z = k1;
+	cell_num.x = i1.x;
+	cell_num.y = i.y;
+	cell_num.z = i1.z;
 	E.y =    Interpolate3D(Ey1,&cell_num,s2,s21,s3,s31,s6,s61,p,1);
 
-	cell_num.x = i1;
-	cell_num.y = l1;
-	cell_num.z = k;
+	cell_num.x = i1.x;//i1;
+	cell_num.y = i1.y;//l1;
+	cell_num.z = i.z; //k;
 	E.z =    Interpolate3D(Ez1,&cell_num,s2,s21,s4,s41,s5,s51,p,2);
 
 	return E;
@@ -1105,29 +1105,28 @@ __host__ __device__
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-void InverseKernel(double3 x,
-			    int& i,int& l,int& k,int&  i1,int&  l1,int& k1,
+void InverseKernel(double3 x,int3 & i,int3 & i1,
 			    double& s1,double& s2,double& s3,double& s4,double& s5,double& s6,
 			    double& s11,double& s21,double& s31,double& s41,double& s51,double& s61,
 			    Particle *p
  			  )
 {
         s2 = getCellFraction(x.x,0.0,hx);
-	i =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
-	i1 = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
+	i.x =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
+	i1.x = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
 	s1 = s1_interpolate(x.x);          //i - s2;
 	s2 = s2_interpolate(x.x); //getCellCenterReminder(x,0.0,hx);    //i1 - 0.5 - s2;
 
-	s4 = getCellFraction(x.y,y0,hy);
-        l  = getCellNumber(x.y,y0,hy);            //(int) (s2 + 1.);
-	l1 = getCellNumberCenter(x.y,y0,hy);      //(int) (s2 + 1.5);
+	s4   = getCellFraction(x.y,y0,hy);
+    i.y  = getCellNumber(x.y,y0,hy);            //(int) (s2 + 1.);
+	i1.y = getCellNumberCenter(x.y,y0,hy);      //(int) (s2 + 1.5);
 
 	s3 = s3_interpolate(x.y);//getCellReminder(y,y0,hy);          //i - s2;
 	s4 = s4_interpolate(x.y);//   getCellCenterReminder(y,y0,hy);    //i1 - 0.5 - s2;
 
-	s6 = getCellFraction(x.z,z0,hz);
-	k  = getCellNumber(x.z,z0,hz);            //(int) (s2 + 1.);
-	k1 = getCellNumberCenter(x.z,z0,hz);      //(int) (s2 + 1.5);
+	s6   = getCellFraction(x.z,z0,hz);
+	i.z  = getCellNumber(x.z,z0,hz);            //(int) (s2 + 1.);
+	i1.z = getCellNumberCenter(x.z,z0,hz);      //(int) (s2 + 1.5);
 	s5 = s5_interpolate(x.z); //getCellReminder(z,z0,hz);          //i - s2;
 	s6 = s6_interpolate(x.z); //getCellCenterReminder(z,z0,hz);    //i1 - 0.5 - s2;
 
@@ -1254,7 +1253,7 @@ double Interpolate3D(CellDouble *E,int3 *cell,
 virtual
 #endif
 double3 GetMagneticField(
-			    int& i,int& l,int& k,int&  i1,int&  l1,int& k1,
+			    int3 i,int3 i1,
 			    double& s1,double& s2,double& s3,double& s4,double& s5,double& s6,
 			    double& s11,double& s21,double& s31,double& s41,double& s51,double& s61,
 			    Particle *p,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1
@@ -1263,19 +1262,19 @@ double3 GetMagneticField(
         double3 H;
         int3 cn;
 
-        cn.x = i1;
-        cn.y = l;
-        cn.z = k;
+        cn.x = i1.x;
+        cn.y = i.y;
+        cn.z = i.z;
     	H.x =    Interpolate3D(Hx1,&cn,s2,s21,s3,s31,s5,s51,p,3);
 
-    	cn.x = i;
-    	cn.y = l1;
-    	cn.z = k;
+    	cn.x = i.x;
+    	cn.y = i1.y;
+    	cn.z = i.z;
     	H.y =    Interpolate3D(Hy1,&cn,s1,s11,s4,s41,s5,s51,p,4);
 
-    	cn.x = i;
-    	cn.y = l;
-    	cn.z = k1;
+    	cn.x = i.x;
+    	cn.y = i.y;
+    	cn.z = i1.z;
     	H.z =    Interpolate3D(Hz1,&cn,s1,s11,s3,s31,s6,s61,p,5);
 
 
@@ -1360,17 +1359,17 @@ void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,Cell
 	    }
 
         InverseKernel(x,
-	  	              i.x,i.y,i.z,i1.x,i1.y,i1.z,
+	  	              i,i1,
 		              s1,s2,s3,s4,s5,s6,
 	                  s11,s21,s31,s41,s51,s61,p);
 
 
 
-        E = GetElectricField(i.x,i.y,i.z,i1.x,i1.y,i1.z,
+        E = GetElectricField(i,i1,
 			     s1,s2,s3,s4,s5,s6,
 			     s11,s21,s31,s41,s51,s61,p,Ex1,Ey1,Ez1);
 
-	    H = GetMagneticField(i.x,i.y,i.z,i1.x,i1.y,i1.z,
+	    H = GetMagneticField(i,i1,
 			     s1,s2,s3,s4,s5,s6,
 			     s11,s21,s31,s41,s51,s61,p,Hx1,Hy1,Hz1);
 }
