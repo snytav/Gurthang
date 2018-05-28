@@ -1851,7 +1851,7 @@ void ElectricFieldComponentEvaluate(
 		  )
 
 {
-    ElectricFieldTrace(E,H1,H2,J,dir,c1,c2,tau);
+     ElectricFieldTrace(E,H1,H2,J,dir,c1,c2,tau);
 
      PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
      PeriodicBoundaries(E, dir_2,start1_2,end1_2,start2_2,end2_2,N_2);
@@ -1865,14 +1865,11 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 	 CPU_field = 0;
       double3 c1 = getMagneticFieldTimeMeshFactors();
 
-
       ElectricFieldComponentEvaluate(
     		  locEx,locHz,locHy,loc_npJx,
     		  0,c1.y,c1.z,tau,
               1,0,Nx,1,Nz,Ny,
               2,0,Nx,0,Ny+1,Nz);
-
-
 
       ElectricFieldComponentEvaluate(
     		  locEy,locHx,locHz,loc_npJy,
@@ -1880,7 +1877,7 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
               0,0,Ny,1,Nz,Nx,
               2,0,Nx+1,0,Ny,Nz);
 
-       SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
+      SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
 
       ElectricFieldComponentEvaluate(
     		  locEz,locHy,locHx,loc_npJz,

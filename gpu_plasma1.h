@@ -811,11 +811,7 @@ __global__ void GPU_GetCellNumbers(Cell<Particle>  **cells,
 
 template <template <class Particle> class Cell >
 __global__ void GPU_StepAllCells(Cell<Particle>  **cells,
-//		                         int n,
 		                         int i,
-//		                         CellDouble *jx,
-//		                         CellDouble *jy,
-//		                         CellDouble *jz,
 		                         double *global_jx,
 		                         double mass,
 		                         double q_mass,
