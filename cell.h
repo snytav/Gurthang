@@ -1111,6 +1111,10 @@ void InverseKernel(double3 x,int3 & i,int3 & i1,
 			    Particle *p
  			  )
 {
+
+	int2 g;
+
+	double2 f;
        // s2 = getCellFraction(x.x,0.0,hx);
 	i.x =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
 	i1.x = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
