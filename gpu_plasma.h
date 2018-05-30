@@ -895,6 +895,45 @@ __device__ void assignSharedWithLocal(
 	*c_jz = &(fd[8]);
 }
 
+__device__ void copyFieldsToSharedMemory(
+		 CellDouble *c_jx,
+		 CellDouble *c_jy,
+		 CellDouble *c_jz,
+		 CellDouble *c_ex,
+		 CellDouble *c_ey,
+		 CellDouble *c_ez,
+		 CellDouble *c_hx,
+		 CellDouble *c_hy,
+		 CellDouble *c_hz,
+		 Cell<Particle>  *c,
+		 int index,
+		 dim3 blockId,
+		 int blockDimX
+		)
+{
+	//int index  = threadIdx.x;
+
+
+	while(index < CellExtent*CellExtent*CellExtent)
+	{
+//		if(index < 125) {
+
+		copyCellDouble(c_ex,c->Ex,index,blockId);
+		copyCellDouble(c_ey,c->Ey,index,blockId);
+		copyCellDouble(c_ez,c->Ez,index,blockId);
+
+		copyCellDouble(c_hx,c->Hx,index,blockId);
+		copyCellDouble(c_hy,c->Hy,index,blockId);
+		copyCellDouble(c_hz,c->Hz,index,blockId);
+
+		copyCellDouble(c_jx,c->Jx,index,blockId);
+		copyCellDouble(c_jy,c->Jy,index,blockId);
+		copyCellDouble(c_jz,c->Jz,index,blockId);
+		//}
+		index += blockDimX;
+	}
+}
+
 template <template <class Particle> class Cell >
 global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 //		                         int n,
@@ -926,6 +965,8 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 
 	int index  = threadIdx.x;
 
+	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
+			threadIdx.x,blockIdx,blockDim.x);
 
 	while(index < CellExtent*CellExtent*CellExtent)
 	{
