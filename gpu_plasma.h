@@ -870,6 +870,30 @@ global_for_CUDA void GPU_GetCellNumbers(Cell<Particle>  **cells,
 		numbers[blockIdx.x] = (*c).number_of_particles;
 }
 
+__device__ void assignSharedWithLocal(CellDouble *c_jx,
+		                         CellDouble *c_jy,
+		                         CellDouble *c_jz,
+		                         CellDouble *c_ex,
+		                         CellDouble *c_ey,
+		                         CellDouble *c_ez,
+		                         CellDouble *c_hx,
+		                         CellDouble *c_hy,
+		                         CellDouble *c_hz,
+		                         CellDouble *fd)
+{
+	c_ex = &(fd[0]);
+	c_ey = &(fd[1]);
+	c_ez = &(fd[2]);
+
+	c_hx = &(fd[3]);
+	c_hy = &(fd[4]);
+	c_hz = &(fd[5]);
+
+	c_jx = &(fd[6]);
+	c_jy = &(fd[7]);
+	c_jz = &(fd[8]);
+}
+
 template <template <class Particle> class Cell >
 global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 //		                         int n,
@@ -892,8 +916,11 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 	int pqr2;
 	Particle p;
 
+//	printf("GPU_StepAllCells \n");
+
 	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
 
+	assignSharedWithLocal(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,fd);
 	c_ex = &(fd[0]);
 	c_ey = &(fd[1]);
 	c_ez = &(fd[2]);
