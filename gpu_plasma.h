@@ -932,6 +932,9 @@ __device__ void copyFieldsToSharedMemory(
 		//}
 		index += blockDimX;
 	}
+
+	__syncthreads();
+
 }
 
 template <template <class Particle> class Cell >
@@ -963,7 +966,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 	assignSharedWithLocal(&c_jx,&c_jy,&c_jz,&c_ex,&c_ey,&c_ez,&c_hx,&c_hy,&c_hz,fd);
 
 
-	int index  = threadIdx.x;
+	int index;//  = threadIdx.x;
 
 	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
 			threadIdx.x,blockIdx,blockDim.x);
@@ -986,7 +989,6 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 //		//}
 //		index += blockDim.x;
 //	}
-	__syncthreads();
 
 	index  = threadIdx.x;
 
