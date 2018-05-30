@@ -968,24 +968,24 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
 			threadIdx.x,blockIdx,blockDim.x);
 
-	while(index < CellExtent*CellExtent*CellExtent)
-	{
-//		if(index < 125) {
-
-		copyCellDouble(c_ex,c->Ex,index,blockIdx);
-		copyCellDouble(c_ey,c->Ey,index,blockIdx);
-		copyCellDouble(c_ez,c->Ez,index,blockIdx);
-
-		copyCellDouble(c_hx,c->Hx,index,blockIdx);
-		copyCellDouble(c_hy,c->Hy,index,blockIdx);
-		copyCellDouble(c_hz,c->Hz,index,blockIdx);
-
-		copyCellDouble(c_jx,c->Jx,index,blockIdx);
-		copyCellDouble(c_jy,c->Jy,index,blockIdx);
-		copyCellDouble(c_jz,c->Jz,index,blockIdx);
-		//}
-		index += blockDim.x;
-	}
+//	while(index < CellExtent*CellExtent*CellExtent)
+//	{
+////		if(index < 125) {
+//
+//		copyCellDouble(c_ex,c->Ex,index,blockIdx);
+//		copyCellDouble(c_ey,c->Ey,index,blockIdx);
+//		copyCellDouble(c_ez,c->Ez,index,blockIdx);
+//
+//		copyCellDouble(c_hx,c->Hx,index,blockIdx);
+//		copyCellDouble(c_hy,c->Hy,index,blockIdx);
+//		copyCellDouble(c_hz,c->Hz,index,blockIdx);
+//
+//		copyCellDouble(c_jx,c->Jx,index,blockIdx);
+//		copyCellDouble(c_jy,c->Jy,index,blockIdx);
+//		copyCellDouble(c_jz,c->Jz,index,blockIdx);
+//		//}
+//		index += blockDim.x;
+//	}
 	__syncthreads();
 
 	index  = threadIdx.x;
