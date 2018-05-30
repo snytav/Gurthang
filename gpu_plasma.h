@@ -922,17 +922,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
 
 	assignSharedWithLocal(&c_jx,&c_jy,&c_jz,&c_ex,&c_ey,&c_ez,&c_hx,&c_hy,&c_hz,fd);
-//	c_ex = &(fd[0]);
-//	c_ey = &(fd[1]);
-//	c_ez = &(fd[2]);
-//
-//	c_hx = &(fd[3]);
-//	c_hy = &(fd[4]);
-//	c_hz = &(fd[5]);
-//
-//	c_jx = &(fd[6]);
-//	c_jy = &(fd[7]);
-//	c_jz = &(fd[8]);
+
 
 	int index  = threadIdx.x;
 
