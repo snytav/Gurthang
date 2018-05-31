@@ -1025,7 +1025,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 	assignSharedWithLocal(&c_jx,&c_jy,&c_jz,&c_ex,&c_ey,&c_ez,&c_hx,&c_hy,&c_hz,fd);
 
 
-	int index;
+
 
 	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
 			threadIdx.x,blockIdx,blockDim.x);
@@ -1034,20 +1034,10 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 	MoveAndWriteCurrents(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 						 c,threadIdx.x,blockDim.x,mass,q_mass,p_control,jmp);
 
-    index  = threadIdx.x;
+
 
     copyFromSharedMemoryToCell(c_jx,c_jy,c_jz,c,threadIdx.x,blockDim.x,blockIdx);
 
-
-//	while(index < CellExtent*CellExtent*CellExtent)
-//	{
-//      	copyCellDouble(c->Jx,c_jx,index,blockIdx);
-//    	copyCellDouble(c->Jy,c_jy,index,blockIdx);
-//    	copyCellDouble(c->Jz,c_jz,index,blockIdx);
-//
-//    	index += blockDim.x;
-//    }
-//    c->busyParticleArray = 0;
 }
 
 template <template <class Particle> class Cell >
