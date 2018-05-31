@@ -937,6 +937,43 @@ __device__ void copyFieldsToSharedMemory(
 
 }
 
+__device__ void MoveAndWriteCurrents(
+									 CellDouble *c_ex,
+									 CellDouble *c_ey,
+									 CellDouble *c_ez,
+									 CellDouble *c_hx,
+									 CellDouble *c_hy,
+									 CellDouble *c_hz,
+									 CellDouble *c_jx,
+									 CellDouble *c_jy,
+									 CellDouble *c_jz,
+									 Cell<Particle>  *c,
+		                             int index,
+		                             int blockDimX,
+		                             double mass,
+		                             double q_mass,
+		                             double *p_control,
+		                             int jmp
+		                             )
+{
+	CurrentTensor t1,t2;//,loc_t1,loc_t2;
+    int pqr2;
+	Particle p;
+
+    while(index < c->number_of_particles)
+    {
+
+        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,p_control,jmp,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+
+        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
+        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
+        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+
+        index += blockDimX;
+    }
+    __syncthreads();
+}
+
 template <template <class Particle> class Cell >
 global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 //		                         int n,
@@ -974,18 +1011,22 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 
 	index  = threadIdx.x;
 
-    while(index < c->number_of_particles)
-    {
+	MoveAndWriteCurrents(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+						 c,threadIdx.x,blockDim.x,mass,q_mass,p_control,jmp);
 
-        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,p_control,jmp,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
-        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
-        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
-        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
-
-        index += blockDim.x;
-    }
-    __syncthreads();
+//    while(index < c->number_of_particles)
+//    {
+//
+//        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,p_control,jmp,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+//
+//        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
+//        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
+//        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+//
+//        index += blockDim.x;
+//    }
+//    __syncthreads();
     index  = threadIdx.x;
 
 	while(index < CellExtent*CellExtent*CellExtent)
