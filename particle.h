@@ -117,14 +117,14 @@ void Move(double3 E,double3 H,double tau,double *p_control,int jmp_control)
 	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
 
 //	if(fortran_number == 14536 && sort == 2) printf("attribute 1: %25.16e num %5d sort %d \n",x,fortran_number,sort);
-#ifdef ATTRIBUTES_CHECK
-	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,1)] = x;
-	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,2)] = y;
-	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,3)] = z;
-	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,4)] = pu;
-	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,5)] = pv;
-	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,6)] = pw;
-#endif
+//#ifdef ATTRIBUTES_CHECK
+//	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,1)] = x;
+//	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,2)] = y;
+//	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,3)] = z;
+//	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,4)] = pu;
+//	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,5)] = pv;
+//	p_control[ParticleAttributePosition(jmp_control,fortran_number,sort,6)] = pw;
+//#endif
 
 	tau1=q_m*tau*0.5;
     
