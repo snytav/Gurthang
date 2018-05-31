@@ -2299,7 +2299,7 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
      jmp = jmp_control;
     		 x = p.GetX();
     		 GetField(x,E,H,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-    		 p.Move(E,H,tau,p_control,jmp_control);
+    		 p.Move(E,H,tau);
     		 m = p.GetMass();
 
    		     x1 = p.GetX();

@@ -111,7 +111,7 @@ __host__ __device__
   ~Particle(){}    
   
 __host__ __device__ __forceinline__
-void Move(double3 E,double3 H,double tau,double *p_control,int jmp_control)
+void Move(double3 E,double3 H,double tau)
 {
     double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
 	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
