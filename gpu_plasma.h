@@ -998,11 +998,7 @@ __device__ void copyFromSharedMemoryToCell(
 
 template <template <class Particle> class Cell >
 global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
-//		                         int n,
 		                         int i,
-//		                         CellDouble *jx,
-//		                         CellDouble *jy,
-//		                         CellDouble *jz,
 		                         double *global_jx,
 		                         double mass,
 		                         double q_mass,
@@ -1011,14 +1007,12 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 		                         int nt
 		                         )
 {
-	Cell<Particle>  *c,*c0 = cells[0];//,nc;
+	Cell<Particle>  *c,*c0 = cells[0];
 	__shared__ extern CellDouble fd[9];
 	CellDouble *c_jx,*c_jy,*c_jz,*c_ex,*c_ey,*c_ez,*c_hx,*c_hy,*c_hz;
-	CurrentTensor t1,t2;//,loc_t1,loc_t2;
-	int pqr2;
+//	CurrentTensor t1,t2;
+//	int pqr2;
 	Particle p;
-
-//	printf("GPU_StepAllCells \n");
 
 	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
 
