@@ -1009,7 +1009,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 
-	index  = threadIdx.x;
+//	index  = threadIdx.x;
 
 	MoveAndWriteCurrents(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 						 c,threadIdx.x,blockDim.x,mass,q_mass,p_control,jmp);
