@@ -951,9 +951,7 @@ __device__ void MoveAndWriteCurrents(
 		                             int index,
 		                             int blockDimX,
 		                             double mass,
-		                             double q_mass,
-		                             double *p_control,
-		                             int jmp
+		                             double q_mass
 		                             )
 {
 	CurrentTensor t1,t2;//,loc_t1,loc_t2;
@@ -963,7 +961,7 @@ __device__ void MoveAndWriteCurrents(
     while(index < c->number_of_particles)
     {
 
-        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,p_control,jmp,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
         writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
         writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
@@ -1001,9 +999,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 		                         int i,
 		                         double *global_jx,
 		                         double mass,
-		                         double q_mass,
-		                         double *p_control,
-		                         int jmp
+		                         double q_mass
 		                         )
 {
 	Cell<Particle>  *c,*c0 = cells[0];
@@ -1025,7 +1021,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 
 
 	MoveAndWriteCurrents(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
-						 c,threadIdx.x,blockDim.x,mass,q_mass,p_control,jmp);
+						 c,threadIdx.x,blockDim.x,mass,q_mass);
 
 
 
@@ -5027,7 +5023,7 @@ int StepAllCells(int nt,double mass,double q_mass)
 	   cudaDeviceSynchronize();
 
 	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
-	            		     		                 mass,q_mass,d_ctrlParticles,jmp);
+	            		     		                 mass,q_mass);
 
 	   cudaDeviceSynchronize();
 

@@ -2285,7 +2285,7 @@ int Move16()
 virtual
 #endif
 int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
+		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
 
@@ -2296,7 +2296,7 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
 
      if(i >= number_of_particles) return 0;
      readParticleFromSurfaceDevice(i,&p);
-     jmp = jmp_control;
+//     jmp = jmp_control;
     		 x = p.GetX();
     		 GetField(x,E,H,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
     		 p.Move(E,H,tau);
