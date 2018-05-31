@@ -1003,8 +1003,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 		                         double mass,
 		                         double q_mass,
 		                         double *p_control,
-		                         int jmp,
-		                         int nt
+		                         int jmp
 		                         )
 {
 	Cell<Particle>  *c,*c0 = cells[0];
@@ -5028,7 +5027,7 @@ int StepAllCells(int nt,double mass,double q_mass)
 	   cudaDeviceSynchronize();
 
 	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
-	            		     		                 mass,q_mass,d_ctrlParticles,jmp,nt);
+	            		     		                 mass,q_mass,d_ctrlParticles,jmp);
 
 	   cudaDeviceSynchronize();
 
