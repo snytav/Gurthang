@@ -974,6 +974,28 @@ __device__ void MoveAndWriteCurrents(
     __syncthreads();
 }
 
+
+__device__ void copyFromSharedMemoryToCell(
+		                                     CellDouble *c_jx,
+											 CellDouble *c_jy,
+											 CellDouble *c_jz,
+											 Cell<Particle>  *c,
+				                             int index,
+				                             int blockDimX,
+				                             dim3 blockId
+		)
+{
+	while(index < CellExtent*CellExtent*CellExtent)
+	{
+      	copyCellDouble(c->Jx,c_jx,index,blockIdx);
+    	copyCellDouble(c->Jy,c_jy,index,blockIdx);
+    	copyCellDouble(c->Jz,c_jz,index,blockIdx);
+
+    	index += blockDim.x;
+    }
+    c->busyParticleArray = 0;
+}
+
 template <template <class Particle> class Cell >
 global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 //		                         int n,
@@ -1009,35 +1031,23 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 
-//	index  = threadIdx.x;
-
 	MoveAndWriteCurrents(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 						 c,threadIdx.x,blockDim.x,mass,q_mass,p_control,jmp);
 
-
-//    while(index < c->number_of_particles)
-//    {
-//
-//        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,p_control,jmp,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
-//
-//        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
-//        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
-//        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
-//
-//        index += blockDim.x;
-//    }
-//    __syncthreads();
     index  = threadIdx.x;
 
-	while(index < CellExtent*CellExtent*CellExtent)
-	{
-      	copyCellDouble(c->Jx,c_jx,index,blockIdx);
-    	copyCellDouble(c->Jy,c_jy,index,blockIdx);
-    	copyCellDouble(c->Jz,c_jz,index,blockIdx);
+    copyFromSharedMemoryToCell(c_jx,c_jy,c_jz,c,threadIdx.x,blockDim.x,blockIdx);
 
-    	index += blockDim.x;
-    }
-    c->busyParticleArray = 0;
+
+//	while(index < CellExtent*CellExtent*CellExtent)
+//	{
+//      	copyCellDouble(c->Jx,c_jx,index,blockIdx);
+//    	copyCellDouble(c->Jy,c_jy,index,blockIdx);
+//    	copyCellDouble(c->Jz,c_jz,index,blockIdx);
+//
+//    	index += blockDim.x;
+//    }
+//    c->busyParticleArray = 0;
 }
 
 template <template <class Particle> class Cell >
