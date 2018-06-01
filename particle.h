@@ -206,9 +206,9 @@ void Move(double3 E,double3 H,double tau)
 	sy = sx3.y;
 	sz = sx3.z;
 
-	pu = pu1 + sx;
-	pv = pv1 + sy;
-	pw = pw1 + sz;
+	pu = pu1 + sx3.x;
+	pv = pv1 + sx3.y;
+	pw = pw1 + sx3.z;
 	ps = pu * pu + pv * pv + pw * pw;
 	ps = pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
 
