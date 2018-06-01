@@ -10,6 +10,7 @@
 #include <math.h>
 #include "run_control.h"
 #include "control.h"
+#include "vec3d.h"
 
 #define GPU_PARTICLE
 #define TOLERANCE 1e-15
