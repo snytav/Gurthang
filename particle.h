@@ -147,42 +147,64 @@ __device__ void MagneticMove(double3 H,double ps,double *pu1,double *pv1,double 
 	*pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
 }
 
+__device__
+void ElectricMoveStageTwo(double tau1,double tau,double3 E,
+//		 double pu,double pv,double pw,
+		 double pu1,double pv1,double pw1,double *u,double *v,double *w,double *x,double *y,double *z)
+{
+	double sx,sy,sz,pu,pv,pw,ps,x1,y1,z1;
+
+	sx = tau1*E.x;
+	sy = tau1*E.y;
+	sz = tau1*E.z;
+
+	pu = pu1 + sx;
+	pv = pv1 + sy;
+	pw = pw1 + sz;
+	ps = pu * pu + pv * pv + pw * pw;
+	ps = pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
+
+	*u = ps * pu;
+	*v = ps * pv;
+	*w = ps * pw;
+	x1 = *x + tau * (*u);
+	y1 = *y + tau * (*v);
+	z1 = *z + tau * (*w);
+
+	*x = x1;
+	*y = y1;
+	*z = z1;
+
+
+}
+
+__device__ double3 mult(double t,double3 t3)
+{
+	t3.x *= t;
+	t3.y *= t;
+	t3.z *= t;
+
+	return t3;
+}
+
  __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
     double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
 	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
+	double3 sx3;
 
 
 	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);
 
 	MagneticMove(H,ps,&pu1,&pv1,&pw1);
 
-//	bx = ps * H.x;
-//	by = ps * H.y;
-//	bz = ps * H.z;
-//	su = pu + pv * bz - pw * by;
-//	sv = pv + pw * bx - pu * bz;
-//	sw = pw + pu * by - pv * bx;
-//
-//	s1 = bx * bx;
-//	s2 = by * by;
-//	s3 = bz * bz;
-//	s4 = bx * by;
-//	s5 = by * bz;
-//	s6 = bz * bx;
-//	s = s1 + 1. + s2 + s3;
-//
-//
-//
-//
-//	pu1 = ((s1 + 1.) * su + (s4 + bz) * sv + (s6 - by) * sw) / s;
-//	pv1 = ((s4 - bz) * su + (s2 + 1.) * sv + (s5 + bx) * sw) / s;
-//	pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
+//	ElectricMoveStageTwo(tau1,tau,E,pu1,pv1,pw1,&u,&v,&w,&x,&y,&z);
 
-	sx = tau1*E.x;
-	sy = tau1*E.y;
-	sz = tau1*E.z;
+	sx3 = mult(tau1,E);
+	sx = sx3.x;
+	sy = sx3.y;
+	sz = sx3.z;
 
 	pu = pu1 + sx;
 	pv = pv1 + sy;
@@ -196,12 +218,11 @@ void Move(double3 E,double3 H,double tau)
 	x1 = x + tau * u;
 	y1 = y + tau * v;
 	z1 = z + tau * w;
-	
 
 	x = x1;
 	y = y1;
 	z = z1;
-	
+
 }
    
 __host__ __device__
