@@ -150,13 +150,15 @@ void Move(double3 E,double3 H,double tau)
 	s = s1 + 1. + s2 + s3;
 
 
-	sx = tau1*E.x;
-	sy = tau1*E.y;
-	sz = tau1*E.z;
+
 
 	pu1 = ((s1 + 1.) * su + (s4 + bz) * sv + (s6 - by) * sw) / s;
 	pv1 = ((s4 - bz) * su + (s2 + 1.) * sv + (s5 + bx) * sw) / s;
 	pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
+
+	sx = tau1*E.x;
+	sy = tau1*E.y;
+	sz = tau1*E.z;
 
 	pu = pu1 + sx;
 	pv = pv1 + sy;
