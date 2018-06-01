@@ -108,22 +108,31 @@ __host__ __device__ __forceinline__
 Particle(double x1,double y1, double z1,double u1,double v1,double w1,double m1,double q_m1): x(x1), y(y1), z(z1), pu(u1), pv(v1), pw(w1), m(m1), q_m(q_m1) {}
 
 __host__ __device__
-  ~Particle(){}    
+  ~Particle(){}
+
+ __device__
+void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,double *pv,double *pw,double *ps)
+{
+	__shared__ double dt;
+	__shared__ double3 p;
+
+	*tau1=q_m*tau*0.5;
+
+		*pu += *tau1*E.x;
+		*pv += *tau1*E.y;
+		*pw += *tau1*E.z;
+		*ps = (*tau1) * rsqrt(((*pu) * (*pu) + (*pv) * (*pv) + (*pw) * (*pw)) * 1. + 1.0);
+
+}
   
-__host__ __device__ __forceinline__
+ __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
     double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
 	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
 
 
-
-	tau1=q_m*tau*0.5;
-    
-	pu += tau1*E.x;
-	pv += tau1*E.y;
-	pw += tau1*E.z;
-	ps = tau1 * rsqrt((pu * pu + pv * pv + pw * pw) * 1. + 1.0);
+	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);
 
 	bx = ps * H.x;
 	by = ps * H.y;

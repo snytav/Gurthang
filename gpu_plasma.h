@@ -954,7 +954,7 @@ __device__ void MoveAndWriteCurrents(
 		                             double q_mass
 		                             )
 {
-	CurrentTensor t1,t2;//,loc_t1,loc_t2;
+	CurrentTensor t1,t2;
     int pqr2;
 	Particle p;
 
