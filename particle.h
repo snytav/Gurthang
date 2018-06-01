@@ -113,8 +113,6 @@ __host__ __device__
  __device__
 void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,double *pv,double *pw,double *ps)
 {
-	__shared__ double dt;
-	__shared__ double3 p;
 
 	*tau1=q_m*tau*0.5;
 
@@ -124,15 +122,10 @@ void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,doubl
 		*ps = (*tau1) * rsqrt(((*pu) * (*pu) + (*pv) * (*pv) + (*pw) * (*pw)) * 1. + 1.0);
 
 }
-  
- __device__ __forceinline__
-void Move(double3 E,double3 H,double tau)
+
+__device__ void MagneticMove(double3 H,double ps,double *pu1,double *pv1,double *pw1)
 {
-    double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
-	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
-
-
-	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);
+	double bx,by,bz,s1,s2,s3,s4,s5,s6,s,su,sv,sw;
 
 	bx = ps * H.x;
 	by = ps * H.y;
@@ -149,12 +142,43 @@ void Move(double3 E,double3 H,double tau)
 	s6 = bz * bx;
 	s = s1 + 1. + s2 + s3;
 
+	*pu1 = ((s1 + 1.) * su + (s4 + bz) * sv + (s6 - by) * sw) / s;
+	*pv1 = ((s4 - bz) * su + (s2 + 1.) * sv + (s5 + bx) * sw) / s;
+	*pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
+}
+
+ __device__ __forceinline__
+void Move(double3 E,double3 H,double tau)
+{
+    double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
+	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
 
 
+	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);
 
-	pu1 = ((s1 + 1.) * su + (s4 + bz) * sv + (s6 - by) * sw) / s;
-	pv1 = ((s4 - bz) * su + (s2 + 1.) * sv + (s5 + bx) * sw) / s;
-	pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
+	MagneticMove(H,ps,&pu1,&pv1,&pw1);
+
+//	bx = ps * H.x;
+//	by = ps * H.y;
+//	bz = ps * H.z;
+//	su = pu + pv * bz - pw * by;
+//	sv = pv + pw * bx - pu * bz;
+//	sw = pw + pu * by - pv * bx;
+//
+//	s1 = bx * bx;
+//	s2 = by * by;
+//	s3 = bz * bz;
+//	s4 = bx * by;
+//	s5 = by * bz;
+//	s6 = bz * bx;
+//	s = s1 + 1. + s2 + s3;
+//
+//
+//
+//
+//	pu1 = ((s1 + 1.) * su + (s4 + bz) * sv + (s6 - by) * sw) / s;
+//	pv1 = ((s4 - bz) * su + (s2 + 1.) * sv + (s5 + bx) * sw) / s;
+//	pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
 
 	sx = tau1*E.x;
 	sy = tau1*E.y;
