@@ -199,12 +199,19 @@ __device__ double impulse(double pu,double pv,double pw)
 	return pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
 }
 
+__device__ void  mult(double *u,double *v,double *w,double ps, double pu,double pv,double pw)
+{
+	*u = ps * pu;
+	*v = ps * pv;
+	*w = ps * pw;
+}
+
  __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
     double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
 	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
-	double3 sx3;
+	double3 sx3,u3;
 
 
 	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);
@@ -225,9 +232,11 @@ void Move(double3 E,double3 H,double tau)
 //	ps = pu * pu + pv * pv + pw * pw;
 	ps = impulse(pu,pv,pw);
 
-	u = ps * pu;
-	v = ps * pv;
-	w = ps * pw;
+	mult(&u,&v,&w,ps,pu,pv,pw);
+
+//	u = ps * pu;
+//	v = ps * pv;
+//	w = ps * pw;
 	x1 = x + tau * u;
 	y1 = y + tau * v;
 	z1 = z + tau * w;
