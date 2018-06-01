@@ -187,6 +187,18 @@ __device__ double3 mult(double t,double3 t3)
 	return t3;
 }
 
+__device__ void add(double3 sx3,double *pu,double *pv,double *pw,double pu1,double pv1,double pw1)
+{
+	*pu = pu1 + sx3.x;
+	*pv = pv1 + sx3.y;
+	*pw = pw1 + sx3.z;
+}
+
+__device__ double impulse(double pu,double pv,double pw)
+{
+	return pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
+}
+
  __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
@@ -206,11 +218,12 @@ void Move(double3 E,double3 H,double tau)
 //	sy = sx3.y;
 //	sz = sx3.z;
 
-	pu = pu1 + sx3.x;
-	pv = pv1 + sx3.y;
-	pw = pw1 + sx3.z;
+	add(sx3,&pu,&pv,&pw,pu1,pv1,pw1);
+//	pu = pu1 + sx3.x;
+//	pv = pv1 + sx3.y;
+//	pw = pw1 + sx3.z;
 //	ps = pu * pu + pv * pv + pw * pw;
-	ps = pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
+	ps = impulse(pu,pv,pw);
 
 	u = ps * pu;
 	v = ps * pv;
