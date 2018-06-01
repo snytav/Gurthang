@@ -202,14 +202,14 @@ void Move(double3 E,double3 H,double tau)
 //	ElectricMoveStageTwo(tau1,tau,E,pu1,pv1,pw1,&u,&v,&w,&x,&y,&z);
 
 	sx3 = mult(tau1,E);
-	sx = sx3.x;
-	sy = sx3.y;
-	sz = sx3.z;
+//	sx = sx3.x;
+//	sy = sx3.y;
+//	sz = sx3.z;
 
 	pu = pu1 + sx3.x;
 	pv = pv1 + sx3.y;
 	pw = pw1 + sx3.z;
-	ps = pu * pu + pv * pv + pw * pw;
+//	ps = pu * pu + pv * pv + pw * pw;
 	ps = pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
 
 	u = ps * pu;
