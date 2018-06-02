@@ -17,6 +17,9 @@ OBJ = main.o rnd.o mpi_shortcut.o service_functions.o
             
 main.o: main.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 
+	
+compare.o: compare.cu $(DEPS)
+	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 	
                     
 #plasma.o: plasma.cu $(DEPS)
 #	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)                     
