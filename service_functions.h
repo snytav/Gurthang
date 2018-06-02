@@ -37,6 +37,8 @@ double get_meminfo1(void);
 
 int setPrintfLimit();
 
+void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz);
+
 
 
 #endif /* SERVICE_FUNCTIONS_H_ */

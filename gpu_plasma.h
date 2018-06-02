@@ -142,13 +142,7 @@ void Initialize()
 	InitializeGPU();
 }
 
-void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz)
-{
-	cudaMalloc(X,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(Y,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(Z,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
-}
 
 void InitGPUFields(
 		double **d_Ex,double **d_Ey,double **d_Ez,

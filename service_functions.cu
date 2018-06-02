@@ -206,5 +206,12 @@ void get_load_data_file_names(
     t_qzfile =    qzfile;
 }
 
+void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz)
+{
+	cudaMalloc(X,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
+	cudaMalloc(Y,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
+	cudaMalloc(Z,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
+
+}
 
 
