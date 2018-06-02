@@ -54,21 +54,6 @@
 #include <sys/sysinfo.h>
 #include <sys/time.h>
 
-//struct sysinfo {
-//       long uptime;             /* Seconds since boot */
-//       unsigned long loads[3];  /* 1, 5, and 15 minute load averages */
-//       unsigned long totalram;  /* Total usable main memory size */
-//       unsigned long freeram;   /* Available memory size */
-//       unsigned long sharedram; /* Amount of shared memory */
-//       unsigned long bufferram; /* Memory used by buffers */
-//       unsigned long totalswap; /* Total swap space size */
-//       unsigned long freeswap;  /* swap space still available */
-//       unsigned short procs;    /* Number of current processes */
-//       unsigned long totalhigh; /* Total high memory size */
-//       unsigned long freehigh;  /* Available high memory size */
-//       unsigned int mem_unit;   /* Memory unit size in bytes */
-//       char _f[20-2*sizeof(long)-sizeof(int)]; /* Padding for libc5 */
-//   };
 
 #include "init.h"
 #include "diagnose.h"
@@ -82,6 +67,8 @@
 
 #include "memory_control.h"
 
+#include "kernels.cu"
+
 
 
 using namespace std;
@@ -93,20 +80,6 @@ using namespace std;
 
 #define FORTRAN_ORDER
 
-__device__ double cuda_atomicAdd(double *address, double val)
-{
-    double assumed,old=*address;
-    do {
-        assumed=old;
-        old= __longlong_as_double(atomicCAS((unsigned long long int*)address,
-                    __double_as_longlong(assumed),
-                    __double_as_longlong(val+assumed)));
-    }while (assumed!=old);
-
-    //printf("NEW ATOMIC ADD\n");
-
-    return old;
-}
 
 
 const int flagCPUandGPUrun = 1;
@@ -169,30 +142,7 @@ void GPU_SetAllCurrentsToZero(Cell<Particle>  **cells)
 	nc.SetAllCurrentsToZero(threadIdx);
 }
 
-template <template <class Particle> class Cell >
-global_for_CUDA
-void GPU_getCellEnergy(
-		Cell<Particle>  **cells,double *d_ee,
-		double *d_Ex,double *d_Ey,double *d_Ez)
-{
-	unsigned int i = blockIdx.x;
-	unsigned int l= blockIdx.y;
-	unsigned int k = blockIdx.z;
-	//int i,l,k;
-	Cell<Particle>  *c0 = cells[0],nc;
-	double t,ex,ey,ez;
-	__shared__ extern CellDouble fd[9];
-	//double *src;//,*dst;
-	int n  = c0->getGlobalCellNumber(i,l,k);
 
-	ex = d_Ex[n];
-	ey = d_Ey[n];
-	ez = d_Ez[n];
-
-	t = ex*ex+ey*ey+ez*ez;
-
-	cuda_atomicAdd(d_ee,t);
-}
 
 
 template <template <class Particle> class Cell >

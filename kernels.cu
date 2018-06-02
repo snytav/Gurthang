@@ -1,7 +1,4 @@
-//#include "archAPI.h"
-#include "rnd.h"
-//#include "plasma.h"
-#include "cell.h"
+
 
 
 __device__ double cuda_atomicAdd(double *address, double val)
@@ -20,35 +17,26 @@ __device__ double cuda_atomicAdd(double *address, double val)
 }
 
 template <template <class Particle> class Cell >
-__global__ void  GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
-		      double *jx,double *jy,double *jz,double *rho)
+__global__
+void GPU_getCellEnergy(
+		Cell<Particle>  **cells,double *d_ee,
+		double *d_Ex,double *d_Ey,double *d_Ez)
 {
-	unsigned int nx = blockIdx.x;
-	unsigned int ny = blockIdx.y;
-	unsigned int nz = blockIdx.z;
-	Cell<Particle>  *c,*c0 = cells[0],nc;
+	unsigned int i = blockIdx.x;
+	unsigned int l= blockIdx.y;
+	unsigned int k = blockIdx.z;
+	//int i,l,k;
+	Cell<Particle>  *c0 = cells[0],nc;
+	double t,ex,ey,ez;
 	__shared__ extern CellDouble fd[9];
+	//double *src;//,*dst;
+	int n  = c0->getGlobalCellNumber(i,l,k);
 
-	c = cells[ c0->getGlobalCellNumber(nx,ny,nz)];
+	ex = d_Ex[n];
+	ey = d_Ey[n];
+	ez = d_Ez[n];
 
-	 nc = *c;
+	t = ex*ex+ey*ey+ez*ez;
 
-	             int i1,l1,k1;
-	        	 i1 = threadIdx.x;
-	        	 l1 = threadIdx.y;
-	        	 k1 = threadIdx.z;
-    	         int n = nc.getFortranCellNumber(nc.i+i1-1,nc.l+l1-1,nc.k+k1-1);
-
-    	         if (n < 0 ) n = -n;
-        		 double t,t_x,t_y;
-		         t_x = nc.Jx->M[i1][l1][k1];
-		         int3 i3 = nc.getCellTripletNumber(n);
-
-
-		         cuda_atomicAdd(&(jx[n]),t_x);
-		         t_y= nc.Jy->M[i1][l1][k1];
-		         cuda_atomicAdd(&(jy[n]),t_y);
-		         t = nc.Jz->M[i1][l1][k1];
-		         cuda_atomicAdd(&(jz[n]),t);
-
+	cuda_atomicAdd(d_ee,t);
 }
