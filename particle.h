@@ -29,25 +29,7 @@ typedef struct CurrentTensor {
 
 typedef char gpu_string[200];
 
-//char *FortranExpWrite(double t)
-//{
-//      char str[100],res[100];
-//      char *prev,*next,*dot;
-//      gpu_string res_str;
-//
-//      sprintf(str,"%11.4E",t);
-//
-//      dot = strstr(str,".");
-//
-//      prev = dot - 1;
-//      next = dot + 1;
-//
-//      sprintf(res,"0.%c%s",*prev,next);
-//
-//      strcpy(res_str,res);
-//
-//      return (char *)res_str;
-//}
+
 
 double compare(double *a,double *b,int num,char *legend,double tol)
 {
@@ -85,19 +67,13 @@ int comd(double a,double b)
 
 class Particle
 {
-//	int jmp;
-//	double *d_ctrlParticles;
+
 public:  
   
    double x,y,z,pu,pv,pw,m,q_m;
    particle_sorts sort;
-//   CurrentTensor t1,t2;
 
-  // void SetControlSystem(int j,double *c){jmp = j;d_ctrlParticles = c;}
-   
 #ifdef DEBUG_PLASMA
- //  double3 next_x;
-//   double ex,ey,ez,hx,hy,hz;
    int fortran_number;
 
 #endif   
