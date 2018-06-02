@@ -148,26 +148,28 @@ void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz)
 void InitGPUFields()
 {
 	cudaMalloc3D(&d_Ex,&d_Ey,&d_Ez,Nx,Ny,Nz);
+	cudaMalloc3D(&d_Hx,&d_Hy,&d_Hz,Nx,Ny,Nz);
+	cudaMalloc3D(&d_Jx,&d_Jy,&d_Jz,Nx,Ny,Nz);
+	cudaMalloc3D(&d_npJx,&d_npJy,&d_npJz,Nx,Ny,Nz);
+	cudaMalloc3D(&d_Qx,&d_Qy,&d_Qz,Nx,Ny,Nz);
 
-//	cudaMalloc(&d_Ex,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	cudaMalloc(&d_Ey,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	cudaMalloc(&d_Ez,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
-	cudaMalloc(&d_Hx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Hy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Hz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
-	cudaMalloc(&d_Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-	cudaMalloc(&d_npJx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_npJy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_npJz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-	cudaMalloc(&d_Qx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Qy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Qz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Hx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Hy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Hz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//	cudaMalloc(&d_Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//	cudaMalloc(&d_npJx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_npJy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_npJz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//
+//	cudaMalloc(&d_Qx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Qy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Qz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
     copyFieldsToGPU();
 }
