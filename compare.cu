@@ -1,5 +1,5 @@
 
-
+#include "compare.h"
 
 
 double compare(double *a,double *b,int num,char *legend,double tol)
