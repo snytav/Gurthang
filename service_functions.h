@@ -39,6 +39,34 @@ int setPrintfLimit();
 
 void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz);
 
+void InitGPUFields(
+		double **d_Ex,double **d_Ey,double **d_Ez,
+		double **d_Hx,double **d_Hy,double **d_Hz,
+		double **d_Jx,double **d_Jy,double **d_Jz,
+		double **d_npJx,double **d_npJy,double **d_npJz,
+        double **d_Qx,double **d_Qy,double **d_Qz,
+        double *Ex,double *Ey,double *Ez,
+		double *Hx,double *Hy,double *Hz,
+		double *Jx,double *Jy,double *Jz,
+		double *npJx,double *npJy,double *npJz,
+		double *Qx,double *Qy,double *Qz,
+		int Nx,int Ny,int Nz
+        );
+
+void copyFieldsToGPU(
+						double *d_Ex,double *d_Ey,double *d_Ez,
+						double *d_Hx,double *d_Hy,double *d_Hz,
+						double *d_Jx,double *d_Jy,double *d_Jz,
+						double *d_npJx,double *d_npJy,double *d_npJz,
+						double *d_Qx,double *d_Qy,double *d_Qz,
+						double *Ex,double *Ey,double *Ez,
+		        		double *Hx,double *Hy,double *Hz,
+		        		double *Jx,double *Jy,double *Jz,
+		        		double *npJx,double *npJy,double *npJz,
+		                double *Qx,double *Qy,double *Qz,
+		                int Nx,int Ny,int Nz
+		);
+
 
 
 #endif /* SERVICE_FUNCTIONS_H_ */
