@@ -123,7 +123,12 @@ int InitializeGPU()
     	          &d_Hx,&d_Hy,&d_Hz,
     		      &d_Jx,&d_Jy,&d_Jz,
     		      &d_npJx,&d_npJy,&d_npJz,
-                  &d_Qx,&d_Qy,&d_Qz
+                  &d_Qx,&d_Qy,&d_Qz,
+                  Ex,Ey,Ez,
+				  Hx,Hy,Hz,
+				  Jx,Jy,Jz,
+				  npJx,npJy,npJz,
+				  Qx,Qy,Qz
             );
 
     setPrintfLimit();
@@ -149,7 +154,12 @@ void InitGPUFields(
 		double **d_Hx,double **d_Hy,double **d_Hz,
 		double **d_Jx,double **d_Jy,double **d_Jz,
 		double **d_npJx,double **d_npJy,double **d_npJz,
-        double **d_Qx,double **d_Qy,double **d_Qz
+        double **d_Qx,double **d_Qy,double **d_Qz,
+        double *Ex,double *Ey,double *Ez,
+		double *Hx,double *Hy,double *Hz,
+		double *Jx,double *Jy,double *Jz,
+		double *npJx,double *npJy,double *npJz,
+		double *Qx,double *Qy,double *Qz
         )
 {
 	cudaMalloc3D(d_Ex,d_Ey,d_Ez,Nx,Ny,Nz);
