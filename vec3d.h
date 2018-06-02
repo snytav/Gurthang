@@ -16,10 +16,19 @@ public:
 
 	vec3d(double x1,double y1,double z1){x = x1;y = y1;z = z1;}
 	void Set(double x1,double y1,double z1){x = x1;y = y1;z = z1;}
-	vec3d & operator=(double3 d){x = d.x;y = d.y;z = d.z; return *this;}
+
+	vec3d & operator=(double3 &d){x = d.x;y = d.y;z = d.z; return *this;}
+
 	vec3d & operator=(vec3d & d){x = d.x;y = d.y;z = d.z; return *this;}
 	vec3d & operator+(vec3d & d){vec3d p=*this; p.x += d.x;p.y += d.y;p.z += d.z; return p;}
-//	vec3d & operator*(double  d){x *= d;y *= d.y;z *= d;}
+	vec3d & operator*(double  d)
+	{
+		vec3d p;
+		p.x = this->x*d;
+		p.y = this->y*d;
+		p.z = this->z*d;
+		return p;
+	}
 
 
 

@@ -117,9 +117,20 @@ void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,doubl
 
 	*tau1=q_m*tau*0.5;
 
-		*pu += *tau1*E.x;
-		*pv += *tau1*E.y;
-		*pw += *tau1*E.z;
+	vec3d Ef;
+
+	Ef = E;
+	vec3d dp;
+
+	dp = Ef*(*tau1);
+
+	*pu += dp.x;
+	*pv += dp.y;
+	*pw += dp.z;
+
+//		*pu += *tau1*E.x;
+//		*pv += *tau1*E.y;
+//		*pw += *tau1*E.z;
 		*ps = (*tau1) * rsqrt(((*pu) * (*pu) + (*pv) * (*pv) + (*pw) * (*pw)) * 1. + 1.0);
 
 }
