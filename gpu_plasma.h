@@ -115,25 +115,6 @@ public:
 
    int CPU_field;
 
-int setPrintfLimit()
-{
-	size_t sizeP;
-
-	printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
-
-	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
-
-	printf("printf default limit %d \n",sizeP/1024/1024);
-
-	sizeP *= 10000;
-	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
-
-	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
-
-	printf("printf limit set to %d \n",sizeP/1024/1024);
-
-	return 0;
-}
 
 int InitializeGPU()
 {
@@ -156,11 +137,21 @@ void Initialize()
 	InitializeGPU();
 }
 
+void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz)
+{
+	cudaMalloc(X,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	cudaMalloc(Y,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	cudaMalloc(Z,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+
+}
+
 void InitGPUFields()
 {
-	cudaMalloc(&d_Ex,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Ey,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	cudaMalloc(&d_Ez,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	cudaMalloc3D(&d_Ex,&d_Ey,&d_Ez,Nx,Ny,Nz);
+
+//	cudaMalloc(&d_Ex,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Ey,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	cudaMalloc(&d_Ez,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 	cudaMalloc(&d_Hx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 	cudaMalloc(&d_Hy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));

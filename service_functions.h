@@ -5,6 +5,8 @@
  *      Author: snytav
  */
 
+
+
 #ifndef SERVICE_FUNCTIONS_H_
 #define SERVICE_FUNCTIONS_H_
 
@@ -32,6 +34,8 @@ void get_load_data_file_names(
 
 double get_meminfo(void);
 double get_meminfo1(void);
+
+int setPrintfLimit();
 
 
 

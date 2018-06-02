@@ -11,6 +11,8 @@
 #include <sys/sysinfo.h>
 #include <sys/time.h>
 
+#include<cuda.h>
+
 //struct sysinfo {
 //       long uptime;             /* Seconds since boot */
 //       unsigned long loads[3];  /* 1, 5, and 15 minute load averages */
@@ -181,3 +183,24 @@ void get_load_data_file_names(
     t_qyfile =    qyfile;
     t_qzfile =    qzfile;
 }
+
+int setPrintfLimit()
+{
+	size_t sizeP;
+
+	printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
+
+	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+
+	printf("printf default limit %d \n",sizeP/1024/1024);
+
+	sizeP *= 10000;
+	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
+
+	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+
+	printf("printf limit set to %d \n",sizeP/1024/1024);
+
+	return 0;
+}
+

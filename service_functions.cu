@@ -1,42 +1,105 @@
 #include <math.h>
 #include <string>
 #include <stdio.h>
+
+#include <stdlib.h>
+#include<string.h>
+
+#include <sys/resource.h>
+#include <stdint.h>
+
+#include <sys/sysinfo.h>
+#include <sys/time.h>
+
 #include "particle.h"
+
+//#include<cuda.h>
+
+//struct sysinfo {
+//       long uptime;             /* Seconds since boot */
+//       unsigned long loads[3];  /* 1, 5, and 15 minute load averages */
+//       unsigned long totalram;  /* Total usable main memory size */
+//       unsigned long freeram;   /* Available memory size */
+//       unsigned long sharedram; /* Amount of shared memory */
+//       unsigned long bufferram; /* Memory used by buffers */
+//       unsigned long totalswap; /* Total swap space size */
+//       unsigned long freeswap;  /* swap space still available */
+//       unsigned short procs;    /* Number of current processes */
+//       unsigned long totalhigh; /* Total high memory size */
+//       unsigned long freehigh;  /* Available high memory size */
+//       unsigned int mem_unit;   /* Memory unit size in bytes */
+//       char _f[20-2*sizeof(long)-sizeof(int)]; /* Padding for libc5 */
+//   };
 
 using namespace std;
 
-double compare(double *a,double *b,int num,char *legend,double tol)
+int setPrintfLimit()
 {
-     double t = 0.0;
+	size_t sizeP;
 
-     for(int i = 0; i < num ;i++)
-     {
-         if(fabs(a[i] - b[i]) < tol)
-         {
-            t += 1.0;
-#ifdef COMPARE_PRINTS
-            printf(" i %5d a %e b %e diff %e\n",i,a[i],b[i],fabs(a[i] - b[i]));
-#endif
+	printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
 
-         }
-         else
-         {
-#ifdef COMPARE_PRINTS
-        	printf("WRONG i %5d a %e b %e diff %e\n",i,a[i],b[i],fabs(a[i] - b[i]));
-#endif
-         }
-     }
+	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
-     if(num > 0) t /= num;
-#ifdef COMPARE_PRINTS
-     printf("%30s %.5f\n",legend,t);
-#endif
-     return t;
+	printf("printf default limit %d \n",sizeP/1024/1024);
+
+	sizeP *= 10000;
+	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
+
+	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+
+	printf("printf limit set to %d \n",sizeP/1024/1024);
+
+	return 0;
 }
 
-int comd(double a,double b)
+double get_meminfo(void)
 {
-	return (fabs(a - b) < TOLERANCE);
+	FILE *f;
+	char str[100];
+	int  mem_free;
+	double dmem;
+   // return 0.0;
+
+	system("free>&free_mem_out.dat");
+
+
+	if((f = fopen("free_mem_out.dat","rt")) == NULL) return 0.0;
+
+	fgets(str,100,f);
+	fgets(str,100,f);
+
+	mem_free = atoi(str + 30);
+
+	dmem = (((double)mem_free)/1024)/1024;
+
+	return dmem;
+
+}
+
+double get_meminfo1(void)
+{
+	double retval=0;
+	char tmp[256]={0x0};
+	/* note= add a path to meminfo like /usr/bin/meminfo
+	   to match where meminfo lives on your system */
+	FILE *shellcommand=popen("meminfo","r");
+	while(fgets(tmp,sizeof(tmp),shellcommand)!=NULL)
+	{
+		if(memcmp(tmp,"Mem:",4)==0)
+		{
+			int	wordcount=0;
+			char *delimiter=" ";
+			char *p=strtok(tmp,delimiter);
+			while(*p)
+			{
+				wordcount++;
+				if(wordcount==3) retval=atof(p);
+			}
+		}
+	}
+	pclose(shellcommand);
+	return retval;
 }
 
 
@@ -142,3 +205,6 @@ void get_load_data_file_names(
     t_qyfile =    qyfile;
     t_qzfile =    qzfile;
 }
+
+
+

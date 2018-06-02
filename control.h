@@ -19,44 +19,6 @@
 __host__ __device__
 void writeParticleAttribute(int j,double ami,int num,double t);
 
-__host__ __device__
-int ParticleAttributePosition(int jmp,int j,int sort,int num)
-{
-    int pos;//,pos1,pos2,pos0;
-
-    if(sort == ION)
-    {
-       pos = num+(j-1)*PARTICLE_ATTRIBUTES ;
-    }
-
-    if(sort == PLASMA_ELECTRON)
-    {
-       pos = num+(j-1)*PARTICLE_ATTRIBUTES + jmp*PARTICLE_ATTRIBUTES ;
-//       pos1 = pos;
-    }
-
-    if(sort == BEAM_ELECTRON)
-    {
-       pos = num+(j-1)*PARTICLE_ATTRIBUTES + jmp*2*PARTICLE_ATTRIBUTES ;
-//       pos2 = pos;
-    }
-
-//    pos0 = num+(j-1)*PARTICLE_ATTRIBUTES ;
-//    pos1 = num+(j-1)*PARTICLE_ATTRIBUTES + jmp*PARTICLE_ATTRIBUTES ;
-//    pos2 = num+(j-1)*PARTICLE_ATTRIBUTES + jmp*2*PARTICLE_ATTRIBUTES ;
-//
-//    //printf("PAP %10d %10d %10d %10d %10d %10d \n",jmp,j,num,pos0,pos1,pos2);
-
-    //printf("sort %d pos %d \n",(int)sort,pos);
-    return pos;
-}
-
-__host__ __device__
-int ParticleAttributePositionFortran(int jmp,int j,int sort,int num)
-{
-
-	return ParticleAttributePosition(jmp,j,sort,num) - 1;
-}
 
 
 #endif /* CONTROL_H_ */

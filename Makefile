@@ -21,6 +21,9 @@ main.o: main.cu $(DEPS)
 compare.o: compare.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)
 	
+service_functions.o: service_functions.cu $(DEPS)
+	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
+	
 #kernels.o: kernels.cu $(DEPS)
 #	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 		 	
                     
@@ -28,13 +31,13 @@ compare.o: compare.cu $(DEPS)
 #	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)                     
                     
 %.o: %.cxx $(DEPS)
-	$(CXX) -g -c -o $@ $< $(MPIFLAGS)
+	$(CXX) -g -c -o $@ $< $(MPIFLAGS) 
 
 %.o: %.cpp $(DEPS)
-	$(CPP) -g -c -o $@ $< $(CBFLAGS)
+	$(CPP) -g -c -o $@ $< $(CBFLAGS) 
                             
 all: $(OBJ)
-	$(LD) -g -o $@ $^ $(CFLAGS) $(DBFLAGS) $(CUDALIBS)
+	$(LD) -g -o $@ $^ $(CFLAGS) $(DBFLAGS) $(CUDALIBS) 
 
 clean:
 	rm *.o all    
