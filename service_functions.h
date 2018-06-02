@@ -30,6 +30,9 @@ void get_load_data_file_names(
 		std::string & t_qyfile,
 		std::string & t_qzfile,int nt);
 
+double get_meminfo(void);
+double get_meminfo1(void);
+
 
 
 #endif /* SERVICE_FUNCTIONS_H_ */

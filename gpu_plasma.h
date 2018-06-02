@@ -87,54 +87,6 @@
 using namespace std;
 
 
-double get_meminfo(void)
-{
-	FILE *f;
-	char str[100];
-	int  mem_free;
-	double dmem;
-   // return 0.0;
-
-	system("free>&free_mem_out.dat");
-
-
-	if((f = fopen("free_mem_out.dat","rt")) == NULL) return 0.0;
-
-	fgets(str,100,f);
-	fgets(str,100,f);
-
-	mem_free = atoi(str + 30);
-
-	dmem = (((double)mem_free)/1024)/1024;
-
-	return dmem;
-
-}
-
-double get_meminfo1(void)
-{
-	double retval=0;
-	char tmp[256]={0x0};
-	/* note= add a path to meminfo like /usr/bin/meminfo
-	   to match where meminfo lives on your system */
-	FILE *shellcommand=popen("meminfo","r");
-	while(fgets(tmp,sizeof(tmp),shellcommand)!=NULL)
-	{
-		if(memcmp(tmp,"Mem:",4)==0)
-		{
-			int	wordcount=0;
-			char *delimiter=" ";
-			char *p=strtok(tmp,delimiter);
-			while(*p)
-			{
-				wordcount++;
-				if(wordcount==3) retval=atof(p);
-			}
-		}
-	}
-	pclose(shellcommand);
-	return retval;
-}
 
 
 

@@ -2,7 +2,82 @@
 #include <string>
 #include <stdio.h>
 
+#include <stdlib.h>
+#include<string.h>
+
+#include <sys/resource.h>
+#include <stdint.h>
+
+#include <sys/sysinfo.h>
+#include <sys/time.h>
+
+//struct sysinfo {
+//       long uptime;             /* Seconds since boot */
+//       unsigned long loads[3];  /* 1, 5, and 15 minute load averages */
+//       unsigned long totalram;  /* Total usable main memory size */
+//       unsigned long freeram;   /* Available memory size */
+//       unsigned long sharedram; /* Amount of shared memory */
+//       unsigned long bufferram; /* Memory used by buffers */
+//       unsigned long totalswap; /* Total swap space size */
+//       unsigned long freeswap;  /* swap space still available */
+//       unsigned short procs;    /* Number of current processes */
+//       unsigned long totalhigh; /* Total high memory size */
+//       unsigned long freehigh;  /* Available high memory size */
+//       unsigned int mem_unit;   /* Memory unit size in bytes */
+//       char _f[20-2*sizeof(long)-sizeof(int)]; /* Padding for libc5 */
+//   };
+
 using namespace std;
+
+double get_meminfo(void)
+{
+	FILE *f;
+	char str[100];
+	int  mem_free;
+	double dmem;
+   // return 0.0;
+
+	system("free>&free_mem_out.dat");
+
+
+	if((f = fopen("free_mem_out.dat","rt")) == NULL) return 0.0;
+
+	fgets(str,100,f);
+	fgets(str,100,f);
+
+	mem_free = atoi(str + 30);
+
+	dmem = (((double)mem_free)/1024)/1024;
+
+	return dmem;
+
+}
+
+double get_meminfo1(void)
+{
+	double retval=0;
+	char tmp[256]={0x0};
+	/* note= add a path to meminfo like /usr/bin/meminfo
+	   to match where meminfo lives on your system */
+	FILE *shellcommand=popen("meminfo","r");
+	while(fgets(tmp,sizeof(tmp),shellcommand)!=NULL)
+	{
+		if(memcmp(tmp,"Mem:",4)==0)
+		{
+			int	wordcount=0;
+			char *delimiter=" ";
+			char *p=strtok(tmp,delimiter);
+			while(*p)
+			{
+				wordcount++;
+				if(wordcount==3) retval=atof(p);
+			}
+		}
+	}
+	pclose(shellcommand);
+	return retval;
+}
+
 
 double CheckArraySilent	(double* a, double* dbg_a,int size)
 	{
