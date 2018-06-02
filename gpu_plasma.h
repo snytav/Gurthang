@@ -2479,12 +2479,7 @@ void readControlPoint(FILE **f1,char *fncpy,int num,int nt,int part_read,int fie
 	readFortranBinaryArray(f,qy);
 	readFortranBinaryArray(f,qz);
 
-//	readFortranBinaryArray(f,x);
-//	readFortranBinaryArray(f,y);
-//	readFortranBinaryArray(f,z);
-//	readFortranBinaryArray(f,px);
-//	readFortranBinaryArray(f,py);
-//	readFortranBinaryArray(f,pz);
+
 
 
 
@@ -3008,15 +3003,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	     while(fgets(str,1000,f) != NULL)
 	     {
-//	          x.x   = atof(str);
-//	          x.y   = atof(str + 25);
-//	          x.z   = atof(str + 50);
 
-	          //px  = atof(str + 75);
-	          //py  = atof(str + 100);
-	          //pz  = atof(str + 125);
-	          //m   = atof(str + 150);
-	          //q_m = atof(str + 175);
 
 		  Particle & p = vp[n++];
 		  //p.SetXnext(x);
@@ -3069,15 +3056,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	     for(int i = 0;i< total_particles;i++)
 	     {
-//	          x.x   = atof(str);
-//	          x.y   = atof(str + 25);
-//	          x.z   = atof(str + 50);
 
-	          //px  = atof(str + 75);
-	          //py  = atof(str + 100);
-	          //pz  = atof(str + 125);
-	          //m   = atof(str + 150);
-	          //q_m = atof(str + 175);
 
 		  Particle & p = vp[n++];
 		//  p.SetXnext(x);
@@ -3234,114 +3213,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	   virtual void ParticleSort(){}
 
-	   //void ApplyToAllParticles(cell_work_function cwf);
-
-	//   virtual void ComputeField(int nt)
-	//{
-	//   double t27 = Hy[27];
-	//
-	//#ifdef UNITY_ELECTRIC_FIELD
-	//     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
-	//     {
-	//         Ex[i] = 1.0;
-	//         Ey[i] = 1.0;
-	//         Ez[i] = 1.0;
-	//     }
-	//#else
-	//        double t271 = Hy[27];
-	//
-	//     CheckArray(Hx,dbgHx);
-	//     CheckArray(Hy,dbgHy);
-	//     CheckArray(Hz,dbgHz);
-	//     CheckArray(Ex,dbgEx);
-	//     CheckArray(Ey,dbgEy);
-	//     CheckArray(Ez,dbgEz);
-	//
-	//     emh1(Qx,Qy,Qz,Hx,Hy,Hz,nt,Ex,Ey,Ez);
-	//
-	//     eme(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz);
-	//     CheckArray(Ex,dbgEx);
-	//     CheckArray(Ey,dbgEy);
-	//     CheckArray(Ez,dbgEz);
-	//
-	//     emh2(Hx,Hy,Hz,nt+1,Qx,Qy,Qz);
-	//
-	//
-	//     eme(Ex,Ey,Ez,nt+1,Hx,Hy,Hz,npJx,npJy,npJz);
-	//
-	//     CheckArray(Hx,dbgHx);
-	//     CheckArray(Hy,dbgHy);
-	//     CheckArray(Hz,dbgHz);
-	//     puts("H");
-	//     //exit(0);
-	//
-	////for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
-	////     {
-	////         Ex[i] = 0.0;
-	////         Ey[i] = 0.0;
-	////         Ez[i] = 0.0;
-	////     }
-	////    LoadTestData(3);
-	//     eme(Ex,Ey,Ez,nt,Hx,Hy,Hz,npJx,npJy,npJz);
-	//     CheckArray(Ex,dbgEx);
-	//     CheckArray(Ey,dbgEy);
-	//     CheckArray(Ez,dbgEz);
-	//#endif
-	//}
-
-	//    void  ComputeField_FirstHalfStep(
-	//		   double *locEx,double *locEy,double *locEz,
-	//		   double nt,
-	//		   double *locHx,double *locHy,double *locHz,
-	//		   double *loc_npJx,double *loc_npJy,double *loc_npJz)
-	//{
-	//	 double *locQx,*locQy,*locQz;
-	//	 static int first = 0;
-	//
-	//	 if(first == 0)
-	//	 {
-	//		 locQx = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	//		 locQy = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	//		 locQz = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	//
-	//		 first = 1;
-	//	 }
-	//     emh1(locQx,locQy,locQz,locHx,locHy,locHz,nt,locEx,locEy,locEz);
-	//     CheckArray(dbg_Qx,locQx);
-	//     eme(locEx,locEy,locEz,nt,locHx,locHy,locHz,loc_npJx,loc_npJy,loc_npJz);
-	//     CheckArray(dbg_Qx,locQx);
-	//     emh2(locHx,locHy,locHz,nt,locQx,locQy,locQz);
-	//}
-
-
-
-//	void StepAllCells()
-//	{
-//		int cell_sum = 0;
-//
-//		for(int n = 0;n < (*AllCells).size();n++)
-//		{
-//			int sum = 0,f;
-//
-//		    Cell<Particle> c = (*AllCells)[n];
-//
-//	        for(int i = 0; i < c.number_of_particles;i++)
-//	        {
-//		        f = c.Move(i);
-//		        sum += f;
-//	//	        c.writeAllToArrays(Jx,Jy,Jz,Rho);
-//	        }
-//	        if(sum != c.number_of_particles)
-//	                {
-//	                	int qq = 0;
-//	                }
-//	        cell_sum += sum == c.number_of_particles;
-//
-//		}
-//		printf("passed %10d cells of %10d total \n",cell_sum,(*AllCells).size());
-//
-//		AssignCellsToArrays();
-//	}
 
 	   void ListAllParticles(int nt,char *where)
 	   	{
@@ -3451,15 +3322,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	  	// read magnetic field from "nt+1" exlg file - to consider emh2
 
 
-//	  	readDebugArray("npjx",dbg,nt,5);
-//	    t_hx = CheckArray(npJx,dbg);
-//	  	readDebugArray("npjx",dbg,nt+1,5);
-//	    t_hx = CheckArray(npJx,dbg);
-//	    readDebugArray("exlg",dbg,nt,5);
-//	    t_hx = CheckArray(npJx,dbg);
-//	    readDebugArray("exlg",dbg,nt+1,5);
-//	    t_hx = CheckArray(npJx,dbg);
-
 	    return 1.0;//t_hx;
 	}
 
@@ -3472,15 +3334,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	  //	dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 	  	TryCheckCurrent(nt,npJx);
 
-	  	// read magnetic field from "nt+1" exlg file - to consider emh2
-//	  	readDebugArray("npjx",dbg,nt,5);
-//	    t_hx = CheckArray(npJx,dbg);
-//	  	readDebugArray("npjy",dbg,nt,5);
-//	  	t_hy = CheckArray(npJy,dbg);
-//	  	readDebugArray("npjz",dbg,nt,5);
-//	  	t_hz = CheckArray(npJz,dbg);
-//
-//	  	printf("Non-periodic currents %.5f \n",(t_hx+t_hy+t_hz)/3.0);
+
 
 		return 1.0;//(t_hx+t_hy+t_hz)/3.0;
 	}
@@ -3494,18 +3348,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	  	dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 	  	TryCheckCurrent(nt,Jx);
-
-	  	// read magnetic field from "nt+1" exlg file - to consider emh2
-//	  	readDebugArray("npjx",dbg,nt,5);
-//	    t_hx = CheckArray(Jx,dbg);
-//	    readDebugArray("exlg",dbg,nt+1,5);
-//	    t_hx = CheckArray(Jx,dbg);
-//	  	readDebugArray("npjy",dbg,nt,5);
-//	  	t_hy = CheckArray(Jy,dbg);
-//	  	readDebugArray("npjz",dbg,nt,5);
-//	  	t_hz = CheckArray(Jz,dbg);
-//
-//	  	printf("Non-periodic currents %.5f \n",(t_hx+t_hy+t_hz)/3.0);
 
 		return 1.0;//(t_hx+t_hy+t_hz)/3.0;
 	}
@@ -3821,35 +3663,7 @@ int SetCurrentsToZero(int nt)
 	     puts("particles moved!!!");
 	     //return;
 	     exit(0);
-	/*
-	     c000 = (*AllCells)[0];
-	     AssignCellsToArrays();
 
-	     for(int n = 0;n < (*AllCells).size();n++)
-	     {
-	         Cell<Particle>  c = (*AllCells)[n];
-		     thrust::host_vector<Particle> vecp = c.getFlyList();
-		     if(vecp.size() > 0)
-		     {
-		        int q = 0;
-		        for(j = 0;j < vecp.size();j++)
-		        {
-		        	p = vecp[j];
-		        	printf("cell %5d particle %5d %10.3e \n",n,j,p.x);
-		        }
-		     }
-		     Distribute(vecp);
-	     }
-	     c000 = (*AllCells)[0];
-	   //  LoadTestData(2);
-
-	     ComputeField();
-
-	#ifdef DEBUG_PLASMA
-	     CheckArray(Jx, dbgJx);
-	#endif
-
-	     ParticleLog();*/
 	}
 
 double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Particle> **copy_cells,int nt,int sort)
@@ -3980,13 +3794,6 @@ double checkControlPointParticles(int check_point_num,FILE *f,char *fname,int nt
 #endif
 
 
-//	if(tb < 1.0 && check_point_num == 100)
-//	{
-//		int qq = 0;
-//		tb  = checkControlPointParticlesOneSort(check_point_num,f,cp);
-//	}
-
-//    printf("checkpoint %s electrons %e ions %e beam %e \n",fname,te,ti,tb);
 
 #endif
 
@@ -4039,19 +3846,6 @@ int readControlFile(int nt)
 
 	jmp = size/sizeof(double)/PARTICLE_ATTRIBUTES/3;
 
-	//double x,y,z;
-	//int pos;
-
-	//pos = ParticleAttributePositionFortran(jmp,1,ION,1);
-	//x = ctrlParticles[pos];
-	//printf("x %s \n",FortranExpWrite(x));
-
-	//pos = ParticleAttributePositionFortran(jmp,1,ION,2);
-
-	//y = ctrlParticles[pos];
-	//pos = ParticleAttributePositionFortran(jmp,1,ION,3);
-
-	//z = ctrlParticles[pos];
 
 	return 0;
 #endif
