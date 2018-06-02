@@ -2015,7 +2015,7 @@ int PushParticles(int nt)
 
 	memory_monitor("after_CellOrder_StepAllCells",nt);
 
-	checkParticleAttributes(nt);
+	//checkParticleAttributes(nt);
 
 	checkControlPoint(270,nt,1);
 
@@ -5506,149 +5506,7 @@ int checkDoublePrecisionIdentity(double a,double b)
 	return (i - point_pos);
 }
 
-double checkParticleSortAttributes(int nt,particle_sorts sort,int attributes_checked,int jmp_real)
-{
 
-
-#ifndef ATTRIBUTES_CHECK
-	return 0;
-#else
-	int j,i,n,n_fortran/*,n1,n1_fortran,n2,n2_fortran,max_j,max_num*/,eq_flag,wrong = 0;
-		int min_eq_flag = 25;
-		double t = 0.0,c,ch, delta,max_delta = 0.0;
-		//c1,ch1,c2,ch2,
-		double wrong_attr;
-		FILE *f,*f_all,*f_tab;
-		char fn[200],fn_all[200],fn_table[200];
-
-	sprintf(fn,"attributes%05d_%d.dat",nt,(int)sort);
-	sprintf(fn_all,"atr_all_attribute%05d_%d.dat",nt,(int)sort);
-	sprintf(fn_table,"atr_table_attribute%05d_%d.dat",nt,(int)sort);
-
-	if((f = fopen(fn,"wt")) == NULL) return -1.0;
-	if((f_all = fopen(fn_all,"wt")) == NULL) return -1.0;
-	if((f_tab = fopen(fn_table,"wt")) == NULL) return -1.0;
-
-	for(i = 1;
-			i <= attributes_checked
-	//PARTICLE_ATTRIBUTES
-	;i++)
-	{
-		wrong_attr = 0.0;
-		max_delta  = 0.0;
-		min_eq_flag = 25;
-		for(j = 1;j <= jmp_real;j++)
-		{
-			n         = ParticleAttributePosition(jmp,j,sort,i);
-			n_fortran = ParticleAttributePositionFortran(jmp,j,sort,i);
-
-
-			c  = ctrlParticles[n_fortran];
-			ch = check_ctrlParticles[n];
-			delta = fabs(ctrlParticles[n_fortran] - check_ctrlParticles[n]);
-
-			eq_flag = checkDoublePrecisionIdentity(c,ch);
-
-			if(delta > max_delta)
-				{
-				max_delta = delta;
-//				max_j     = j;
-//				max_num   = i;
-				}
-
-			if(eq_flag < min_eq_flag) min_eq_flag = eq_flag;
-
-//			if(j == 50724)
-//			{
-//				int qq = 0;
-//			}
-//
-//			if(j == 115226 && i == 106 && (int)sort == 1)
-//			{
-//				int qq = checkDoublePrecisionIdentity(c,ch);
-//			}
-
-			if(eq_flag >= TOLERANCE_DIGITS_AFTER_POINT) t += 1.0;
-			else
-			{
-				wrong_attr += 1.0;
-//				int qq = 0;
-				eq_flag = checkDoublePrecisionIdentity(c,ch);
-				fprintf(f,"wrong %10d particle %10d attribute %3d digits %5d CPU %25.16e GPU %25.16e diff %15.5e n %10d nf %10d \n",
-						wrong++,j,i,eq_flag,c,ch,delta,n,n_fortran);
-			}
-
-
-		    fprintf(f_all,"wrong %10d particle %10d attribute %3d digits %5d CPU %25.16e GPU %25.16e diff %15.5e n %10d nf %10d \n",
-				wrong++,j,i,eq_flag,c,ch,delta,n,n_fortran);
-
-		}
-//		printf("sort %2d attribute %3d wrong %e, %8d of %10d delta %15.5e digits %2d\n",
-//				   (int)sort,i,wrong_attr/jmp_real,(int)wrong_attr,jmp_real,max_delta,min_eq_flag);
-		fprintf(f_tab,"sort %2d attribute %3d wrong %e, %8d of %10d delta %15.5e digits %5d\n",
-				   (int)sort,i,wrong_attr/jmp_real,(int)wrong_attr,jmp_real,max_delta,min_eq_flag);
-	}
-	fclose(f);
-	fclose(f_all);
-	fclose(f_tab);
-	return (1.0 + t/jmp/attributes_checked);
-#endif
-}
-
-int checkParticleAttributes(int nt)
-{
-
-
-#ifndef ATTRIBUTES_CHECK
-	return 0;
-#else
-
-	static int first = 1;
-
-	readControlFile(nt);
-
-	if(first == 1)
-	{
-		first = 0;
-		check_ctrlParticles = (double *)malloc(size_ctrlParticles);
-		memset(check_ctrlParticles,0,size_ctrlParticles);
-
-	}
-	cudaError_t err;
-
-	err = cudaGetLastError();
-
-#ifdef ATTRIBUTES_CHECK
-    err = cudaMemcpy(check_ctrlParticles,d_ctrlParticles,
-    		   //1,
-    		   size_ctrlParticles, // /PARTICLE_ARRAY_PORTION,
-    		   cudaMemcpyDeviceToHost);
-    err = cudaGetLastError();
-#endif
-    if(err != cudaSuccess)
-    {
-    	printf("cudaMemcpy before attributes error %d %s\n",err,cudaGetErrorString(err));
-    	exit(0);
-    }
-
-    checkParticleSortAttributes(nt,ION,131,real_number_of_particle[(int)ION]);
-    checkParticleSortAttributes(nt,PLASMA_ELECTRON,131,real_number_of_particle[(int)PLASMA_ELECTRON]);
-    checkParticleSortAttributes(nt,BEAM_ELECTRON,131,real_number_of_particle[(int)BEAM_ELECTRON]);
-
-#endif
-}
-
-void printGPUParticle(int num,int sort)
-{
-	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(MAX_particles_per_cell/2,1,1),
-					dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
-
-
-//	cudaPrintfInit();
-	printParticle<<<dimGrid, dimBlock,16000>>>(d_CellArray,num,sort);
-//	cudaPrintfDisplay(stdout, true);
-//	cudaPrintfEnd();
-}
 
 
 
