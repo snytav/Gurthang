@@ -82,14 +82,6 @@ using namespace std;
 
 
 
-//const int flagCPUandGPUrun = 1;
-
-//global_for_CUDA void testKernel(double *p,int jmp)
-//{
-////	cuPrintf("jmp %d \n",jmp);
-////	cuPrintf("%p \n",(void *)p);
-//}
-
 template <template <class Particle> class Cell >
 global_for_CUDA
 void printParticle(Cell<Particle>  **cells,int num,int sort)
