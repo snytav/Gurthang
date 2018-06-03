@@ -1,4 +1,143 @@
- virtual void Alloc()
+
+int InitializeGPU()
+{
+    InitGPUParticles();
+    InitGPUFields(&d_Ex,&d_Ey,&d_Ez,
+    	          &d_Hx,&d_Hy,&d_Hz,
+    		      &d_Jx,&d_Jy,&d_Jz,
+    		      &d_npJx,&d_npJy,&d_npJz,
+                  &d_Qx,&d_Qy,&d_Qz,
+                  Ex,Ey,Ez,
+				  Hx,Hy,Hz,
+				  Jx,Jy,Jz,
+				  npJx,npJy,npJz,
+				  Qx,Qy,Qz,
+				  Nx,Ny,Nz
+            );
+
+    setPrintfLimit();
+
+    int err = cudaSetDevice(0);
+
+    printf("InitializeGPU error %d \n",err);
+
+    return 0;
+}
+
+void Initialize()
+{
+	InitializeCPU();
+	copyCellsWithParticlesToGPU();
+	InitializeGPU();
+}
+
+
+
+
+
+void InitGPUParticles()
+ //   :InitParticles(fname,vp)
+{
+	int size;
+	GPUCell<Particle> *d_c,*h_ctrl;
+	GPUCell<Particle> *n;
+	GPUCell<Particle> *h_copy,*h_c;
+	double t;
+	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlockOne(1,1,1);
+
+	 readControlFile(START_STEP_NUMBER);
+
+	size = (*AllCells).size();
+
+	 size_t m_free,m_total;
+
+	h_ctrl = new Cell<Particle>;
+	n = new Cell<Particle>;
+
+    h_CellArray = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+    cudaError_t err = cudaMalloc(&d_CellArray,size*sizeof(Cell<Particle> *));
+
+//    h_controlParticleNumberArray = (int*)malloc(size*sizeof(int));
+
+    printf("%s : size = %d\n", __FILE__, size);
+    for(int i = 0;i < size;i++)
+    {
+        //printf("GPU cell %d begins******************************************************\n",i);
+    	GPUCell<Particle> c;
+    	c = (*AllCells)[i];
+
+    	h_controlParticleNumberArray[i] = c.number_of_particles;
+    	/////////////////////////////////////////
+    	*n = c;
+#ifdef ATTRIBUTES_CHECK
+    	c.SetControlSystem(jmp,d_ctrlParticles);
+#endif
+
+    	//t = c.compareToCell(*n);
+
+       // puts("COMPARE------------------------------");
+    	//printf("%d: %d\n", i, c.busyParticleArray);
+        d_c = c.copyCellToDevice();
+        cudaMemGetInfo(&m_free,&m_total);
+        double mfree,mtot;
+        mfree = m_free;
+        mtot  = m_total;
+#ifdef COPY_CELL_PRINTS
+        printf("cell %10d Device cell array allocated error %d %s memory: free %10.2f total %10.2f\n",i,err,cudaGetErrorString(err),
+        		                                                mfree/1024/1024/1024,mtot/1024/1024/1024);
+        puts("");
+
+	  dbgPrintGPUParticleAttribute(d_c,50,1," CO2DEV " );
+	  puts("COPY----------------------------------");
+#endif
+
+
+#ifdef PARTICLE_PRINTS
+
+        if(t < 1.0)
+        {
+        	t = c.compareToCell(*h_copy);
+        }
+#endif
+        ////////////////////////////////////////.
+        h_CellArray[i] = d_c;
+        cudaMemcpy(h_ctrl,d_c,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
+#ifdef InitGPUParticles_PRINTS
+	    dbgPrintGPUParticleAttribute(d_c,50,1," CPY " );
+
+       cudaPrintfInit();
+
+        testKernel<<<1,1>>>(h_ctrl->d_ctrlParticles,h_ctrl->jmp);
+        cudaPrintfDisplay(stdout, true);
+        cudaPrintfEnd();
+
+        printf("i %d l %d k n %d %d %e src %e num %d\n",h_ctrl->i,h_ctrl->l,h_ctrl->k,i,
+        		c.ParticleArrayRead(0,7),c.number_of_particles
+        		);
+	printf("GPU cell %d ended ******************************************************\n",i);
+#endif
+    }
+
+    //cudaError_t err;
+    err = cudaMemcpy(d_CellArray,h_CellArray,size*sizeof(Cell<Particle> *),cudaMemcpyHostToDevice);
+    if(err != cudaSuccess)
+        {
+         	printf("bGPU_WriteControlSystem err %d %s \n",err,cudaGetErrorString(err));
+        	exit(0);
+        }
+
+//	d_AllCells = new thrust::device_vector<Cell<Particle> >(size);
+
+//	*d_AllCells = (*AllCells);
+#ifdef ATTRIBUTES_CHECK
+    GPU_WriteControlSystem<<<dimGrid, dimBlockOne,16000>>>(d_CellArray);
+#endif
+	size = 0;
+
+}
+
+
+virtual void Alloc()
 	  {
 
 		  AllCells = new thrust::host_vector<Cell<Particle> >;
