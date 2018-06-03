@@ -24,6 +24,100 @@ int InitializeGPU()
     return 0;
 }
 
+int initMeshArrays()
+{
+	   initControlPointFile();
+
+	   Alloc();
+
+	   Cell<Particle> c000;
+
+	   InitCells();
+	   c000 = (*AllCells)[0];
+
+	   InitFields();
+	   c000 = (*AllCells)[0];
+	   InitCurrents();
+
+	   return 0;
+}
+
+int LoadParticleData(int nt,
+		               std::vector<Particle> & ion_vp,
+		               std::vector<Particle> & el_vp,
+		               std::vector<Particle> & beam_vp)
+{
+	 if(nt > 1)
+	 {
+		 ClearAllParticles();
+	 }
+
+	 FILE *f;
+
+	 string part_name = getBinaryFileName(nt);
+
+	 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return 1;
+
+//		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+
+	 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
+
+	 fclose(f);
+
+
+
+
+   magf = 1;
+
+	 return 0;
+}
+
+//	  int LoadData(i)
+
+void LoadTestData(int nt,
+		            int part_nt,
+		            std::vector<Particle> & ion_vp,
+		            std::vector<Particle> & el_vp,
+		            std::vector<Particle> & beam_vp)
+{
+   LoadMeshData(nt);
+
+   LoadParticleData(nt,ion_vp,el_vp,beam_vp);
+
+
+}
+
+void AssignArraysToCells()
+{
+   for(int n = 0;n < (*AllCells).size();n++)
+   {
+
+       Cell<Particle> c = (*AllCells)[n];
+//	         if(c.i == 1 &&  c.l  == 1 && c.k == 1)
+//	         {
+////	         	   int j = 0;
+//	         }
+	     c.readFieldsFromArrays(Ex,Ey,Ez,Hx,Hy,Hz);
+   }
+}
+
+
+
+virtual void InitializeCPU()
+{
+   std::vector<Particle> ion_vp,el_vp,beam_vp;
+
+   initMeshArrays();
+
+   LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER, ion_vp,el_vp,beam_vp);
+
+   addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
+
+   AssignArraysToCells();
+
+
+}
+
 void Initialize()
 {
 	InitializeCPU();
