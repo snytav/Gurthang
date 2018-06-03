@@ -309,9 +309,7 @@ double compareFields(){return 1.0;}
 
 double compareCPUtoGPU()
 {
-//       return (compareFields() +
-//
-//       compareCells())/2.0;
+
 	return 1.0;
 }
 
@@ -320,30 +318,16 @@ void StepAllCells()
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),
 			dimBlock(MAX_particles_per_cell/2,1,1);
 
-//	cudaPrintfInit();
-    //cudaDeviceSetCacheConfig(cudaFuncCachePreferL1);
-   // GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray);
     cudaError_t err;
     err = cudaGetLastError();
     printf("Err: %d %s\n", err, cudaGetErrorString(err));
     cudaDeviceSynchronize();
     err = cudaGetLastError();
     printf("Err: %d %s\n", err, cudaGetErrorString(err));
-	//cudaPrintfDisplay(stdout, true);
-
-	//cudaPrintfEnd();
-//	exit(0);
 }
 
 
 public:
-//	GPUPlasma(){}
-
-
-//	 void Initialize(){
-//		 Initialize();
-//	 }
-//
 
 void virtual emeGPUIterate(int3 s,int3 f,
 			double *E,double *H1, double *H2,
@@ -442,11 +426,7 @@ int checkFields_afterMagneticStageOne(double *t_Hx,double *t_Hy,double *t_Hz,
 }
 
 void  ComputeField_FirstHalfStep(
-//		   double *locEx,double *locEy,double *locEz,
-		   int nt//,
-//		   double *locHx,double *locHy,double *locHz,
-//		   double *loc_npJx,double *loc_npJy,double *loc_npJz,
-//		   double *locQx,double *locQy,double *locQz
+		   int nt
 		   )
 {
 	 double t_check[15];
@@ -600,7 +580,7 @@ int readStartPoint(int nt)
 		 readControlPoint(NULL,fn,0,nt,0,1,Ex,Ey,Ez,Hx,Hy,Hz,Jx,Jy,Jz,Qx,Qy,Qz,
 							   dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz
 			 );
-		//copyFieldsToGPU();
+
 		copyFieldsToGPU(
 		    		                        d_Ex,d_Ey,d_Ez,
 		    								d_Hx,d_Hy,d_Hz,
@@ -780,15 +760,6 @@ int readStartPoint(int nt)
 		  for(int i = start1;i <= end1;i++)
 		  {
 			  periodicElement(&c,i,k,E,dir,0,N);
-//		      //std::cout << "ex2 "<< i+1 << " "<< N+2 << " " << k+1  <<" " <<  i+1 << " " << " 2 " << " " << k+1  << std::endl;
-//			  int3 i0,i1;
-//
-//	                  int n   = c.getGlobalBoundaryCellNumber(i,k,dir,0);
-//			  int n1  = c.getGlobalBoundaryCellNumber(i,k,dir,N);
-//			  E[n]    = E[n1];
-//			  i0= c.getCellTripletNumber(n);
-//			  i1= c.getCellTripletNumber(n1);
-			   //std::cout << "ex1 "<< i0.x+1 << " "<< i0.y+1 << " " << i0.z+1  <<" " <<  i1.x+1 << " " << i1.y+1 << " " << i1.z+1  << " " << E[n]  << " " << E[n1] << std::endl;
 		  }
 	      }
 	      for(int k = start2;k <= end2;k++)
@@ -796,14 +767,7 @@ int readStartPoint(int nt)
 	         for(int i = start1;i <= end1;i++)
 	      	 {
 	        	 periodicElement(&c,i,k,E,dir,N+1,1);
-//	          int n       = c.getGlobalBoundaryCellNumber(i,k,dir,N+1);
-//			  int n1      = c.getGlobalBoundaryCellNumber(i,k,dir,1);
-//			  E[n]    = E[n1];
-//			  int3 i0= c.getCellTripletNumber(n);
-//			  int3 i1= c.getCellTripletNumber(n1);
-			  //std::cout << "ex2 "<< i0.x+1 << " "<< i0.y+1 << " " << i0.z+1  <<" " <<  i1.x+1 << " " << i1.y+1 << " " << i1.z+1  << " " << E[n]  << " " << E[n1] << std::endl;
 		  }
-//		      int qq = 0;
 	      }
 	      }
 	      return 0;
