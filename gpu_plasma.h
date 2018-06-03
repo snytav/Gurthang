@@ -854,14 +854,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
                    jx_wrong_points_number++;
                    wrong_flag[n] = 1;
 
-//#ifdef WRONG_CURRENTS_CHECK
-//                   double *d_w;
-//                   cudaError_t err_attr = cudaMalloc(
-//                	        &d_w,
-//                   			sizeof(double)*PARTICLE_ATTRIBUTES*MAX_particles_per_cell);
-//                   printf("wrong current attributes alloc %d %s \n",err_attr,cudaGetErrorString(err_attr));
-//                   wrong_attributes[n] = d_w;
-//#endif
+
         	   }
     	   }
     	   jx_wrong_points = (int3 *)malloc(jx_wrong_points_number*sizeof(int3));
@@ -992,17 +985,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		  SetPeriodicCurrentComponent(d_CellArray,d_Jy,1,Nx,Ny,Nz);
 		  SetPeriodicCurrentComponent(d_CellArray,d_Jz,2,Nx,Ny,Nz);
 
-//         GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jx,0,0,0,0,Nx+2);
-//	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jx,0,1,0,0,Ny+2);
-//	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jx,0,2,0,0,Nz+2);
-
-//	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jy,1,0,0,0,Nx+2);
-//	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jy,1,1,0,0,Ny+2);
-//	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jy,1,2,0,0,Nz+2);
-//
-//	     GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(d_CellArray,d_Jz,2,0,0,0,Nx+2);
-//	     GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(d_CellArray,d_Jz,2,1,0,0,Ny+2);
-//	     GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(d_CellArray,d_Jz,2,2,0,0,Nz+2);
 
 	     checkControlPoint(400,nt,0);
 
