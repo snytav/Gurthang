@@ -118,7 +118,7 @@ int compare(Particle p,Particle p1)
 
 double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
 {
-	double t = 0.0;
+	double t = 0.0,s = v.size(),s1 = v1.size();
 
 	if(v.size() != v1.size()) return 0.0;
 
@@ -159,12 +159,9 @@ virtual void InitializeCPU()
 	   getUniformMaxwellianParticles(ion_vp,el_vp,beam_vp);
 
    }
-
-
-
-   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
-
-   double t1 = compareParticleList(ion_vp,ion_vp1);
+//   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
+//
+//   double t1 = compareParticleList(ion_vp,ion_vp1);
 
 
    addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
@@ -689,41 +686,7 @@ virtual void Alloc()
 
       }
 
-      int convertParticleArraysToSTLvector(
-    		  double *dbg_x,
-    		  double *dbg_y,
-			  double *dbg_z,
-			  double *dbg_px,
-			  double *dbg_py,
-			  double *dbg_pz,
-			  double q_m,
-			  double m,
-			  int total_particles,
-			  particle_sorts sort,
-    		  std::vector<Particle> & vp
-    		  )
-      {
-    	  double x,y,z,px,py,pz;
 
-    	  for(int i = 0; i < total_particles;i++)
-    	  {
-			  x   = dbg_x[i];
-			  y   = dbg_y[i];
-			  z   = dbg_z[i];
-			  px   = dbg_px[i];
-			  py   = dbg_py[i];
-			  pz   = dbg_pz[i];
-
-
-			  Particle p(x,y,z,px,py,pz,m,q_m);
-
-			  p.fortran_number = i+1;
-			  p.sort = sort;
-
-			  vp.push_back(p);
-
-    	  }
-      }
 
       int getParticlesOneSortFromFile(
     		                          FILE *f,

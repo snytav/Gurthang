@@ -51,4 +51,18 @@ int getUniformMaxwellianParticles(
 		                           std::vector<Particle>  & beam_vp
 		                           );
 
+int convertParticleArraysToSTLvector(
+    		  double *dbg_x,
+    		  double *dbg_y,
+			  double *dbg_z,
+			  double *dbg_px,
+			  double *dbg_py,
+			  double *dbg_pz,
+			  double q_m,
+			  double m,
+			  int total_particles,
+			  particle_sorts sort,
+    		  std::vector<Particle> & vp
+    		  );
+
 #endif /* INIT_H_ */

@@ -12,6 +12,8 @@
 
 #include "particle.h"
 
+#include "maxwell.h"
+
 
 #include "f2c.h"
 #include <stdio.h>
@@ -617,6 +619,7 @@ int AllocateMemoryForArrays(int N,int sorts)
     initial[1].total    = 2*N;
     initial[2].total    = N;
 
+
     diagnostics[0].total    = N;
     diagnostics[1].total    = 2*N;
     diagnostics[2].total    = N;
@@ -626,6 +629,42 @@ int AllocateMemoryForArrays(int N,int sorts)
     AllocateBinaryParticlesArrays(&(initial[0]),&(initial[1]),&(initial[2]));
     AllocateBinaryParticlesArraysFloat(&(diagnostics[0]),&(diagnostics[1]),&(diagnostics[2]));
 
+}
+
+int convertParticleArraysToSTLvector(
+		  double *dbg_x,
+		  double *dbg_y,
+		  double *dbg_z,
+		  double *dbg_px,
+		  double *dbg_py,
+		  double *dbg_pz,
+		  double q_m,
+		  double m,
+		  int total_particles,
+		  particle_sorts sort,
+		  std::vector<Particle> & vp
+		  )
+{
+	  double x,y,z,px,py,pz;
+
+	  for(int i = 0; i < total_particles;i++)
+	  {
+		  x   = dbg_x[i];
+		  y   = dbg_y[i];
+		  z   = dbg_z[i];
+		  px   = dbg_px[i];
+		  py   = dbg_py[i];
+		  pz   = dbg_pz[i];
+
+
+		  Particle p(x,y,z,px,py,pz,m,q_m);
+
+		  p.fortran_number = i+1;
+		  p.sort = sort;
+
+		  vp.push_back(p);
+
+	  }
 }
 
 
@@ -653,6 +692,9 @@ int getUniformMaxwellianParticles(std::vector<Particle>  & ion_vp,
 
     AllocateMemoryForArrays(total,3);
 
+    getMassCharge(&(initial[0]),&(initial[1]),&(initial[2]),
+       		      ni,rbd,lp);
+
 	InitUniformMaxwellianParticles(1,total,tex0,tey0,tez0,
 					  lx,ly,lz,
 					  &jmb,
@@ -664,6 +706,19 @@ int getUniformMaxwellianParticles(std::vector<Particle>  & ion_vp,
 						  initial[2].dbg_px,initial[2].dbg_py,initial[2].dbg_pz,
 						  initial[1].dbg_x,initial[1].dbg_y,initial[1].dbg_z,
 						  initial[1].dbg_px,initial[1].dbg_py,initial[1].dbg_pz);
+
+	 convertParticleArraysToSTLvector(
+			 initial[0].dbg_x,
+			 initial[0].dbg_y,
+			 initial[0].dbg_z,
+			 initial[0].dbg_px,
+			 initial[0].dbg_py,
+			 initial[0].dbg_pz,
+			 initial[0].q_m,
+			 *(initial[0].m),
+	 		 initial[0].total,
+	 		 BEAM_ELECTRON,
+	 		 beam_vp);
 
 
 	return 0;
