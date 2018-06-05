@@ -1,4 +1,7 @@
 
+
+
+
 int InitializeGPU()
 {
     InitGPUParticles();
@@ -109,7 +112,26 @@ virtual void InitializeCPU()
 
    initMeshArrays();
 
-   LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER, ion_vp,el_vp,beam_vp);
+   int flag_from_file = 1;
+
+   if(flag_from_file == 1)
+   {
+      LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER, ion_vp,el_vp,beam_vp);
+
+//      writeParamsFile(tex0,tey0,tez0,
+//      					Tb,rimp,rbd,ni,
+//      				xmax.x,xmax.y,xmax.z(),
+//      				    lp,mesh.x,mesh.y,mesh.z(),
+//      				    tau,Bx0,beam_max.x,beam_max.y,beam_max.z(),
+//      				    plasma_dim_y,plasma_dim_z,
+//      				    beam_plasma,nt_start_from_file,
+//      				    total_steps,minor_steps,start_phase);
+   }
+   else
+   {
+	   getUniformMaxwellianParticles(ion_vp,el_vp,beam_vp);
+
+   }
 
    addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
 

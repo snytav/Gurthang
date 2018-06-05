@@ -12,7 +12,7 @@ CUDALIBS=  -g -L$(CUDALIB) -lcuda -lcudart #-lthrust
 MPIFLAGS=
 CFLAGS=
 
-OBJ = main.o rnd.o mpi_shortcut.o service_functions.o compare.o 
+OBJ = main.o rnd.o mpi_shortcut.o service_functions.o compare.o maxwell.o
 #plasma.o
             
 main.o: main.cu $(DEPS)
@@ -20,6 +20,9 @@ main.o: main.cu $(DEPS)
 	
 compare.o: compare.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)
+	
+maxwell.o: maxwell.cu $(DEPS)
+	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
 	
 service_functions.o: service_functions.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	

@@ -29,6 +29,7 @@
 #include <nvToolsExtCudaRt.h>
 #endif
 
+#include "maxwell.h"
 
 #include <time.h>
 
