@@ -104,11 +104,38 @@ void AssignArraysToCells()
    }
 }
 
+int compare(Particle p,Particle p1)
+{
+	int tx = comd(p.x,p1.x);
+	int ty = comd(p.y,p1.y);
+	int tz = comd(p.z,p1.z);
+	int tpx = comd(p.pu,p1.pu);
+	int tpy = comd(p.pv,p1.pv);
+	int tpz = comd(p.pw,p1.pw);
+
+	return (tx && ty && tz && tpx && tpy && tpz);
+}
+
+double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
+{
+	double t = 0.0;
+
+	if(v.size() != v1.size()) return 0.0;
+
+	for (int i = 0;i < v.size();i++)
+	{
+		t += compare(v[i],v1[i]);
+	}
+
+	return (t/v.size());
+}
+
 
 
 virtual void InitializeCPU()
 {
    std::vector<Particle> ion_vp,el_vp,beam_vp;
+   std::vector<Particle> ion_vp1,el_vp1,beam_vp1;
 
    initMeshArrays();
 
@@ -132,6 +159,13 @@ virtual void InitializeCPU()
 	   getUniformMaxwellianParticles(ion_vp,el_vp,beam_vp);
 
    }
+
+
+
+   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
+
+   double t1 = compareParticleList(ion_vp,ion_vp1);
+
 
    addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
 
