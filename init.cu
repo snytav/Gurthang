@@ -110,6 +110,7 @@ int compare(Particle p,Particle p1)
 	int ty = comd(p.y,p1.y);
 	int tz = comd(p.z,p1.z);
 	int tpx = comd(p.pu,p1.pu);
+	double dpx = fabs(p.pu - p1.pu);
 	int tpy = comd(p.pv,p1.pv);
 	int tpz = comd(p.pw,p1.pw);
 
@@ -124,7 +125,8 @@ double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
 
 	for (int i = 0;i < v.size();i++)
 	{
-		t += compare(v[i],v1[i]);
+
+			t += compare(v[i],v1[i]);
 	}
 
 	return (t/v.size());
@@ -159,9 +161,9 @@ virtual void InitializeCPU()
 	   getUniformMaxwellianParticles(ion_vp,el_vp,beam_vp);
 
    }
-//   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
-//
-//   double t1 = compareParticleList(ion_vp,ion_vp1);
+ //  getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
+
+   //double t1 = compareParticleList(beam_vp,beam_vp1);
 
 
    addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
