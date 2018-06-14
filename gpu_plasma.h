@@ -1867,29 +1867,29 @@ int readControlFile(int nt)
 #endif
 }
 
-int checkDoublePrecisionIdentity(double a,double b)
-{
-	char as[50],bs[50];
-	int point_pos,i;
-
-	if(fabs(a-b) > PARTICLE_TOLERANCE) return 0;
-
-	sprintf(as,"%25.15e",a);
-	sprintf(bs,"%25.15e",b);
-
-	for(i = 0;i < strlen(as);i++)
-	{
-		if(as[i] == bs[i] && as[i] == '.')
-		{
-			point_pos = i;
-		}
-
-		if(as[i] != bs[i]) break;
-	}
-
-
-	return (i - point_pos);
-}
+//int checkDoublePrecisionIdentity(double a,double b)
+//{
+//	char as[50],bs[50];
+//	int point_pos,i;
+//
+//	if(fabs(a-b) > PARTICLE_TOLERANCE) return 0;
+//
+//	sprintf(as,"%25.15e",a);
+//	sprintf(bs,"%25.15e",b);
+//
+//	for(i = 0;i < strlen(as);i++)
+//	{
+//		if(as[i] == bs[i] && as[i] == '.')
+//		{
+//			point_pos = i;
+//		}
+//
+//		if(as[i] != bs[i]) break;
+//	}
+//
+//
+//	return (i - point_pos);
+//}
 
 
 
