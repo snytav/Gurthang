@@ -1029,44 +1029,6 @@ void checkControlPoint(int num,int nt,int check_part)
      fclose(f);
 }
 
-	  void write3DcellArray(char *name,int code)
-	  {
-	    char fname[100];
-	    Cell<Particle> & c = AllCells[0];
-	    FILE *f;
-#ifndef WRITE_3D_CELL_ARRAY
-	    return;
-#endif
-
-	    sprintf(fname,"%03d_cells.dat",code,name);
-
-	    if((f = fopen(fname,"wt")) == NULL) return;
-
-	    for(int i = 1;i < Nx+1;i++)
-	    {
-	        for(int l = 1;l < Ny+1;l++)
-	        {
-	            for(int k = 1;k < Nz+1;k++)
-		    {
-		        int n = c.getGlobalCellNumber(i,l,k);
-			Cell<Particle> & cc = AllCells[n];
-
-			fprintf(f,"%15.5e %15.5e %15.5e %10.3e %10.3e %10.3e %10.3e %10.3e %10.3e %10.3e %10.3e \n",c.getNodeX(i),c.getNodeY(l),c.getNodeZ(k),
-				cc.getCoreCell(code,1,1,1),
-				cc.getCoreCell(code,1,1,2),
-				cc.getCoreCell(code,1,2,1),
-				cc.getCoreCell(code,1,2,2),
-				cc.getCoreCell(code,2,1,1),
-				cc.getCoreCell(code,2,1,2),
-				cc.getCoreCell(code,2,2,1),
-				cc.getCoreCell(code,2,2,2)
-			);
-		    }
-		}
-	    }
-
-	    fclose(f);
-	}
 
 
 
