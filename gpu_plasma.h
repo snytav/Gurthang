@@ -1029,33 +1029,6 @@ void checkControlPoint(int num,int nt,int check_part)
      fclose(f);
 }
 
-	  void read3DarrayModified(char* name, double* d,double a)
-	  {
-	      char str[100];
-	      Cell<Particle>  c = (*AllCells)[0];
-	      FILE *f;
-
-	      //sprintf(fname,"%s_fiel3d.dat",name);
-
-	      if((f = fopen(name,"rt")) == NULL) return;
-
-	      while(fgets(str,100,f) != NULL)
-	      {
-	            int i = atoi(str) - 1;
-	            int l = atoi(str + 10) - 1;
-	            int k = atoi(str + 20) - 1;
-	  	  double t = atof(str + 30);
-	  	  int n = c.getGlobalCellNumber(i,l,k);
-	  	   t = a*(i + 100*l + 10000*k);
-	  	   d[n] = t;
-	      }
-
-	      fclose(f);
-
-	  }
-
-
-
 	  void write3DcellArray(char *name,int code)
 	  {
 	    char fname[100];
