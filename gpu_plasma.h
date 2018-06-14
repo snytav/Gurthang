@@ -1868,53 +1868,53 @@ int readControlFile(int nt)
 }
 
 
-void printCellCurrents(int num,int nt,char *name,char *where)
-{
-	int size = (*AllCells).size();
-	GPUCell<Particle> ** cp = (GPUCell<Particle> **)malloc(size*sizeof(GPUCell<Particle> *));
-	FILE *f;
-	char fname[100];
-	CellDouble *m;
-
-	sprintf(fname,"%s_at_%s_cells_%03d.dat",name,where,nt);
-
-	if((f = fopen(fname,"wt")) == NULL) return;
-
-	//	copyCells(h_CellArray);
-		copyCells(where,nt);
-
-		for(int i = 0;i <size;i++)
-		{
-			GPUCell<Particle> c = *(cp[i]);
-
-			for(int i1  = 0;i1 < CellExtent;i1++)
-			{
-				for(int k1  = 0;k1 < CellExtent;k1++)
-				{
-					for(int l1  = 0;l1 < CellExtent;l1++)
-					{
-						if(!strcmp(name,"jx"))
-						{
-							m = c.Jx;
-						}
-						else
-						{
-							if(!strcmp(name,"jy"))
-							{
-								m = c.Jy;
-							}
-							else
-							{
-								m = c.Jz;
-							}
-						}
-						fprintf(f,"%10d %5d %5d %5d %25.15e \n",i,i1,k1,l1,m->M[i1][k1][l1]);
-					}
-				}
-			}
-		}
-        fclose(f);
-}
+//void printCellCurrents(int num,int nt,char *name,char *where)
+//{
+//	int size = (*AllCells).size();
+//	GPUCell<Particle> ** cp = (GPUCell<Particle> **)malloc(size*sizeof(GPUCell<Particle> *));
+//	FILE *f;
+//	char fname[100];
+//	CellDouble *m;
+//
+//	sprintf(fname,"%s_at_%s_cells_%03d.dat",name,where,nt);
+//
+//	if((f = fopen(fname,"wt")) == NULL) return;
+//
+//	//	copyCells(h_CellArray);
+//		copyCells(where,nt);
+//
+//		for(int i = 0;i <size;i++)
+//		{
+//			GPUCell<Particle> c = *(cp[i]);
+//
+//			for(int i1  = 0;i1 < CellExtent;i1++)
+//			{
+//				for(int k1  = 0;k1 < CellExtent;k1++)
+//				{
+//					for(int l1  = 0;l1 < CellExtent;l1++)
+//					{
+//						if(!strcmp(name,"jx"))
+//						{
+//							m = c.Jx;
+//						}
+//						else
+//						{
+//							if(!strcmp(name,"jy"))
+//							{
+//								m = c.Jy;
+//							}
+//							else
+//							{
+//								m = c.Jz;
+//							}
+//						}
+//						fprintf(f,"%10d %5d %5d %5d %25.15e \n",i,i1,k1,l1,m->M[i1][k1][l1]);
+//					}
+//				}
+//			}
+//		}
+//        fclose(f);
+//}
 
 int memory_monitor(char *legend,int nt)
 {
