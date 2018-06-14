@@ -234,14 +234,14 @@ double checkGPUArray(double *a,double *d_a)
 
 }
 
-
-double compareFields(){return 1.0;}
-
-double compareCPUtoGPU()
-{
-
-	return 1.0;
-}
+//
+//double compareFields(){return 1.0;}
+//
+//double compareCPUtoGPU()
+//{
+//
+//	return 1.0;
+//}
 
 void StepAllCells()
 {
@@ -2243,8 +2243,7 @@ int memory_status_print(int nt)
 
 int Compute()
 {
-	   double t = compareCPUtoGPU();
-	   printf("----------------------------------------------------------- plasma check before move %.5f\n",t);
+	   printf("----------------------------------------------------------- \n");
 	   size_t m_free,m_total;
 
 	   cudaMemGetInfo(&m_free,&m_total);
@@ -2260,10 +2259,7 @@ int Compute()
 
 	       memory_status_print(nt);
 	   }
-
-
-	   t = compareCPUtoGPU();
-	   printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ plasma check after move %.5f\n",t);
+	   printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ \n");
 
 }
 
