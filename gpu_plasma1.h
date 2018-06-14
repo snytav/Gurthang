@@ -809,17 +809,30 @@ __global__ void GPU_GetCellNumbers(Cell<Particle>  **cells,
 		numbers[blockIdx.x] = (*c).number_of_particles;
 }
 
-__device__ void assignSharedWithLocal(CellDouble *c_jx,
-		                         CellDouble *c_jy,
-		                         CellDouble *c_jz,
-		                         CellDouble *c_ex,
-		                         CellDouble *c_ey,
-		                         CellDouble *c_ez,
-		                         CellDouble *c_hx,
-		                         CellDouble *c_hy,
-		                         CellDouble *c_hz,
-		                         CellDouble *fd)
+template <template <class Particle> class Cell >
+__global__ void GPU_StepAllCells(Cell<Particle>  **cells,
+//		                         int n,
+		                         int i,
+//		                         CellDouble *jx,
+//		                         CellDouble *jy,
+//		                         CellDouble *jz,
+		                         double *global_jx,
+		                         double mass,
+		                         double q_mass,
+		                         double *p_control,
+		                         int jmp,
+		                         int nt
+		                         )
 {
+	Cell<Particle>  *c,*c0 = cells[0];//,nc;
+	__shared__ extern CellDouble fd[9];
+	CellDouble *c_jx,*c_jy,*c_jz,*c_ex,*c_ey,*c_ez,*c_hx,*c_hy,*c_hz;
+	CurrentTensor t1,t2;//,loc_t1,loc_t2;
+	int pqr2;
+	Particle p;
+
+	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
+
 	c_ex = &(fd[0]);
 	c_ey = &(fd[1]);
 	c_ez = &(fd[2]);
@@ -831,46 +844,14 @@ __device__ void assignSharedWithLocal(CellDouble *c_jx,
 	c_jx = &(fd[6]);
 	c_jy = &(fd[7]);
 	c_jz = &(fd[8]);
-}
-
-template <template <class Particle> class Cell >
-__global__ void GPU_StepAllCells(Cell<Particle>  **cells,
-		                         int i,
-		                         double *global_jx,
-		                         double mass,
-		                         double q_mass,
-		                         double *p_control,
-		                         int jmp,
-		                         int nt
-		                         )
-{
-	Cell<Particle>  *c,*c0 = cells[0];
-	__shared__ extern CellDouble fd[9];
-	CellDouble *c_jx,*c_jy,*c_jz,*c_ex,*c_ey,*c_ez,*c_hx,*c_hy,*c_hz;
-	CurrentTensor t1,t2;
-	int pqr2;
-	Particle p;
-
-	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
-
-	assignSharedWithLocal(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,fd);
-//	c_ex = &(fd[0]);
-//	c_ey = &(fd[1]);
-//	c_ez = &(fd[2]);
-//
-//	c_hx = &(fd[3]);
-//	c_hy = &(fd[4]);
-//	c_hz = &(fd[5]);
-//
-//	c_jx = &(fd[6]);
-//	c_jy = &(fd[7]);
-//	c_jz = &(fd[8]);
 
 	int index  = threadIdx.x;
 
 
 	while(index < CellExtent*CellExtent*CellExtent)
 	{
+//		if(index < 125) {
+
 		copyCellDouble(c_ex,c->Ex,index,blockIdx);
 		copyCellDouble(c_ey,c->Ey,index,blockIdx);
 		copyCellDouble(c_ez,c->Ez,index,blockIdx);
@@ -882,7 +863,7 @@ __global__ void GPU_StepAllCells(Cell<Particle>  **cells,
 		copyCellDouble(c_jx,c->Jx,index,blockIdx);
 		copyCellDouble(c_jy,c->Jy,index,blockIdx);
 		copyCellDouble(c_jz,c->Jz,index,blockIdx);
-
+		//}
 		index += blockDim.x;
 	}
 	__syncthreads();

@@ -1,4 +1,4 @@
-#include "load_data.h"
+//#include "load_data.h"
 
 
 int InitializeGPU()
@@ -44,31 +44,31 @@ int initMeshArrays()
 	   return 0;
 }
 
-int LoadParticleData(int nt,
-		               std::vector<Particle> & ion_vp,
-		               std::vector<Particle> & el_vp,
-		               std::vector<Particle> & beam_vp)
-{
-
-	 FILE *f;
-
-	 std::string part_name = getBinaryFileName(nt);
-
-	 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return 1;
-
-//		 std::vector<Particle> ion_vp,el_vp,beam_vp;
-
-	 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
-
-	 fclose(f);
-
-
-
-
-   magf = 1;
-
-	 return 0;
-}
+//int LoadParticleData(int nt,
+//		               std::vector<Particle> & ion_vp,
+//		               std::vector<Particle> & el_vp,
+//		               std::vector<Particle> & beam_vp)
+//{
+//
+//	 FILE *f;
+//
+//	 std::string part_name = getMumuFileName(nt);
+//
+//	 if((f = readPreliminary3Darrays(part_name,nt,Nx,Ny,Nz)) == NULL) return 1;
+//
+////		 std::vector<Particle> ion_vp,el_vp,beam_vp;
+//
+//	 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
+//
+//	 fclose(f);
+//
+//
+//
+//
+//
+//
+//	 return 0;
+//}
 
 //	  int LoadData(i)
 
@@ -78,7 +78,7 @@ void LoadTestData(int nt,
 		            std::vector<Particle> & el_vp,
 		            std::vector<Particle> & beam_vp)
 {
-   LoadMeshData(nt);
+  // LoadMeshData(nt);
 
    if(nt > 1)
    	 {
@@ -86,9 +86,9 @@ void LoadTestData(int nt,
    	 }
 
 
-   LoadParticleData(nt,ion_vp,el_vp,beam_vp);
+   LoadParticleData(nt,ion_vp,el_vp,beam_vp,Nx,Ny,Nz);
 
-
+   magf = 1;
 }
 
 void AssignArraysToCells()
@@ -290,7 +290,7 @@ void InitGPUParticles()
 virtual void Alloc()
 	  {
 
-		  AllCells = new thrust::host_vector<Cell<Particle> >;
+		  AllCells = new std::vector<Cell<Particle> >;
 
 	     Ex  = new double[(Nx + 2)*(Ny + 2)*(Nz + 2)];
 	     Ey  = new double[(Nx + 2)*(Ny + 2)*(Nz + 2)];
@@ -510,121 +510,6 @@ virtual void Alloc()
 	  }
 
 
-	  void debugPrintParticleCharacteristicArray(double *p_ch,int np,int nt,char *name,int sort)
-	  {
-		   char fname[200];
-		   FILE *f;
-
-#ifndef PRINT_PARTICLE_INITIALS
-		   return;
-
-#else
-		   sprintf(fname,"particle_init_%s_%05d_sort%02d.dat",name,nt,sort);
-
-		   if((f = fopen(fname,"wt")) == NULL) return;
-
-		   for (int i = 0;i < np;i++)
-		   {
-			   fprintf(f,"%10d %10d %25.16e \n",i,i+1,p_ch[i]);
-		   }
-		   fclose(f);
-#endif
-	  }
-
-      virtual int readBinaryParticleArraysOneSort(
-    		  FILE *f,
-    		  double **dbg_x,
-    		  double **dbg_y,
-    		  double **dbg_z,
-    		  double **dbg_px,
-    		  double **dbg_py,
-    		  double **dbg_pz,
-    		  double *qq_m,
-    		  double *mm,
-    		  int nt,
-    		  int sort
-    		  )
-      {
-		//     char str[1000];
-		     double /*x,y,z,px,py,pz,*/q_m,/* *buf,*/tp,m;
-		     int t;
-		     Cell<Particle> c0 = (*AllCells)[0];
-		     int total_particles;
-		     int err;
-
-		     if((err = ferror(f)) != 0)
-		     {
-		     	 return err ;
-		     }
-
-		     fread(&t,sizeof(int),1,f);
-		     if((err = ferror(f)) != 0)
-		    	 {
-		    	 	 return err ;
-		    	 }
-		     fread(&tp,sizeof(double),1,f);
-		     if((err = ferror(f)) != 0)
-		    	 {
-		    	 	 return err ;
-		    	 }
-
-		     total_particles = (int)tp;
-		     fread(&q_m,sizeof(double),1,f);
-		     if((err = ferror(f)) != 0)
-		    	 {
-		    	 	 return err ;
-		    	 }
-
-		     fread(&m,sizeof(double),1,f);
-		     if((err = ferror(f)) != 0)
-		    	 {
-		    	 	 return err ;
-		    	 }
-
-		    // m = fabs(m);
-		     fread(&t,sizeof(int),1,f);
-		     if((err = ferror(f)) != 0)
-		    	 {
-		    	 	 return err ;
-		    	 }
-
-	         *dbg_x = (double *)malloc(sizeof(double)*total_particles);
-	         debugPrintParticleCharacteristicArray(*dbg_x,total_particles,nt,"x",sort);
-
-	         *dbg_y = (double *)malloc(sizeof(double)*total_particles);
-	         debugPrintParticleCharacteristicArray(*dbg_y,total_particles,nt,"y",sort);
-
-	         *dbg_z = (double *)malloc(sizeof(double)*total_particles);
-	         debugPrintParticleCharacteristicArray(*dbg_z,total_particles,nt,"z",sort);
-
-	         *dbg_px = (double *)malloc(sizeof(double)*total_particles);
-	         debugPrintParticleCharacteristicArray(*dbg_px,total_particles,nt,"px",sort);
-
-	         *dbg_py = (double *)malloc(sizeof(double)*total_particles);
-	         debugPrintParticleCharacteristicArray(*dbg_py,total_particles,nt,"py",sort);
-
-	         *dbg_pz = (double *)malloc(sizeof(double)*total_particles);
-	         debugPrintParticleCharacteristicArray(*dbg_pz,total_particles,nt,"pz",sort);
-
-		 	readFortranBinaryArray(f,*dbg_x);
-		 	readFortranBinaryArray(f,*dbg_y);
-		 	readFortranBinaryArray(f,*dbg_z);
-		 	readFortranBinaryArray(f,*dbg_px);
-		 	readFortranBinaryArray(f,*dbg_py);
-		 	readFortranBinaryArray(f,*dbg_pz);
-
-		 	//printf("particle 79943 %25.15e \n",(*dbg_x)[79943]);
-
-		 	*qq_m = q_m;
-		 	*mm   = m;
-
-		 	if((err = ferror(f)) != 0)
-            {
-	   	 	    return err ;
-			}
-
-		 	return total_particles;
-      }
 
       void printPICstatitstics(double m,double q_m, int total_particles)
       {
@@ -691,105 +576,11 @@ virtual void Alloc()
 
 
 
-      int getParticlesOneSortFromFile(
-    		                          FILE *f,
-                                      particle_sorts sort,
-                                      int nt,
-                                      std::vector<Particle> & vp,
-                                      double *q_m,
-                                      double *m
-                                      )
-      {
- 		     double x,y,z,px,py,pz;
-
- 		     int err;
-
- 		     if((err = ferror(f)) != 0) return 1;
-
- 		     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
- 		    		                                             &dbg_px,&dbg_py,&dbg_pz,q_m,m,nt,
- 		    		                                             sort);
-
- 		     real_number_of_particle[(int)sort] = total_particles;
-
- 		     if((err = ferror(f)) != 0) return 1;
- 		     convertParticleArraysToSTLvector(dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz,*q_m,*m,
- 		    			  total_particles,sort,vp);
-
-      }
-
-	  virtual void readBinaryParticlesOneSort(FILE *f,std::vector<Particle> & vp,
-			                                  particle_sorts sort,int nt)
-
-	  {
-		    double q_m,m;
-		    int err;
-		    getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
-
-		    err = ferror(f);
-		    free(dbg_x);
-			free(dbg_y);
-			free(dbg_z);
-		    free(dbg_px);
-			free(dbg_py);
-			free(dbg_pz);
-			err = ferror(f);
-
-			struct sysinfo info;
-            sysinfo(&info);
-			printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-			err = ferror(f);
-
-			printPICstatitstics(m,q_m,total_particles);
-	  }
 
 
 
-	  FILE *readPreliminary3Darrays(string fn,int nt)
-	  {
-		     double *buf;
-		     FILE *f;
 
-		     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
-		     if((f = fopen(fn.c_str(),"rb")) == NULL) return NULL;
-		     struct sysinfo info;
-
-		     sysinfo(&info);
-		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-		     readFortranBinaryArray(f,buf);
-		     sysinfo(&info);
-		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-		     readFortranBinaryArray(f,buf);
-		     sysinfo(&info);
-		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-		     readFortranBinaryArray(f,buf);
-		     sysinfo(&info);
-		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-		     readFortranBinaryArray(f,buf);
-		     sysinfo(&info);
-		     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-		     readFortranBinaryArray(f,buf);
-		     readFortranBinaryArray(f,buf);
-
-		     readFortranBinaryArray(f,buf);
-		     readFortranBinaryArray(f,buf);
-		     readFortranBinaryArray(f,buf);
-
-		     readFortranBinaryArray(f,buf);
-		     readFortranBinaryArray(f,buf);
-		     readFortranBinaryArray(f,buf);
-		     int err;
-	//--------------------------------------------
-		     err = ferror(f);
-
-		     if(err != 0) return NULL;
-
-		     return f;
-	  }
 
 	  int addAllParticleListsToCells(std::vector<Particle> & ion_vp,
 			                         std::vector<Particle> & el_vp,
@@ -802,18 +593,9 @@ virtual void Alloc()
 			 return 0;
 	  }
 
-	  int readBinaryParticlesAllSorts(FILE *f,int nt,
-			                          std::vector<Particle> & ion_vp,
-                                      std::vector<Particle> & el_vp,
-                                      std::vector<Particle> & beam_vp)
-	  {
-		  readBinaryParticlesOneSort(f,ion_vp,ION,nt);
-          readBinaryParticlesOneSort(f,el_vp,PLASMA_ELECTRON,nt);
-    	  readBinaryParticlesOneSort(f,beam_vp,BEAM_ELECTRON,nt);
 
-    	  return 0;
-	  }
 
+//
 	  int readParticles(FILE *f,int nt)
 	  {
 		 std::vector<Particle> ion_vp,el_vp,beam_vp;
@@ -841,9 +623,9 @@ virtual void Alloc()
 	  virtual void InitBinaryParticles(int nt)
 	  {
 	     FILE *f;
-	     std::string part_name = getBinaryFileName(nt);
+	     std::string part_name  = getMumuFileName(nt);
 
-		 if((f = readPreliminary3Darrays(part_name,nt)) == NULL) return;
+		 if((f = readPreliminary3Darrays(part_name,nt,Nx,Ny,Nz)) == NULL) return;
 
 		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
@@ -869,9 +651,9 @@ virtual void Alloc()
 
 	     for(int j = 0;j < total_ions;j++)
 	     {
-		z = Lz * rnd_uniform();
-		y = meh * Ly + Ly * rnd_uniform();
-		x = Lx * rnd_uniform();
+		z = 0.0;//Lz * rnd_uniform();
+		y = 0.0;//meh * Ly + Ly * rnd_uniform();
+		x = 0.0;//Lx * rnd_uniform();
 
 		p = new Particle(x,y,z,0.0,0.0,0.0,ni,q_m);
 

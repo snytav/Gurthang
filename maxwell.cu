@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#include "rnd.h"
+//#include "rnd.h"
 
 #include "read_particles.h"
 
@@ -17,6 +17,7 @@
 
 #include "f2c.h"
 #include <stdio.h>
+//#include "rnd.h"
 // #include "run_control.h"
 
 /* Common Block Declarations */

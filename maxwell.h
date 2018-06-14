@@ -14,6 +14,10 @@
 
 #include <vector>
 
+double rnd_uniform();
+
+double rnd_gaussian(double a,double b);
+
 int getMassCharge(ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays *beam_electrons,
 		double ni,double rbd,int lp);
 

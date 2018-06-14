@@ -20,6 +20,8 @@
 
 #include <string>
 
+#include "load_data.h"
+
 //#include <unistd.h>
 //#include <stdio.h>
 #include <errno.h>
@@ -42,7 +44,7 @@
 #endif
 
 #include "archAPI.h"
-#include "rnd.h"
+#include "maxwell.h"
 #include "plasma.h"
 #include "gpucell.h"
 #include "mpi_shortcut.h"
@@ -69,6 +71,8 @@
 #include "memory_control.h"
 
 #include "kernels.cu"
+
+#include <vector>
 
 
 
@@ -124,7 +128,6 @@ void copyCells(char *where,int nt)
 	static int first = 1;
 	size_t m_free,m_total;
 	int size = (*AllCells).size();
-	//double accum = 0.0;
 	struct sysinfo info;
 	unsigned long c1,c2;
 
@@ -136,11 +139,6 @@ void copyCells(char *where,int nt)
 	unsigned long m1,m2,delta,accum;
 	memory_monitor("beforeCopyCells",nt);
 
-//	err = cudaMemGetInfo(&m_free,&m_total);
-//	freemem=get_meminfo();
-//	sysinfo(&info);
-
-
 	for(int i = 0;i < size;i++)
 	{
 		if(i == 141)
@@ -148,12 +146,9 @@ void copyCells(char *where,int nt)
 			int qq = 0;
 		}
 		cudaError_t err = cudaMemGetInfo(&m_free,&m_total);
-		//double freemem=get_meminfo();
 		sysinfo(&info);
 		m1 = info.freeram;
 	 	GPUCell<Particle> c,*d_c,*z0;
-	 //	m1 = get_meminfo();
-	 	//c = new GPUCell<Particle>;
 	 	z0 = h_CellArray[i];
 	 	if(first == 1)
 	 	{
@@ -165,14 +160,10 @@ void copyCells(char *where,int nt)
 	 	   d_c = cp[i];
 	 	}
 	    c.copyCellFromDevice(z0,d_c,where,nt);
-	   // m2 = get_meminfo();
-		//sysinfo(&info);
 		m2 = info.freeram;
 
 	    delta = m1-m2;
         accum += delta;
-
-	//    printf("cell allocated delta %u size %d free CPU memory %u accum %u \n",delta,sizeof(GPUCell<Particle>),m2,accum);
 
 	}
 
@@ -182,70 +173,8 @@ void copyCells(char *where,int nt)
 	}
 
 	memory_monitor("afterCopyCells",nt);
-
-
 }
 
-void freeCellCopies(Cell<Particle> **cp)
-{
-	int size = (*AllCells).size();
-
-	for(int i = 0;i < size;i++)
-	{
-		GPUCell<Particle> *d_c,c;
-
-		d_c = cp[i];
-
-		c.freeCopyCellFromDevice(d_c);
-
-	}
-	free(cp);
-}
-
-double compareCells(int nt)
-{
-	double t = 0.0,t1;
-	struct sysinfo info;
-//	Cell<Particle> **cp;
-
-	int size = (*AllCells).size();
-
-
-
-	//copyCells(cp);
-	checkParticleNumbers(cp,-1);
-	memory_monitor("compareCells",nt);
-
-	//h_ctrl = new Cell<Particle>;
-
-	for(int i = 0;i < size;i++)
-	{
-	 	Cell<Particle> c = (*AllCells)[i];
-	    t1 = c.compareToCell(*(cp[i]));
-
-	    Particle p;
-	    //int j;
-
-	    c.readParticleFromSurfaceDevice(0,&p);
-
-	 //   j = p.fortran_number;
-
-	    if(t1 < 1.0)
-	    {
-	       	t1 = c.compareToCell(*(cp[i]));
-	    }
-	    if(isNan(t1))
-	    {
-	    	t1 = c.compareToCell(*(cp[i]));
-	    }
-
-	    t += t1;
-
-	}
-	memory_monitor("compareCells2",nt);
-
-	return t/size;
-}
 
 double checkGPUArray(double *a,double *d_a,char *name,char *where,int nt)
 {
@@ -693,7 +622,7 @@ int readStartPoint(int nt)
 
 
 
-	  thrust::host_vector<Cell<Particle> > *AllCells;
+	  std::vector<Cell<Particle> > *AllCells;
 
 	  int getBoundaryLimit(int dir){return ((dir == 0)*Nx  + (dir == 1)*Ny + (dir == 2)*Nz + 2);}
 
@@ -791,8 +720,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
        {
 	  	  for(int i = start1;i <= end1;i++)
 	  	  {
-
-	  	      //std::cout << "ex2 "<< i+1 << " "<< N+2 << " " << k+1  <<" " <<  i+1 << " " << " 2 " << " " << k+1  << std::endl;
 	  		  int3 i0,i1;
 
 	                    int n   = c.getGlobalBoundaryCellNumber(i,k,dir,N+1);
@@ -802,7 +729,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	  		            i1= c.getCellTripletNumber(n1);
 	  		            std::cout << "ex1 "<< i0.x+1 << " "<< i0.y+1 << " " << i0.z+1  <<" " <<  i1.x+1 << " " << i1.y+1 << " " << i1.z+1  << " " << E[n]  << " " << E[n1] << std::endl;
 	  		   	  }
-	  	      //int qq = 0;
 	        }
     }
     return 0;
@@ -810,157 +736,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 
 
-      void getWrongCurrentCellList(int num,int nt)
-      {
-    	   FILE *f;
-    	   char fn_copy[100];
-    	   Cell<Particle> c = (*AllCells)[0];
-    	   int wrong_flag[(Nx+2)*(Ny+2)*(Nz+2)],*d_wrong_flag;
-    	   double_pointer wrong_attributes[(Nx+2)*(Ny+2)*(Nz+2)],*d_wrong_attributes;
 
-    	   readControlPoint(&f,fn_copy,num,nt,1,0,dbgEx,dbgEy,dbgEz,dbgHx,dbgHy,dbgHz,dbgJx,dbgJy,dbgJz,dbg_Qx,dbg_Qy,dbg_Qz,
-    	                     dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz);
-
-    	   for(int n = 0;n < (Nx + 2)*(Ny + 2)*(Nz + 2);n++)
-    	       	   {
-    		           wrong_flag[n] = 0;
-    	       	   }
-    	   cudaMalloc(&d_wrong_flag,sizeof(int)*(Nx + 2)*(Ny + 2)*(Nz + 2));
-    	   cudaMalloc(&d_wrong_attributes,sizeof(double_pointer)*(Nx+2)*(Ny+2)*(Nz+2));
-
-    	   static double *t;
-    	   static int first = 1;
-
-    	   if(first == 1)
-    	   {
-    	  	 t = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    	  	 first = 0;
-    	   }
-    	   cudaError_t err;
-    	   err = cudaMemcpy(t,d_Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-    	   if(err != cudaSuccess)
-    	   {
-    	     printf("getWrongCurrentCellList err %d %s \n",err,cudaGetErrorString(err));
-    	  	 exit(0);
-    	   }
-
-    	   double diff = 0.0;
-    	   jx_wrong_points_number = 0;
-    	  // puts("begin array checking=============================");
-    	   for(int n = 0;n < (Nx + 2)*(Ny + 2)*(Nz + 2);n++)
-    	   {
-   	           if(fabs(dbgJx[n] - t[n]) > TOLERANCE)
-    	   	   {
-      		       int3 i = c.getCellTripletNumber(n);
-                   jx_wrong_points_number++;
-                   wrong_flag[n] = 1;
-
-
-        	   }
-    	   }
-    	   jx_wrong_points = (int3 *)malloc(jx_wrong_points_number*sizeof(int3));
-
-    	   int num_cell = 0;
-    	   for(int n = 0;n < (Nx + 2)*(Ny + 2)*(Nz + 2);n++)
-    	   {
-    	       if(fabs(dbgJx[n] - t[n]) > TOLERANCE)
-    	       {
-    	          int3 i = c.getCellTripletNumber(n);
-    	          jx_wrong_points[num_cell++] = i;
-    	       }
-    	   }
-    	   cudaMalloc(&(d_jx_wrong_points),jx_wrong_points_number*sizeof(int3));
-
-    	   cudaMemcpy(d_wrong_flag,wrong_flag,sizeof(int)*(Nx + 2)*(Ny + 2)*(Nz + 2),cudaMemcpyHostToDevice);
-
-    	   cudaMemcpy(d_wrong_attributes,wrong_attributes,
-    			                              sizeof(double_pointer)*(Nx + 2)*(Ny + 2)*(Nz + 2),cudaMemcpyHostToDevice);
-
-           copy_pointers<<<(Nx + 2)*(Ny + 2)*(Nz + 2),1>>>(d_CellArray,d_wrong_flag,d_wrong_attributes);
-
-      }
-
-      void WrongCurrentCell_AttributeMalloc(int num,int nt)
-      {
-
-      }
-
-	  double checkFirstHalfstepFields(int nt)
-	  {
-
-		  return 1.0;//(t_ex+t_ey+t_ez+t_hx+t_hy+t_hz)/6.0;
-	  }
-
-	  double checkFirstHalfstep_emh2_GPUMagneticFields(int nt)
-	  	  {
-	  		  double /*t = 0.0,*/*dbg/*,t_ex,t_ey,t_ez*/,t_hx,t_hy,t_hz;
-
-	  		  dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-
-	  		  return 1.0;
-	  	  }
-
-
-	  double checkFirstHalfstep_emh1_GPUMagneticFields(int nt)
-	  {
-		  double /*t = 0.0,*/*dbg,t_ex,t_ey,t_ez,t_hx,t_hy,t_hz;
-
-		  dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-
-		  return 1.0;//(t_ex+t_ey+t_ez+t_hx+t_hy+t_hz)/6.0;
-	  }
-
-	  double checkFirstHalfstep_emh1_MagneticFields(int nt,double *Qx,double *Qy,double *Qz,
-			                                               double *Hx,double *Hy,double *Hz)
-	  {
-		  double *dbg,t_ex,t_ey,t_ez,t_hx,t_hy,t_hz;
-
-
-		  return 1.0;//(t_ex+t_ey+t_ez+t_hx+t_hy+t_hz)/6.0;
-	  }
-
-
-	  double checkFirstHalfstepElectricFields(int nt)
-	  {
-		  double *dbg,t_ex,t_ey,t_ez;//,t_hx,t_hy,t_hz;
-
-
-		  return 1.0;//(t_ex+t_ey+t_ez)/3.0;
-	  }
-
-	  double checkFirstHalfstepGPUElectricFields(int nt)
-	  {
-
-		  return 1.0;//(t_ex+t_ey+t_ez)/3.0;
-	  }
-
-	  double checkSecondHalfstepFields(int nt)
-	    {
-
-	  	  return 1.0;//(t_ex+t_ey+t_ez)/3.0;
-	    }
-	  double checkGPUSecondHalfstepFields(int nt)
-	  	    {
-	  	  	  return 1.0;//(t_ex+t_ey+t_ez)/3.0;
-	  	    }
-
-
-	  double checkCurrents(int nt)
-	    {
-	  	  double  *dbg,/*t_ex,t_ey,t_ez,*/t_hx,t_hy,t_hz;
-	  	  static int first = 1;
-
-	  	  if(first == 1)
-	  	  {
-	  	     dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-	  	     first = 0;
-	  	  }
-
-
-	  	  return 1.0;//(t_hx+t_hy+t_hz)/3.0;
-	    }
 
 	  int SetPeriodicCurrentComponent(Cell<Particle>  **cells,double *J,int dir,int Nx,int Ny,int Nz)
 	  {
@@ -979,9 +755,6 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 		  memory_monitor("before275",nt);
 
 		  checkControlPoint(275,nt,0);
-
-//		  dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
-
 		  SetPeriodicCurrentComponent(d_CellArray,d_Jx,0,Nx,Ny,Nz);
 		  SetPeriodicCurrentComponent(d_CellArray,d_Jy,1,Nx,Ny,Nz);
 		  SetPeriodicCurrentComponent(d_CellArray,d_Jz,2,Nx,Ny,Nz);
@@ -1000,284 +773,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	     read3Darray(fnjz, dbg_Qz);
 	  }
 
-	  int LoadMeshData(int nt)
-	  {
-//		 thrust::host_vector<Particle> vp,bin_vp;
-//		 char part_name[100];
-		 std::string jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
-		 qxfile,qyfile,qzfile;
 
-		 readDebugArray("hxlg",Hx,nt,5);
-		 readDebugArray("hylg",Hy,nt,5);
-		 readDebugArray("hzlg",Hz,nt,5);
-
-
-		 get_load_data_file_names(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,np_jxfile,np_jyfile,np_jzfile,
-				 qxfile,qyfile,qzfile,nt);
-
-		 InitQdebug(qxfile,qyfile,qzfile);
-
-		 InitCurrents(jxfile,jyfile,jzfile,d_jxfile,d_jyfile,d_jzfile,
-				 np_jxfile,np_jyfile,np_jzfile,0);
-
-		 return 0;
-	  }
-
-	  virtual void readBinaryParticlesOneSort(FILE *f,thrust::host_vector<Particle>& vp,
-			                                  particle_sorts sort,int nt)
-
-	  {
-
-//		     char str[1000];
-		     double x,y,z,px,py,pz,q_m,m;
-		     int n = 0;//,t;
-		     Cell<Particle> c0 = (*AllCells)[0];
-		     int pn_min,pn_ave,pn_max,pn_sum,err;
-
-
-		     if((err = ferror(f)) != 0) return;
-
-		     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
-		    		                                             &dbg_px,&dbg_py,&dbg_pz,&q_m,&m,nt,
-		    		                                             sort);
-
-		     real_number_of_particle[(int)sort] = total_particles;
-
-		    err = ferror(f);
-		    for(int i = 0; i < total_particles;i++)
-		     {
-
-		    	  if((err = ferror(f)) != 0)
-		    	  {
-		    		 // int qq = 0;
-		    	  }
-
-		         // if(i%getSize() != 0) continue;
-		      //    printf("rank %d part %d \n",getRank(),i);
-
-		    	  x   = dbg_x[i];
-//		    	  if(i  == 269 && sort == ION)
-//		    	  {
-//		    		  int qq = 0;
-//		    		  qq = 0;
-//		    		 // printf("number %5d x %25.15e \n",i,x);
-//		    	  }
-
-
-		          y   = dbg_y[i];
-		          z   = dbg_z[i];
-  		          px   = dbg_px[i];
-		          py   = dbg_py[i];
-		          pz   = dbg_pz[i];
-
-//		          if(i+1 == 138)
-//		          {
-//		        	  int qq = 0;
-//		          }
-
-		         // if(sort == PLASMA_ELECTRON) continue;
-
-			      Particle p;// = new Particle(x,y,z,px,py,pz,m,q_m);
-			      p.x   = x;
-			      p.y   = y;
-			      p.z   = z;
-			      p.pu  = px;
-			      p.pv  = py;
-			      p.pw  = pz;
-			      p.m   = m;
-			      p.q_m = q_m;
-
-		    	  if((err = ferror(f)) != 0)
-		    	  {
-		    		  //int qq = 0;
-		    	  }
-
-//			      if(n == 829)
-//			      {
-////			    	  int qq = 0;
-////			    	  qq = 1;
-//			      }
-			      p.fortran_number = i+1;
-			      p.sort = sort;
-//////////////////////////////////////////////////
-			      double3 d;
-			      d.x = x;
-			      d.y = y;
-			      d.z = z;
-
-			      n = c0.getPointCell(d);
-
-			      Cell<Particle> & c = (*AllCells)[n];
-		    	  if((err = ferror(f)) != 0)
-		    	  {
-		    		  int qq = 0;
-		    	  }
-
-		    	  if(i == 3189003 && sort == PLASMA_ELECTRON)
-		    	  {
-		    		  int qq = 0;
-		    	  }
-
-
-   			      if(c.Insert(p) == true)
-			      {
-#ifdef PARTICLE_PRINTS1000
-		             if((i+1)%1000 == 0 )
-		             {
-		        	     printf("particle %d (%e,%e,%e) is number %d in cell (%d,%d,%d)\n",
-		        	    		 i+1,
-				    		x,y,z,c.number_of_particles,c.i,c.l,c.k);
-		             }
-		             //if((i+1) == 10000) exit(0);
-#endif
-			      }
-   			   if((err = ferror(f)) != 0)
-   			  		    	  {
-   			  		    		 // int qq = 0;
-   			  		    	  }
-
-//		#define GPU_PARTICLE ///////////////////////
-
-		     }// END total_particles LOOP
-	    	  if((err = ferror(f)) != 0)
-	    	  {
-	    		  //int qq = 0;
-	    	  }
-
-		    err = ferror(f);
-		    free(dbg_x);
-			free(dbg_y);
-			free(dbg_z);
-		    free(dbg_px);
-			free(dbg_py);
-			free(dbg_pz);
-			err = ferror(f);
-			 if((err = ferror(f)) != 0)
-					    	  {
-					    		//  int qq = 0;
-					    	  }
-
-             pn_min = 1000000000;
-             pn_max = 0;
-             pn_ave = 0;
-		     for(int n = 0;n < (*AllCells).size();n++)
-		     {
-		    	 Cell<Particle> & c = (*AllCells)[n];
-
-		    	 pn_ave += c.number_of_particles;
-		    	 if(pn_min > c.number_of_particles) pn_min = c.number_of_particles;
-		    	 if(pn_max < c.number_of_particles) pn_max = c.number_of_particles;
-
-		     }
-		     if((err = ferror(f)) != 0)
-		    		    	  {
-		    		    		  //int qq = 0;
-		    		    	  }
-		     err = ferror(f);
-		     pn_sum = pn_ave;
-		     pn_ave /= (*AllCells).size();
-
-		     printf("SORT m %15.5e q_m %15.5e %10d (sum %10d) particles in %8d cells: MIN %10d MAX %10d average %10d \n",
-		    		 m,            q_m,       total_particles,pn_sum,
-		    		 (*AllCells).size(),
-		    		 pn_min,pn_max,pn_ave);
-		     if((err = ferror(f)) != 0)
-		    		    	  {
-		    		    		 // int qq = 0;
-		    		    	  }
-
-		     err = ferror(f);
-			//exit(0);
-	  }
-
-
-	  virtual void InitBinaryParticles(char *fn,thrust::host_vector<Particle>& vp,int nt)
-	  {
-	     FILE *f;
-//	     char str[1000];
-	     double /*x,y,z,px,py,pz,q_m*/*buf;//,tp,m;
-//	     int n = 0,t;
-
-	     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-	     if((f = fopen(fn,"rb")) == NULL) return;
-	     struct sysinfo info;
-
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-	     readFortranBinaryArray(f,buf);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     int err;
-//--------------------------------------------
-	     err = ferror(f);
-	     readBinaryParticlesOneSort(f,vp,ION,nt);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	     err = ferror(f);
-
-	     readBinaryParticlesOneSort(f,vp,PLASMA_ELECTRON,nt);
-	     err = ferror(f);
-	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-         err = ferror(f);
-	     readBinaryParticlesOneSort(f,vp,BEAM_ELECTRON,nt);
-//--------------------------------------------
-
-	     fclose(f);
-
-	     magf = 1;
-	  }
-
-
-void readParticles(char *pfile,char *nextpfile)
-{
-	thrust::host_vector<Particle> vp;
-
-	if(!strncmp(pfile,"mumu",4))
-	{
-		InitBinaryParticles(pfile,vp,4);
-	}
-	else
-	{
-       InitParticles(pfile,vp);
-	}
-#ifdef DEBUG_PLASMA
-	if(!strncmp(pfile,"mumu",4))
-	{
-	    InitBinaryParticlesNext(nextpfile, vp);
-	}
-	else
-	{
-	    InitParticlesNext(nextpfile, vp);
-	}
-#endif
-    Distribute(vp);
-
-    AssignArraysToCells();
-}
 
 void AssignCellsToArraysGPU()
 {
@@ -1290,25 +786,15 @@ void AssignCellsToArraysGPU()
 
 	  void AssignCellsToArrays()
 	{
-
-	     //double g;
 	     for(int n = 0;n < (*AllCells).size();n++)
 	     {
-//	         if(n == 972)
-//		 {
-//		    double g = 0;
-//		 }
 	         Cell<Particle>  c = (*AllCells)[n];
 		 c.writeAllToArrays(Jx,Jy,Jz,Rho,0);
-//		 if(n == 54 || n == 108)
-//		 {
-//		    CheckArray(Jx,dbgJx);
-//		 }
+
 	     }
 	     CheckArray(Jx, dbgJx);
 	     SetPeriodicCurrents(0);
 	     CheckArray(Jx, dbgJx);
-	    // g = 0.0;
 	}
 
 	  void ParticleLog()
@@ -1424,22 +910,14 @@ void readControlPoint(FILE **f1,char *fncpy,int num,int nt,int part_read,int fie
 	readFortranBinaryArray(f,qy);
 	readFortranBinaryArray(f,qz);
 
-
-
-
-
-//	fclose(f);
-
-	//if(part_read == 1) readParticles(fn,fn_next);
-
 	if(field_assign == 1) AssignArraysToCells();
 
 }
 
 double checkControlMatrix(char *wh,int nt,char *name, double *d_m)
 {
-	double /*t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,*/t_jx,t_jy,t_jz;
-	char fn[100];//,fn_next[100];
+	double t_jx,t_jy,t_jz;
+	char fn[100];
 	FILE *f;
 
 #ifndef CHECK_CONTROL_MATRIX
@@ -1573,53 +1051,6 @@ void checkControlPoint(int num,int nt,int check_part)
      fclose(f);
 }
 
-	int readFortranBinaryArray(FILE *f, double* d)
-	{
-//	    char str[100];
-	    Cell<Particle>  c = (*AllCells)[0];
-	    int t,err;//,n;
-//	    double t0;
-
-
-	    //sprintf(fname,"%s_fiel3d.dat",name);
-	    fread(&t,sizeof(int),1,f);
-	     if((err = ferror(f)) != 0)
-	    	 {
-	    	 	 return err ;
-	    	 }
-
-	    fread(d,1,t,f);
-	     if((err = ferror(f)) != 0)
-	    	 {
-	    	 	 return err ;
-	    	 }
-
-//	    t0 = d[269];
-//	    t0 = d[270];
-	    fread(&t,sizeof(int),1,f);
-	     if((err = ferror(f)) != 0)
-	    	 {
-	    	 	 return err ;
-	    	 }
-
-
-
-#ifdef READ_DEBUG_PRINTS
-	    for(int i = 1; i <= Nx+2;i++)
-	    {
-	    	for(int l = 1; l <= Ny+2;l++)
-	    	{
-	    		for(int k = 1;k <= Nz+2;k++)
-	    		{
-	    			n = c.getFortranCellNumber(i,l,k);
-	    			printf("%5d %5d %5d %25.15e \n",i,l,k,d[n]);
-	    		}
-	    	}
-	    }
-#endif
-
-	    	    return t;
-	}
 
 
 
@@ -1937,77 +1368,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	}
 
-	void InitParticlesNext(char* fname, thrust::host_vector< Particle >& vp)
-	{
-	    FILE *f;
-	     char str[1000];
-	     //double3 x;
-	     int n = 0;
-
-	     if((f = fopen(fname,"rt")) == NULL) return;
-
-	     while(fgets(str,1000,f) != NULL)
-	     {
-
-
-		  Particle & p = vp[n++];
-		  //p.SetXnext(x);
-	     }
-	}
-
-	void InitBinaryParticlesNext(char *fn, thrust::host_vector< Particle >& vp)
-	{
-	     FILE *f;
-//	     char str[1000];
-//	     double3 x;
-	     double *buf,q_m,m,tp;
-	     int n = 0,t;
-
-	     buf = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-	     if((f = fopen(fn,"rb")) == NULL) return;
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-	     readFortranBinaryArray(f,buf);
-
-	     readFortranBinaryArray(f,buf);
-	     	     readFortranBinaryArray(f,buf);
-	     	     readFortranBinaryArray(f,buf);
-
-	     	     fread(&t,sizeof(int),1,f);
-	     	     fread(&tp,sizeof(double),1,f);
-	     	     total_particles = (int)tp;
-	     	     fread(&q_m,sizeof(double),1,f);
-	     	     fread(&m,sizeof(double),1,f);
-	     	     fread(&t,sizeof(int),1,f);
-	              dbg_x = (double *)malloc(sizeof(double)*total_particles);
-	              dbg_y = (double *)malloc(sizeof(double)*total_particles);
-	              dbg_z = (double *)malloc(sizeof(double)*total_particles);
-	              dbg_px = (double *)malloc(sizeof(double)*total_particles);
-	              dbg_py = (double *)malloc(sizeof(double)*total_particles);
-	              dbg_pz = (double *)malloc(sizeof(double)*total_particles);
-
-        dbg_x = (double *)malloc(sizeof(double)*total_particles);
-        dbg_y = (double *)malloc(sizeof(double)*total_particles);
-        dbg_z = (double *)malloc(sizeof(double)*total_particles);
-
-	 	readFortranBinaryArray(f,dbg_x);
-	 	readFortranBinaryArray(f,dbg_y);
-	 	readFortranBinaryArray(f,dbg_z);
-
-	     for(int i = 0;i< total_particles;i++)
-	     {
-
-
-		  Particle & p = vp[n++];
-		//  p.SetXnext(x);
-	     }
-	}
-
 	int PeriodicCurrentBoundaries(double* E, int dirE,int dir, int start1, int end1, int start2, int end2)
 	{
 	      Cell<Particle>  c = (*AllCells)[0];
@@ -2171,62 +1531,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   		fclose(f);
 	   	}
 
-	void FortranOrder_StepAllCells(int nt)
-	{
-		int cell_sum = 0;
-		int part_number = 0;
-	//	double t_hx,t_hy,t_hz,*dbg;
-
-		memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-		memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-		memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-		for(int n = 0;n < (*AllCells).size();n++)
-		{
-			Cell<Particle> c = (*AllCells)[n];
-	        part_number += c.number_of_particles;
-		}
-
-		for(int j = 1;j <= part_number;j++)
-		{
-		    for(int n = 0;n < (*AllCells).size();n++)
-		    {
-			    int f;
-
-		        Cell<Particle> c = (*AllCells)[n];
-
-	            for(int i = 0; i < c.number_of_particles;i++)
-	            {
-	            	if(c.getFortranParticleNumber(i) != j) continue;
-	            	int num = c.getFortranParticleNumber(i);
-//	            	if(num == 1000 )
-//	            	{
-//	            		int qq = 0;
-//	            	}
-	            	c.SetAllCurrentsToZero();
-		            f = c.Move(i);
-		        //    sum += f;
-		            c.writeAllToArrays(Jx,Jy,Jz,Rho,c.getFortranParticleNumber(i));
-		            printf("particle number %10d \n",num);
-
-
-	            }
-		    }
-
-	        //if(sum != c.number_of_particles)
-		}
-		printf("passed %10d cells of %10d total \n",cell_sum,(*AllCells).size());
-
-		checkNonPeriodicCurrents(nt);
-
-	    SetPeriodicCurrents(nt);
-		CheckArray(Jx,dbgJx);
-		CheckArray(Jy,dbgJy);
-		CheckArray(Jz,dbgJz);
-
-		//AssignCellsToArrays();
-	}
-
+//
 	double TryCheckCurrent(int nt,double *npJx)
 	{
 		double *dbg,t_hx;//,t_hy,t_hz;

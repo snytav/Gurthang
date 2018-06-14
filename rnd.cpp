@@ -172,27 +172,27 @@ doublereal g05cae_(doublereal *x)
 doublereal wrapg05cae_(doublereal *x)
 {
     double t  = g05cae_(x);
-#ifdef DEBUG_PLASMA    
+#ifdef DEBUG_PLASMA
     printf("%25.15e \n",t);
-#endif    
-    
-    return t; 
+#endif
+
+    return t;
 }
 
 doublereal wrapg05dde_(doublereal *a, doublereal *b)
 {
-    return g05dde_(a,b); 
+    return g05dde_(a,b);
 }
 
 double rnd_uniform()
 {
     doublereal x;
-    
+
     return (double)wrapg05cae_(&x);
 }
 
 double rnd_gaussian(double a,double b)
 {
-    return (double)wrapg05dde_(&a,&b);  
+    return (double)wrapg05dde_(&a,&b);
 }
 

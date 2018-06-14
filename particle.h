@@ -53,7 +53,7 @@ Particle(double x1,double y1, double z1,double u1,double v1,double w1,double m1,
 __host__ __device__
   ~Particle(){}
 
- __device__
+__host__ __device__
 void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,double *pv,double *pw,double *ps)
 {
 
@@ -66,7 +66,7 @@ void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,doubl
 
 }
 
-__device__ void MagneticMove(double3 H,double ps,double *pu1,double *pv1,double *pw1)
+__host__ __device__ void MagneticMove(double3 H,double ps,double *pu1,double *pv1,double *pw1)
 {
 	double bx,by,bz,s1,s2,s3,s4,s5,s6,s,su,sv,sw;
 
@@ -90,7 +90,7 @@ __device__ void MagneticMove(double3 H,double ps,double *pu1,double *pv1,double 
 	*pw1 = ((s6 + by) * su + (s5 - bx) * sv + (s3 + 1.) * sw) / s;
 }
 
-__device__
+__host__ __device__
 void ElectricMoveStageTwo(double tau1,double tau,double3 E,
 //		 double pu,double pv,double pw,
 		 double pu1,double pv1,double pw1,double *u,double *v,double *w,double *x,double *y,double *z)
@@ -121,7 +121,7 @@ void ElectricMoveStageTwo(double tau1,double tau,double3 E,
 
 }
 
-__device__ double3 mult(double t,double3 t3)
+__host__ __device__ double3 mult(double t,double3 t3)
 {
 	t3.x *= t;
 	t3.y *= t;
@@ -130,26 +130,26 @@ __device__ double3 mult(double t,double3 t3)
 	return t3;
 }
 
-__device__ void add(double3 sx3,double *pu,double *pv,double *pw,double pu1,double pv1,double pw1)
+__host__ __device__ void add(double3 sx3,double *pu,double *pv,double *pw,double pu1,double pv1,double pw1)
 {
 	*pu = pu1 + sx3.x;
 	*pv = pv1 + sx3.y;
 	*pw = pw1 + sx3.z;
 }
 
-__device__ double impulse(double pu,double pv,double pw)
+__host__ __device__ double impulse(double pu,double pv,double pw)
 {
 	return pow(((pu * pu + pv * pv + pw * pw) + 1.0),-0.5);
 }
 
-__device__ void  mult(double *u,double *v,double *w,double ps, double pu,double pv,double pw)
+__host__ __device__ void  mult(double *u,double *v,double *w,double ps, double pu,double pv,double pw)
 {
 	*u = ps * pu;
 	*v = ps * pv;
 	*w = ps * pw;
 }
 
- __device__ __forceinline__
+__host__ __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
     double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
