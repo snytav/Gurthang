@@ -1678,35 +1678,7 @@ int SetCurrentsToZero(int nt)
         reorder_particles(nt);
 	}
 
-//	void SetCurrentsFromCellsToArrays(int nt)
-//	{
-//	    memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	    memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	    memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//
-//	    for(int n = 0;n < (*AllCells).size();n++)
-//	    {
-////		    int sum = 0,f;
-//
-//	        Cell<Particle> c = (*AllCells)[n];
-//
-//	        c.writeAllToArrays(Jx,Jy,Jz,Rho,c.getFortranParticleNumber(0));
-//
-//	    }
-//
-//	    //if(sum != c.number_of_particles)
-//	    //	}
-//
-//	    memcpy(npJx,Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	   	memcpy(npJy,Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	   	memcpy(npJz,Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-//	   	checkNonPeriodicCurrents(nt);
-//	    SetPeriodicCurrents(nt);
-//	    CheckArray(Jx,dbgJx);
-//	    CheckArray(Jy,dbgJy);
-//	    CheckArray(Jz,dbgJz);
-//
-//	}
+
 
 
 
