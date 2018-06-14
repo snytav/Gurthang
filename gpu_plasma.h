@@ -1867,53 +1867,6 @@ int readControlFile(int nt)
 #endif
 }
 
-int checkParticleNumbers(GPUCell<Particle> ** h_cp,int num)
-{
-	int *d_numbers,*h_numbers,size;
-
-	if(num >= 270) return -1;
-
-	size = (*AllCells).size();
-
-	h_numbers = (int *)malloc(size*sizeof(int));
-	cudaMalloc(&d_numbers,size*sizeof(int));
-
-	GPU_GetCellNumbers<<<(Nx+2)*(Ny+2)*(Nz+2),1>>>(d_CellArray,d_numbers);
-
-	cudaError_t err = cudaMemcpy(h_numbers,d_numbers,size*sizeof(int),cudaMemcpyDeviceToHost);
-
-
-	for(int i = 0;i < (*AllCells).size();i++)
-	{
-		GPUCell<Particle> c = *(h_cp[i]);
-
-	    if(h_numbers[i] != h_controlParticleNumberArray[i])
-	    {
-	    	printf("checkpoint %d: cell %d incorrect number of particles in DEVICE array %15d (must be %15d)\n",
-	    			num,i,
-	    			h_numbers[i],h_controlParticleNumberArray[i]
-	    			);
-	    	exit(0);
-	    }
-	}
-
-
-	for(int i = 0;i < (*AllCells).size();i++)
-	{
-		GPUCell<Particle> c = *(h_cp[i]);
-
-	    if(c.number_of_particles != h_controlParticleNumberArray[i])
-	    {
-	    	printf("checkpoint %d: cell %d incorrect number of particles in HOST copy array %15d (must be %15d)\n",
-	    			num,i,
-	    			c.number_of_particles,h_controlParticleNumberArray[i]
-	    			);
-	    	exit(0);
-	    }
-	}
-
-    return 0;
-}
 
 void printCellCurrents(int num,int nt,char *name,char *where)
 {
