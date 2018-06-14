@@ -243,18 +243,18 @@ double checkGPUArray(double *a,double *d_a)
 //	return 1.0;
 //}
 
-void StepAllCells()
-{
-	dim3 dimGrid(Nx+2,Ny+2,Nz+2),
-			dimBlock(MAX_particles_per_cell/2,1,1);
-
-    cudaError_t err;
-    err = cudaGetLastError();
-    printf("Err: %d %s\n", err, cudaGetErrorString(err));
-    cudaDeviceSynchronize();
-    err = cudaGetLastError();
-    printf("Err: %d %s\n", err, cudaGetErrorString(err));
-}
+//void StepAllCells()
+//{
+//	dim3 dimGrid(Nx+2,Ny+2,Nz+2),
+//			dimBlock(MAX_particles_per_cell/2,1,1);
+//
+//    cudaError_t err;
+//    err = cudaGetLastError();
+//    printf("Err: %d %s\n", err, cudaGetErrorString(err));
+//    cudaDeviceSynchronize();
+//    err = cudaGetLastError();
+//    printf("Err: %d %s\n", err, cudaGetErrorString(err));
+//}
 
 
 public:
@@ -1869,23 +1869,23 @@ int SetCurrentsToZero(int nt)
 
 	//   virtual void Diagnose(){ puts("Plasma");}
 
-	   void virtual Step()
-	{
-	    // double t = dbgJx[0];
-	  //   int j;
-	     Particle p;
-
-	     //ComputeField();
-		   Cell<Particle> & c000 = (*AllCells)[0];
-	    // AssignArraysToCells();
-
-	     StepAllCells();
-
-	     puts("particles moved!!!");
-	     //return;
-	     exit(0);
-
-	}
+//	   void virtual Step()
+//	{
+//	    // double t = dbgJx[0];
+//	  //   int j;
+//	     Particle p;
+//
+//	     //ComputeField();
+//		   Cell<Particle> & c000 = (*AllCells)[0];
+//	    // AssignArraysToCells();
+//
+//	     StepAllCells();
+//
+//	     puts("particles moved!!!");
+//	     //return;
+//	     exit(0);
+//
+//	}
 
 double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Particle> **copy_cells,int nt,int sort)
 {
