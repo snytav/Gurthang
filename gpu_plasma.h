@@ -1457,49 +1457,49 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 		return 1.0;//(t_hx+t_hy+t_hz)/3.0;
 	}
 
-	void printCurrentTensor(CellDouble dbg_cell_Jx,CellDouble dbg_cell_Jy,CellDouble dbg_cell_Jz,CurrentTensor t1)
-	{
-		double t_b,t_a,t;
-		puts("Jx");
-		t_b = dbg_cell_Jx.M[t1.Jx.i11][t1.Jx.i12][t1.Jx.i13];
-		t   = t1.Jx.t[0];
-		t_a = t_b + t;
-		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
-
-		t_b = dbg_cell_Jx.M[t1.Jx.i21][t1.Jx.i22][t1.Jx.i23];
-		t   = t1.Jx.t[1];
-		t_a = t_b + t;
-		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
-
-		t_b = dbg_cell_Jx.M[t1.Jx.i31][t1.Jx.i32][t1.Jx.i33];
-		t   = t1.Jx.t[2];
-		t_a = t_b + t;
-		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
-
-		t_b = dbg_cell_Jx.M[t1.Jx.i41][t1.Jx.i42][t1.Jx.i43];
-		t   = t1.Jx.t[3];
-		t_a = t_b + t;
-		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
-
-puts("Jy");
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jy.M[t1.Jy.i11][t1.Jy.i12][t1.Jy.i13],t1.Jy.t[0],dbg_cell_Jy.M[t1.Jy.i11][t1.Jy.i12][t1.Jy.i13]);
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jy.M[t1.Jy.i21][t1.Jy.i22][t1.Jy.i23],t1.Jy.t[1],dbg_cell_Jy.M[t1.Jy.i21][t1.Jy.i22][t1.Jy.i23]);
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jy.M[t1.Jy.i31][t1.Jy.i32][t1.Jy.i33],t1.Jy.t[2],dbg_cell_Jy.M[t1.Jy.i31][t1.Jy.i32][t1.Jy.i33]);
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jy.M[t1.Jy.i41][t1.Jy.i42][t1.Jy.i43],t1.Jy.t[3],dbg_cell_Jy.M[t1.Jy.i41][t1.Jy.i42][t1.Jy.i43]);
-        puts("Jz");
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jz.M[t1.Jz.i11][t1.Jz.i12][t1.Jz.i13],t1.Jz.t[0],dbg_cell_Jz.M[t1.Jz.i11][t1.Jz.i12][t1.Jz.i13]);
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jz.M[t1.Jz.i21][t1.Jz.i22][t1.Jz.i23],t1.Jz.t[1],dbg_cell_Jz.M[t1.Jz.i21][t1.Jz.i22][t1.Jz.i23]);
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jz.M[t1.Jz.i31][t1.Jz.i32][t1.Jz.i33],t1.Jz.t[2],dbg_cell_Jz.M[t1.Jz.i31][t1.Jz.i32][t1.Jz.i33]);
-		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
-        dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43],t1.Jz.t[3],dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43]);
-	}
+//	void printCurrentTensor(CellDouble dbg_cell_Jx,CellDouble dbg_cell_Jy,CellDouble dbg_cell_Jz,CurrentTensor t1)
+//	{
+//		double t_b,t_a,t;
+//		puts("Jx");
+//		t_b = dbg_cell_Jx.M[t1.Jx.i11][t1.Jx.i12][t1.Jx.i13];
+//		t   = t1.Jx.t[0];
+//		t_a = t_b + t;
+//		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
+//
+//		t_b = dbg_cell_Jx.M[t1.Jx.i21][t1.Jx.i22][t1.Jx.i23];
+//		t   = t1.Jx.t[1];
+//		t_a = t_b + t;
+//		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
+//
+//		t_b = dbg_cell_Jx.M[t1.Jx.i31][t1.Jx.i32][t1.Jx.i33];
+//		t   = t1.Jx.t[2];
+//		t_a = t_b + t;
+//		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
+//
+//		t_b = dbg_cell_Jx.M[t1.Jx.i41][t1.Jx.i42][t1.Jx.i43];
+//		t   = t1.Jx.t[3];
+//		t_a = t_b + t;
+//		printf("before %15.5e t1 %15.5e after %15.5e \n",t_b,t,t_a);
+//
+//puts("Jy");
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jy.M[t1.Jy.i11][t1.Jy.i12][t1.Jy.i13],t1.Jy.t[0],dbg_cell_Jy.M[t1.Jy.i11][t1.Jy.i12][t1.Jy.i13]);
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jy.M[t1.Jy.i21][t1.Jy.i22][t1.Jy.i23],t1.Jy.t[1],dbg_cell_Jy.M[t1.Jy.i21][t1.Jy.i22][t1.Jy.i23]);
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jy.M[t1.Jy.i31][t1.Jy.i32][t1.Jy.i33],t1.Jy.t[2],dbg_cell_Jy.M[t1.Jy.i31][t1.Jy.i32][t1.Jy.i33]);
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jy.M[t1.Jy.i41][t1.Jy.i42][t1.Jy.i43],t1.Jy.t[3],dbg_cell_Jy.M[t1.Jy.i41][t1.Jy.i42][t1.Jy.i43]);
+//        puts("Jz");
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jz.M[t1.Jz.i11][t1.Jz.i12][t1.Jz.i13],t1.Jz.t[0],dbg_cell_Jz.M[t1.Jz.i11][t1.Jz.i12][t1.Jz.i13]);
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jz.M[t1.Jz.i21][t1.Jz.i22][t1.Jz.i23],t1.Jz.t[1],dbg_cell_Jz.M[t1.Jz.i21][t1.Jz.i22][t1.Jz.i23]);
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jz.M[t1.Jz.i31][t1.Jz.i32][t1.Jz.i33],t1.Jz.t[2],dbg_cell_Jz.M[t1.Jz.i31][t1.Jz.i32][t1.Jz.i33]);
+//		printf("before %15.5e t1 %15.5e after %15.5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n",
+//        dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43],t1.Jz.t[3],dbg_cell_Jz.M[t1.Jz.i41][t1.Jz.i42][t1.Jz.i43]);
+//	}
 
 int SetCurrentArraysToZero()
 {
