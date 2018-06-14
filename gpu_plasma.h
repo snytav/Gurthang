@@ -1029,35 +1029,6 @@ void checkControlPoint(int num,int nt,int check_part)
      fclose(f);
 }
 
-
-
-
-
-	int readDebugArray(char* name, double* d,int nt,int col)
-	{
-		char dfile[100];
-
-		if(!strncmp(name+2,"lg",2))
-		{
-			sprintf(dfile,"%s%03d.dat",name,nt);
-			if(name[0] == 'e')
-			{
-			   read3DarrayLog(dfile, d,50,col);
-			}
-			else
-			{
-				read3DarrayLog(dfile,d,40,col);
-			}
-		}
-		else
-		{
-			sprintf(dfile,"%s%06d.dat",name,nt);
-			read3Darray(dfile,d);
-		}
-		return 0;
-	}
-
-
 	  void read3DarrayModified(char* name, double* d,double a)
 	  {
 	      char str[100];
