@@ -188,22 +188,19 @@ int readBinaryParticleArraysOneSort(
 	    	 }
 
        *dbg_x = (double *)malloc(sizeof(double)*total_particles);
-       debugPrintParticleCharacteristicArray(*dbg_x,total_particles,nt,"x",sort);
 
        *dbg_y = (double *)malloc(sizeof(double)*total_particles);
-       debugPrintParticleCharacteristicArray(*dbg_y,total_particles,nt,"y",sort);
 
        *dbg_z = (double *)malloc(sizeof(double)*total_particles);
-       debugPrintParticleCharacteristicArray(*dbg_z,total_particles,nt,"z",sort);
+
 
        *dbg_px = (double *)malloc(sizeof(double)*total_particles);
-       debugPrintParticleCharacteristicArray(*dbg_px,total_particles,nt,"px",sort);
 
        *dbg_py = (double *)malloc(sizeof(double)*total_particles);
-       debugPrintParticleCharacteristicArray(*dbg_py,total_particles,nt,"py",sort);
+
 
        *dbg_pz = (double *)malloc(sizeof(double)*total_particles);
-       debugPrintParticleCharacteristicArray(*dbg_pz,total_particles,nt,"pz",sort);
+
 
 	 	readFortranBinaryArray(f,*dbg_x);
 	 	readFortranBinaryArray(f,*dbg_y);
@@ -211,6 +208,12 @@ int readBinaryParticleArraysOneSort(
 	 	readFortranBinaryArray(f,*dbg_px);
 	 	readFortranBinaryArray(f,*dbg_py);
 	 	readFortranBinaryArray(f,*dbg_pz);
+	 	debugPrintParticleCharacteristicArray(*dbg_x,total_particles,nt,"x",sort);
+        debugPrintParticleCharacteristicArray(*dbg_y,total_particles,nt,"y",sort);
+        debugPrintParticleCharacteristicArray(*dbg_z,total_particles,nt,"z",sort);
+        debugPrintParticleCharacteristicArray(*dbg_px,total_particles,nt,"px",sort);
+        debugPrintParticleCharacteristicArray(*dbg_py,total_particles,nt,"py",sort);
+        debugPrintParticleCharacteristicArray(*dbg_pz,total_particles,nt,"pz",sort);
 
 	 	//printf("particle 79943 %25.15e \n",(*dbg_x)[79943]);
 
