@@ -187,7 +187,7 @@ double checkGPUArray(double *a,double *d_a,char *name,char *where,int nt)
    return 0.0;
 #endif
 
-	 sprintf(fname,"diff_%s_at_%s_nt%08.dat",name,where,nt);
+	 sprintf(fname,"diff_%s_at_%s_nt%08d.dat",name,where,nt);
 
 
 	 if(f1 == 1)
@@ -371,7 +371,7 @@ virtual void ComputeField_SecondHalfStep(int nt)
 
 }
 
-void ElectricFieldComponentEvaluate(
+void ElectricFieldComponentEvaluateTrace(
 		  double *E,double *H1,double *H2,double *J,
 		  int dir,
 		  double c1,double c2,double tau,
@@ -382,9 +382,33 @@ void ElectricFieldComponentEvaluate(
 {
      ElectricFieldTrace(E,H1,H2,J,dir,c1,c2,tau);
 
-     PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
-     PeriodicBoundaries(E, dir_2,start1_2,end1_2,start2_2,end2_2,N_2);
+//     PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
+//     PeriodicBoundaries(E, dir_2,start1_2,end1_2,start2_2,end2_2,N_2);
 }
+
+
+void ElectricFieldComponentEvaluatePeriodic(
+		  double *E,double *H1,double *H2,double *J,
+		  int dir,
+		  double c1,double c2,double tau,
+		  int dir_1,int start1_1,int end1_1,int start2_1,int end2_1,int N_1,
+		  int dir_2,int start1_2,int end1_2,int start2_2,int end2_2,int N_2
+		  )
+
+{
+//     ElectricFieldTrace(E,H1,H2,J,dir,c1,c2,tau);
+
+     if (dir != 0)
+     {
+    	 PeriodicBoundaries(E, dir_1,start1_1,end1_1,start2_1,end2_1,N_1);
+     }
+
+     if (dir != 2)
+     {
+    	 PeriodicBoundaries(E, dir_2,start1_2,end1_2,start2_2,end2_2,N_2);
+     }
+}
+
 
 void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 		   int nt,
@@ -394,25 +418,49 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 	 CPU_field = 0;
       double3 c1 = getMagneticFieldTimeMeshFactors();
 
-      ElectricFieldComponentEvaluate(
+      ElectricFieldComponentEvaluateTrace(
     		  locEx,locHz,locHy,loc_npJx,
     		  0,c1.y,c1.z,tau,
               1,0,Nx,1,Nz,Ny,
               2,0,Nx,0,Ny+1,Nz);
 
-      ElectricFieldComponentEvaluate(
+      ElectricFieldComponentEvaluateTrace(
+          		  locEy,locHx,locHz,loc_npJy,
+          		  1,c1.z,c1.x,tau,
+                    0,0,Ny,1,Nz,Nx,
+                    2,0,Nx+1,0,Ny,Nz);
+
+
+
+      ElectricFieldComponentEvaluateTrace(
+         		  locEz,locHy,locHx,loc_npJz,
+         		  2,c1.x,c1.y,tau,
+                   0,1,Ny,0,Nz,Nx,
+                   1,0,Nx+1,0,Nz,Ny);
+
+      checkControlPoint(550,nt,0);
+
+
+      ElectricFieldComponentEvaluatePeriodic(
+     		  locEx,locHz,locHy,loc_npJx,
+     		  0,c1.y,c1.z,tau,
+               1,0,Nx,1,Nz,Ny,
+               2,0,Nx,0,Ny+1,Nz);
+
+      ElectricFieldComponentEvaluatePeriodic(
     		  locEy,locHx,locHz,loc_npJy,
     		  1,c1.z,c1.x,tau,
               0,0,Ny,1,Nz,Nx,
               2,0,Nx+1,0,Ny,Nz);
 
-      SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
+//      SinglePeriodicBoundary(locEy,1,0,Nx+1,0,Nz+1,Ny);
 
-      ElectricFieldComponentEvaluate(
-    		  locEz,locHy,locHx,loc_npJz,
-    		  2,c1.x,c1.y,tau,
-              0,1,Ny,0,Nz,Nx,
-              1,0,Nx+1,0,Nz,Ny);
+
+      ElectricFieldComponentEvaluatePeriodic(
+        		  locEz,locHy,locHx,loc_npJz,
+        		  2,c1.x,c1.y,tau,
+                  0,1,Ny,0,Nz,Nx,
+                  1,0,Nx+1,0,Nz,Ny);
 
          checkControlPoint(600,nt,0);
 
@@ -988,6 +1036,28 @@ void checkControlPoint(int num,int nt,int check_part)
 	 t_qy = CheckGPUArraySilent(dbg_Qy,d_Qy);
 	 t_qz = CheckGPUArraySilent(dbg_Qz,d_Qz);
 
+	 if(num >= 500)
+	 {
+		 char wh[100];
+
+		 sprintf(wh,"%d",num);
+
+		 t_jx = checkGPUArray(dbgJx,d_Jx,"Jx",wh,nt); //checkGPUArrayСomponent(dbgEx,d_Ex,"Ex",num);
+		 t_jy = checkGPUArray(dbgJy,d_Jy,"Jy",wh,nt);
+		 t_jz = checkGPUArray(dbgJz,d_Jz,"Jz",wh,nt);
+
+		 t_ex = checkGPUArray(dbgEx,d_Ex,"Ex",wh,nt); //checkGPUArrayСomponent(dbgEx,d_Ex,"Ex",num);
+		 t_ey = checkGPUArray(dbgEy,d_Ey,"Ey",wh,nt);
+		 t_ez = checkGPUArray(dbgEz,d_Ez,"Ez",wh,nt);
+
+	 }
+	 else
+	 {
+		 t_ex = CheckGPUArraySilent(dbgEx,d_Ex);
+		 t_ey = CheckGPUArraySilent(dbgEy,d_Ey);
+		 t_ez = CheckGPUArraySilent(dbgEz,d_Ez);
+	 }
+
 	 t_jx = CheckGPUArraySilent(dbgJx,d_Jx);
 	 t_jy = CheckGPUArraySilent(dbgJy,d_Jy);
 	 t_jz = CheckGPUArraySilent(dbgJz,d_Jz);
@@ -1093,7 +1163,7 @@ double CheckArray	(double* a, double* dbg_a,FILE *f)
 	    	  );
 #endif
 
-	    return (1.0-((double)wrong/((Nx + 2)*(Ny + 2)*(Nz + 2))));
+	    return pow(diff,0.5);
 	}
 
 double CheckArray	(double* a, double* dbg_a)
