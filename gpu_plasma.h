@@ -123,7 +123,7 @@ public:
 
 
 
-void copyCells(char *where,int nt)
+void copyCells(std::string where,int nt)
 {
 	static int first = 1;
 	size_t m_free,m_total;
@@ -971,7 +971,7 @@ void readControlPoint(FILE **f1,char *fncpy,int num,int nt,int part_read,int fie
 
 double checkControlMatrix(char *wh,int nt,char *name, double *d_m)
 {
-	double t_jx,t_jy,t_jz;
+	double t_jx,t_jy;//,t_jz;
 	char fn[100];
 	FILE *f;
 
@@ -1473,7 +1473,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   virtual void ParticleSort(){}
 
 
-	   void ListAllParticles(int nt,char *where)
+	   void ListAllParticles(int nt,std::string where)
 	   	{
 //	   		int cell_sum = 0;
 //	   		int part_number = 0;
@@ -1487,7 +1487,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 #endif
 
 
-	   		sprintf(str,"List%05d_%s.dat\0",nt,where);
+	   		sprintf(str,"List%05d_%s.dat\0",nt,where.c_str());
 
 	   		if((f = fopen(str,"wt")) == NULL) return;
 
@@ -2000,7 +2000,7 @@ int readControlFile(int nt)
 
 
 
-int memory_monitor(char *legend,int nt)
+int memory_monitor(std::string legend,int nt)
 {
 	static int first = 1;
 	static FILE *f;
@@ -2022,7 +2022,7 @@ int memory_monitor(char *legend,int nt)
 	cudaError_t err = cudaMemGetInfo(&m_free,&m_total);
 
 	sysinfo(&info);
-	fprintf(f,"step %10d %50s GPU memory total %10d free %10d free CPU memory %10u \n",nt,legend,m_total/1024/1024,m_free/1024/1024,info.freeram/1024/1024);
+	fprintf(f,"step %10d %50s GPU memory total %10d free %10d free CPU memory %10u \n",nt,legend.c_str(),m_total/1024/1024,m_free/1024/1024,info.freeram/1024/1024);
 
 }
 
@@ -2051,7 +2051,7 @@ int Compute()
 
 	   cudaMemGetInfo(&m_free,&m_total);
 
-	   struct sysinfo info;
+
 
 
 	   for(int nt = START_STEP_NUMBER;nt <= TOTAL_STEPS;nt++)

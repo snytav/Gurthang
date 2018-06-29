@@ -281,7 +281,7 @@ GPUCell<Particle>* copyCellToDevice()
      return d_dst;
 }
 
-void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,char *where,int nt)
+void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::string where,int nt)
 {
 	static GPUCell<Particle> *h_copy_of_d_src;
 	static int first = 1;
@@ -325,7 +325,7 @@ void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,char *
     }
 	//code = cudaMemcpy(h_dst,&h_copy_of_d_src,sizeof(GPUCell<Particle>),cudaMemcpyHostToHost);
 #ifdef COPY_CELLS_MEMORY_PRINTS
-	printf("step %d %s number of particles %5d %3d %3d %d \n",nt,where,h_copy_of_d_src->i,h_copy_of_d_src->l,h_copy_of_d_src->k,h_copy_of_d_src->number_of_particles);
+	printf("step %d %s number of particles %5d %3d %3d %d \n",nt,where.c_str(),h_copy_of_d_src->i,h_copy_of_d_src->l,h_copy_of_d_src->k,h_copy_of_d_src->number_of_particles);
 #endif
 //	if(code != cudaSuccess)
 //	{
