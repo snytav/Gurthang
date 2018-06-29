@@ -300,17 +300,17 @@ int checkFields_beforeMagneticStageOne(double *t_Ex,double *t_Ey,double *t_Ez,
 
 	 memory_monitor("beforeComputeField_FirstHalfStep",nt);
 
-	         t_check[0] = checkControlMatrix("emh1",nt,"qx",t_Qx);
-			 t_check[1] = checkControlMatrix("emh1",nt,"qy",t_Qy);
-			 t_check[2] = checkControlMatrix("emh1",nt,"qz",t_Qz);
-
-			 t_check[3] = checkControlMatrix("emh1",nt,"ex",t_Ex);
-			 t_check[4] = checkControlMatrix("emh1",nt,"ey",t_Ey);
-			 t_check[5] = checkControlMatrix("emh1",nt,"ez",t_Ez);
-
-			 t_check[6] = checkControlMatrix("emh1",nt,"hx",t_Hx);
-			 t_check[7] = checkControlMatrix("emh1",nt,"hy",t_Hy);
-			 t_check[8] = checkControlMatrix("emh1",nt,"hz",t_Hz);
+//	         t_check[0] = checkControlMatrix("emh1",nt,"qx",t_Qx);
+//			 t_check[1] = checkControlMatrix("emh1",nt,"qy",t_Qy);
+//			 t_check[2] = checkControlMatrix("emh1",nt,"qz",t_Qz);
+//
+//			 t_check[3] = checkControlMatrix("emh1",nt,"ex",t_Ex);
+//			 t_check[4] = checkControlMatrix("emh1",nt,"ey",t_Ey);
+//			 t_check[5] = checkControlMatrix("emh1",nt,"ez",t_Ez);
+//
+//			 t_check[6] = checkControlMatrix("emh1",nt,"hx",t_Hx);
+//			 t_check[7] = checkControlMatrix("emh1",nt,"hy",t_Hy);
+//			 t_check[8] = checkControlMatrix("emh1",nt,"hz",t_Hz);
 	return 0;
 }
 
@@ -318,13 +318,13 @@ int checkFields_afterMagneticStageOne(double *t_Hx,double *t_Hy,double *t_Hz,
 		                              double *t_Qx,double *t_Qy,double *t_Qz,
 		                              double *t_check,int nt)
 {
-	         t_check[9] = checkControlMatrix("emh1",nt,"qx",t_Qx);
-			 t_check[10] = checkControlMatrix("emh1",nt,"qy",t_Qy);
-			 t_check[11] = checkControlMatrix("emh1",nt,"qz",t_Qz);
-
-			 t_check[12] = checkControlMatrix("emh1",nt,"hx",t_Hx);
-			 t_check[13] = checkControlMatrix("emh1",nt,"hy",t_Hy);
-			 t_check[14] = checkControlMatrix("emh1",nt,"hz",t_Hz);
+//	         t_check[9] = checkControlMatrix("emh1",nt,"qx",t_Qx);
+//			 t_check[10] = checkControlMatrix("emh1",nt,"qy",t_Qy);
+//			 t_check[11] = checkControlMatrix("emh1",nt,"qz",t_Qz);
+//
+//			 t_check[12] = checkControlMatrix("emh1",nt,"hx",t_Hx);
+//			 t_check[13] = checkControlMatrix("emh1",nt,"hy",t_Hy);
+//			 t_check[14] = checkControlMatrix("emh1",nt,"hz",t_Hz);
 
 
 			 CPU_field = 1;
@@ -824,11 +824,11 @@ void AssignCellsToArraysGPU()
 
 	size_t sz;
 	err = cudaDeviceGetLimit(&sz,cudaLimitStackSize);
-	printf("%s:%d - stack limit %d err = %d\n",__FILE__,__LINE__,sz,err);
+	printf("%s:%d - stack limit %d err = %d\n",__FILE__,__LINE__,((int)sz),err);
 	err = cudaDeviceSetLimit(cudaLimitStackSize, 64*1024);
 	printf("%s:%d - set stack limit %d \n",__FILE__,__LINE__,err);
 	err= cudaDeviceGetLimit(&sz,cudaLimitStackSize);
-	printf("%s:%d - stack limit %d \n",__FILE__,__LINE__,sz,err);
+	printf("%s:%d - stack limit %d err %d\n",__FILE__,__LINE__,((int)sz),err);
 
 	GPU_SetFieldsToCells<<<dimGrid, dimBlockExt>>>(d_CellArray,d_Ex,d_Ey,d_Ez,d_Hx,d_Hy,d_Hz);
     
