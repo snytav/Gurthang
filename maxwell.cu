@@ -720,6 +720,31 @@ int getUniformMaxwellianParticles(std::vector<Particle>  & ion_vp,
 	 		 BEAM_ELECTRON,
 	 		 beam_vp);
 
+	 convertParticleArraysToSTLvector(
+			 ions.dbg_x,
+			 ions.dbg_y,
+			 ions.dbg_z,
+			 ions.dbg_px,
+			 ions.dbg_py,
+			 ions.dbg_pz,
+			 ions.q_m,
+			 *(ions.m),
+	 		 ions.total,
+	 		 ION,
+	 		 ion_vp);
+
+	 convertParticleArraysToSTLvector(
+	 			 electrons.dbg_x,
+	 			 electrons.dbg_y,
+	 			 electrons.dbg_z,
+	 			 electrons.dbg_px,
+	 			 electrons.dbg_py,
+	 			 electrons.dbg_pz,
+	 			 electrons.q_m,
+	 			 *(electrons.m),
+	 	 		 electrons.total,
+	 	 		 PLASMA_ELECTRON,
+	 	 		 el_vp);
 
 	return 0;
 

@@ -203,11 +203,15 @@ double checkGPUArray(double *a,double *d_a,char *name,char *where,int nt)
 	        	exit(0);
 	         }
 
+#ifdef CHECK_ARRAY_DETAIL_PRINTS
 	 if((f = fopen(fname,"wt")) != NULL)
 	 {
 		 res = CheckArray(a,t,f);
 		 fclose(f);
 	 }
+#else
+	 res = CheckArray(a,t,f);
+#endif
 
 	 return res;
 }
@@ -338,6 +342,9 @@ void  ComputeField_FirstHalfStep(
 		   )
 {
 	 double t_check[15];
+    cudaError_t err;
+	err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
      checkFields_beforeMagneticStageOne(d_Ex,d_Ey,d_Ez,
 		 		                               d_Hx,d_Hy,d_Hz,
@@ -345,12 +352,20 @@ void  ComputeField_FirstHalfStep(
 		 		                               t_check,nt);
 
 
+	err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	 MagneticStageOne(d_Qx,d_Qy,d_Qz,d_Hx,d_Hy,d_Hz,d_Ex,d_Ey,d_Ez);
 
+	err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	 checkFields_afterMagneticStageOne(d_Hx,d_Hy,d_Hz,
 		 		                           d_Qx,d_Qy,d_Qz,
 		 		                           t_check,nt);
+	err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	 AssignCellsToArraysGPU();
+	err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 }
 
@@ -804,8 +819,22 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 void AssignCellsToArraysGPU()
 {
 	dim3 dimGrid(Nx,Ny,Nz),dimBlockExt(CellExtent,CellExtent,CellExtent);
+	cudaError_t err = cudaGetLastError();
+    printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); 
+
+	size_t sz;
+	err = cudaDeviceGetLimit(&sz,cudaLimitStackSize);
+	printf("%s:%d - stack limit %d err = %d\n",__FILE__,__LINE__,sz,err);
+	err = cudaDeviceSetLimit(cudaLimitStackSize, 64*1024);
+	printf("%s:%d - set stack limit %d \n",__FILE__,__LINE__,err);
+	err= cudaDeviceGetLimit(&sz,cudaLimitStackSize);
+	printf("%s:%d - stack limit %d \n",__FILE__,__LINE__,sz,err);
 
 	GPU_SetFieldsToCells<<<dimGrid, dimBlockExt>>>(d_CellArray,d_Ex,d_Ey,d_Ez,d_Hx,d_Hy,d_Hz);
+    
+	cudaDeviceSynchronize();
+	err = cudaGetLastError();
+    printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); 
 
 }
 
@@ -823,41 +852,41 @@ void AssignCellsToArraysGPU()
 	     CheckArray(Jx, dbgJx);
 	}
 
-	  void ParticleLog()
-	{
-	#ifndef DEBUG_PLASMA
-	     return;
-	#endif
-
-	     FILE *f;
-	     char  fname[100];
-	     int   num = 0;
-
-	     sprintf(fname,"particles.dat");
-
-	     if((f = fopen(fname,"wt")) == NULL) return;
-
-	     for(int n = 0;n < (*AllCells).size();n++)
-	     {
-	         Cell<Particle>  c = (*AllCells)[n];
-	#ifdef GPU_PARTICLE
-	   	 thrust::host_vector<Particle>  pvec_device;// = c.GetParticles();
-	   	 thrust::host_vector<Particle> pvec = pvec_device;
-	#else
-		 thrust::host_vector<Particle>  pvec = c.GetParticles();
-	#endif
-
-		 for(int i = 0;i < pvec.size();i++)
-		 {
-		      Particle p = pvec[i];
-
-		      p.Print(f,num++);
-		 }
-
-	     }
-
-	     fclose(f);
-	  }
+//	  void ParticleLog()
+//	{
+//	#ifndef DEBUG_PLASMA
+//	     return;
+//	#endif
+//
+//	     FILE *f;
+//	     char  fname[100];
+//	     int   num = 0;
+//
+//	     sprintf(fname,"particles.dat");
+//
+//	     if((f = fopen(fname,"wt")) == NULL) return;
+//
+//	     for(int n = 0;n < (*AllCells).size();n++)
+//	     {
+//	         Cell<Particle>  c = (*AllCells)[n];
+//	#ifdef GPU_PARTICLE
+//	   	 thrust::host_vector<Particle>  pvec_device;// = c.GetParticles();
+//	   	 thrust::host_vector<Particle> pvec = pvec_device;
+//	#else
+//		 thrust::host_vector<Particle>  pvec = c.GetParticles();
+//	#endif
+//
+//		 for(int i = 0;i < pvec.size();i++)
+//		 {
+//		      Particle p = pvec[i];
+//
+//		      p.Print(f,num++);
+//		 }
+//
+//	     }
+//
+//	     fclose(f);
+//	  }
 
 
 	  void write3Darray(char *name,double *d)
@@ -988,7 +1017,7 @@ void checkControlPoint(int num,int nt,int check_part)
 	 double t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,t_jx,t_jy,t_jz;
 	 double t_qx,t_qy,t_qz,t_njx,t_njy,t_njz;
 
-	 if((nt != TOTAL_STEPS) && (num == 600))
+	 if((nt != TOTAL_STEPS) || (num != 600))
 	 {
 #ifndef CONTROL_POINT_CHECK
 	     return;
@@ -1137,9 +1166,9 @@ double CheckArray	(double* a, double* dbg_a,FILE *f)
 
 
 
-//#ifdef CHECK_ARRAY_DETAIL_PRINTS
+#ifdef CHECK_ARRAY_DETAIL_PRINTS
 	    fprintf(f,"begin array checking=============================\n");
-//#endif
+#endif
 	    for(int n = 0;n < (Nx + 2)*(Ny + 2)*(Nz + 2);n++)
 	    {
 //	        double t  = a[n];
@@ -1530,12 +1559,28 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 int SetCurrentArraysToZero()
 {
+    cudaError_t err = cudaGetLastError();
+    err = cudaGetLastError();
+	printf("%s: %d [%d,%d,%d]\n",__FILE__, __LINE__, Nx,Ny,Nz);
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
     memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	return 0;
 }
 
@@ -1621,11 +1666,9 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
 	cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
       before_ArrangeFlights,after_ArrangeFlights;
 
-#ifdef BALANCING_PRINTS
     before_MakeDepartureLists = cudaGetLastError();
     printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
     cudaGetErrorString(before_MakeDepartureLists),dimGrid.x,dimGrid.y,dimGrid.z);
-#endif
 
 //    int stage[4000],stage1[4000];//,*d_stage,*d_stage1;
     cudaMalloc(d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
@@ -1731,7 +1774,13 @@ int Push(int nt,double mass,double q_mass)
 
 int SetCurrentsToZero(int nt)
 {
+    cudaError_t err = cudaGetLastError();
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	SetCurrentArraysToZero();
+
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 	return SetCurrentsInCellsToZero(nt);
 }
@@ -1739,13 +1788,25 @@ int SetCurrentsToZero(int nt)
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
+    cudaError_t err = cudaGetLastError();
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 		SetCurrentsToZero(nt);
 
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+
 		Push(nt,mass,q_mass);
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
         WriteCurrentsFromCellsToArrays(nt);
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
         reorder_particles(nt);
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	}
 
 

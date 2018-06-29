@@ -32,13 +32,13 @@
 
 //#define DEBUG_PLASMA_STEP_FIELDS
 
-#define PRINT_PARTICLE_INITIALS
+
 
 //#define DEBUG_PLASMA_STEP_FIELDS_EMH2
 
 //#define LIST_ALL_PARTICLES
 
-#define CHECK_ARRAY_DETAIL_PRINTS
+
 
 #define START_STEP_NUMBER 1
 
@@ -63,7 +63,7 @@
 
 //#define PARTICLE_TRACE
 
-#define CONTROL_POINT_CHECK
+//#define CONTROL_POINT_CHECK
 
 //#define checkControlPointParticles_PRINTS
 

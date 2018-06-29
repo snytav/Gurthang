@@ -142,7 +142,7 @@ virtual void InitializeCPU()
 
    initMeshArrays();
 
-   int flag_from_file = 1;
+   int flag_from_file = 0;
 
    if(flag_from_file == 1)
    {
@@ -159,15 +159,16 @@ virtual void InitializeCPU()
    }
    else
    {
-	   getUniformMaxwellianParticles(ion_vp,el_vp,beam_vp);
+	   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
 
    }
 //   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
 //
-//   double t1 = compareParticleList(beam_vp,beam_vp1);
+//   double tb = compareParticleList(beam_vp,beam_vp1);
+//   double ti = compareParticleList(ion_vp,ion_vp1);
+//   double te = compareParticleList(el_vp,el_vp1);
 
-
-   addAllParticleListsToCells(ion_vp,el_vp,beam_vp);
+   addAllParticleListsToCells(ion_vp1,el_vp1,beam_vp1);
 
    AssignArraysToCells();
 

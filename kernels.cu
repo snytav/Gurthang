@@ -107,14 +107,13 @@ void GPU_SetFieldsToCells(Cell<Particle>  **cells,
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
 	//int i,l,k;
-	Cell<Particle>  *c,*c0 = cells[0],nc;
+	Cell<Particle>  *c,*c0 = cells[0];
 	//double t;
 
 	c = cells[ c0->getGlobalCellNumber(nx,ny,nz)];
 
-	nc = *c;
 
-	nc.readFieldsFromArrays(Ex,Ey,Ez,Hx,Hy,Hz,threadIdx);
+	c->readFieldsFromArrays(Ex,Ey,Ez,Hx,Hy,Hz,threadIdx);
 }
 
 hostdevice_for_CUDA
@@ -157,7 +156,7 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 	unsigned int nz = blockIdx.z;
 	// int i1,l1;//,k1;
 //	int i,l,k;
-	Cell<Particle>  *c,*c0 = cells[0],nc;
+	Cell<Particle>  *c,*c0 = cells[0];
 	//double t;
 	__shared__ extern CellDouble fd[9];
 	//double *src,*dst;
@@ -167,7 +166,6 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 	c = cells[ c0->getGlobalCellNumber(nx,ny,nz)];
 //	c = cells[ n ];
 
-	 nc = *c;
 
 	//nc.writeToArray(jx,*(nc.Jx),threadIdx.x);
 //     for(int i1 = 0; i1 < CellExtent;i1++)
@@ -180,13 +178,13 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 	        	 i1 = threadIdx.x;
 	        	 l1 = threadIdx.y;
 	        	 k1 = threadIdx.z;
-    	         int n = nc.getFortranCellNumber(nc.i+i1-1,nc.l+l1-1,nc.k+k1-1);
+    	         int n = c->getFortranCellNumber(c->i+i1-1,c->l+l1-1,c->k+k1-1);
 
     	         if (n < 0 ) n = -n;
         		 double t,t_x,t_y;//,jx_p,jy_p;
 		         //int i_f,l_f;//k_f;
-		         t_x = nc.Jx->M[i1][l1][k1];
-		         int3 i3 = nc.getCellTripletNumber(n);
+		         t_x = c->Jx->M[i1][l1][k1];
+		         int3 i3 = c->getCellTripletNumber(n);
 
 //	         if(fabs(jx[n]) > 1e-15)
 //		         {
@@ -202,9 +200,9 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 		         //jy_p = jy[n];
 
 		         cuda_atomicAdd(&(jx[n]),t_x);
-		         t_y= nc.Jy->M[i1][l1][k1];
+		         t_y= c->Jy->M[i1][l1][k1];
 		         cuda_atomicAdd(&(jy[n]),t_y);
-		         t = nc.Jz->M[i1][l1][k1];
+		         t = c->Jz->M[i1][l1][k1];
 		         cuda_atomicAdd(&(jz[n]),t);
 
 //                 printf("nc.i %3d nc.l %3d nc.k %3d n %5d nr %5d nc.i+i1-1 %2d nc.l+l1-1 %2d nc.k+k1-1 %2d i %3d l %3d k %3d jxb %15.5e jxt %15.e jx %15.5e jyb %15.5e jyt %15.e jy %15.5e \n",
