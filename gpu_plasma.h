@@ -1545,11 +1545,11 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	double checkPeriodicCurrents(int nt)
 	{
-		double *dbg,t_hx,t_hy,t_hz;
+		double *dbg;//,t_hx;//,t_hy;//,t_hz;
 
 		printf("CHECKING periodic currents !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n");
 
-	  	dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+	  	//dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 	  	TryCheckCurrent(nt,Jx);
 
@@ -1663,8 +1663,8 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimGridOne(1,1,1),dimBlock(512,1,1),
 	     dimBlockOne(1,1,1),dimBlockGrow(1,1,1),dimBlockExt(CellExtent,CellExtent,CellExtent);
 	dim3 dimGridBulk(Nx,Ny,Nz);
-	cudaError_t before_MakeDepartureLists,after_MakeDepartureLists,
-      before_ArrangeFlights,after_ArrangeFlights;
+	cudaError_t before_MakeDepartureLists,after_MakeDepartureLists;
+//      before_ArrangeFlights;//,after_ArrangeFlights;
 
     before_MakeDepartureLists = cudaGetLastError();
     printf("before_MakeDepartureLists %d %s blockdim %d %d %d\n",before_MakeDepartureLists,
@@ -1722,15 +1722,16 @@ int inter_stage_diagnostic(int *stage,int nt)
 
 int reallyPassParticlesToAnotherCells(int nt,int *stage1,int *d_stage1)
 {
-    int err,after_ArrangeFlights;
+    int err;
     dim3 dimGridBulk(Nx,Ny,Nz),dimBlockOne(1,1,1);
 	cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
 
 	    GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
-	    after_ArrangeFlights = cudaGetLastError();
-
 #ifdef BALANCING_PRINTS
+	    CUDA_Errot_t after_ArrangeFlights = cudaGetLastError();
+
+
     printf("after_ArrangeFlights %d %s\n",after_ArrangeFlights,cudaGetErrorString(after_ArrangeFlights));
             cudaDeviceSynchronize();
 #endif
@@ -1747,7 +1748,6 @@ int reallyPassParticlesToAnotherCells(int nt,int *stage1,int *d_stage1)
 	memory_monitor("CellOrder_StepAllCells7",nt);
 	return (int)err;
 
-	return 0;
 }
 
 int reorder_particles(int nt)
@@ -1820,7 +1820,6 @@ double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Par
     int size = 1;
 #ifdef CPU_DEBUG_RUN
     double q_m,m;
-    struct sysinfo info;
 
     memory_monitor("checkControlPointParticlesOneSort",nt);
 
@@ -1829,10 +1828,7 @@ double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Par
 
     Cell<Particle> c0 = (*AllCells)[0];
     //int pn_min/*,pn_ave,pn_max*/;
-    if(check_point_num == 50)
-    {
-    	int qq = 0;
-    }
+
     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
    		                                             &dbg_px,&dbg_py,&dbg_pz,&q_m,&m,nt,sort);
     memory_monitor("checkControlPointParticlesOneSort2",nt);
