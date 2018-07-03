@@ -166,23 +166,10 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
     	         int n = c->getFortranCellNumber(c->i+i1-1,c->l+l1-1,c->k+k1-1);
 
     	         if (n < 0 ) n = -n;
-        		 double t,t_x,t_y;//,jx_p,jy_p;
-		         //int i_f,l_f;//k_f;
+        		 double t,t_x,t_y;
 		         t_x = c->Jx->M[i1][l1][k1];
 		         int3 i3 = c->getCellTripletNumber(n);
 
-//	         if(fabs(jx[n]) > 1e-15)
-//		         {
-//                     printf("Global: WriteAllCurrents i %d l %d k %d i1 %d l1 %d k1 %d n %5d if %2d lf %d kf %d Jx %15.5e before %15.5e\n",nc.i,nc.k,nc.l,i1,l1,k1,
-//                    		                                                             n,i3.x+1,i3.y+1,i3.z+1,t,jx[n]);
-//		         }
-//		         if(fabs(t) >1e-15)
-//		         {
-//                     printf("Local:  WriteAllCurrents i %d l %d k %d i1 %d l1 %d k1 %d n %5d if %2d lf %d kf %d Jx %15.5e before %15.5e\n",nc.i,nc.k,nc.l,i1,l1,k1,
-//                    		                                                             n,nc.i+i1-1,nc.l+l1-1,nc.k+k1-1,t,jx[n]);
-//		         }
-		         //jx_p = jx[n];
-		         //jy_p = jy[n];
 
 		         cuda_atomicAdd(&(jx[n]),t_x);
 		         t_y= c->Jy->M[i1][l1][k1];
@@ -190,19 +177,6 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 		         t = c->Jz->M[i1][l1][k1];
 		         cuda_atomicAdd(&(jz[n]),t);
 
-//                 printf("nc.i %3d nc.l %3d nc.k %3d n %5d nr %5d nc.i+i1-1 %2d nc.l+l1-1 %2d nc.k+k1-1 %2d i %3d l %3d k %3d jxb %15.5e jxt %15.e jx %15.5e jyb %15.5e jyt %15.e jy %15.5e \n",
-//                		nc.i,nc.l,nc.k,n,n,
-//                		nc.i+i1-1,nc.l+l1-1,nc.k+k1-1,
-//                		i3.x+1,i3.y+1,i3.z+1,
-//                		jx_p,t_x,jx[n],
-//                		jx_p,t_x,jx[n]);
-
-//	         }
-//	     }
-//     }
-//	nc.writeToArray(jy,*(nc.Jy),threadIdx.x);
-//	nc.writeToArray(jz,*(nc.Jz),threadIdx.x);
-//	nc.writeAllToArrays(jx,jy,jz,rho,threadIdx.x);
 }
 
 template <template <class Particle> class Cell >
