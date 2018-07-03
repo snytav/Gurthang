@@ -37,18 +37,18 @@ int setPrintfLimit()
 {
 	size_t sizeP;
 
-	printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
+	printf("Particle size %lu %lu \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
 
 	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
-	printf("printf default limit %d \n",sizeP/1024/1024);
+	printf("printf default limit %lu \n",sizeP/1024/1024);
 
 	sizeP *= 10000;
 	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
 
 	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
-	printf("printf limit set to %d \n",sizeP/1024/1024);
+	printf("printf limit set to %lu \n",sizeP/1024/1024);
 
 	return 0;
 }
@@ -169,7 +169,7 @@ void get_load_data_file_names(
 
     sprintf(d_hxfile,"dnhx%06d.dat",2*nt-1);
     sprintf(d_hyfile,"dnhy%06d.dat",2*nt-1);
-    printf(d_hyfile);
+    puts(d_hyfile);
     sprintf(d_hzfile,"dnhz%06d.dat",2*nt-1);
 
     sprintf(jxfile,"dnjx%06d.dat",2*nt);

@@ -74,27 +74,27 @@ FILE *readPreliminary3Darrays(std::string fn,int nt,int nx,int ny,int nz)
 	     struct sysinfo info;
 
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading electric field Ex
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading electric field Ey
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading electric field Ez
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading magnetic field Hx
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading magnetic field Hy
 	     readFortranBinaryArray(f,buf);
@@ -295,7 +295,7 @@ std::vector<Particle> readBinaryParticlesOneSortSTL(FILE *f, particle_sorts sort
 
 	      			struct sysinfo info;
 	                 sysinfo(&info);
-	      			printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	      			printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 //	      			err = ferror(f);
                     return vp;
 	      //			printPICstatitstics(m,q_m,total_particles);
