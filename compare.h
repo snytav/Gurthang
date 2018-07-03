@@ -8,11 +8,13 @@
 #ifndef COMPARE_H_
 #define COMPARE_H_
 
+#include <string>
+
 #define TOLERANCE 1e-15
 #define SIZE_TOLERANCE 1e-10
 
 
-double compare(double *a,double *b,int num,char *legend,double tol);
+double compare(double *a,double *b,int num,std::string legend,double tol);
 
 
 int comd(double a,double b);

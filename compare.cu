@@ -1,8 +1,10 @@
 
 #include "compare.h"
 
+#include <string>
 
-double compare(double *a,double *b,int num,char *legend,double tol)
+
+double compare(double *a,double *b,int num,std::string legend,double tol)
 {
      double t = 0.0;
 
@@ -26,7 +28,7 @@ double compare(double *a,double *b,int num,char *legend,double tol)
 
      if(num > 0) t /= num;
 #ifdef COMPARE_PRINTS
-     printf("%30s %.5f\n",legend,t);
+     printf("%30s %.5f\n",legend.c_str(),t);
 #endif
      return t;
 }

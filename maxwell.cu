@@ -54,23 +54,23 @@ struct cag05a {
 
 /* Table of constant values */
 
-static integer c__9 = 9;
-static integer c__1 = 1;
-static integer c__3 = 3;
-static integer c__5 = 5;
-static integer c__0 = 0;
-static integer c__2 = 2;
-static doublereal c_b172 = 1.;
-static integer c__12 = 12;
-static doublereal c_b417 = 1.1424;
-static doublereal c_b419 = .5712;
-static doublereal c_b429 = 1.5;
-static integer c__20000 = 20000;
-static doublereal c_b581 = 0.;
-static doublereal c_b582 = .11200000000000002;
-static doublereal c_b587 = .14;
-static doublereal c_b589 = .8;
-static doublereal c_b614 = .001;
+//static integer c__9 = 9;
+//static integer c__1 = 1;
+//static integer c__3 = 3;
+//static integer c__5 = 5;
+//static integer c__0 = 0;
+//static integer c__2 = 2;
+//static doublereal c_b172 = 1.;
+//static integer c__12 = 12;
+//static doublereal c_b417 = 1.1424;
+//static doublereal c_b419 = .5712;
+//static doublereal c_b429 = 1.5;
+//static integer c__20000 = 20000;
+//static doublereal c_b581 = 0.;
+//static doublereal c_b582 = .11200000000000002;
+//static doublereal c_b587 = .14;
+//static doublereal c_b589 = .8;
+//static doublereal c_b614 = .001;
 
 /* ------------------------------------------------------ */
 /* ������� �.�., */
@@ -452,7 +452,7 @@ int InitUniformMaxwellianParticles(int beamf,int jmb,
 	//1st beam particle impulse:    0.20296063288436139
 	for (j = 1; j <= *jmb_real; j++)
 	{
-	    double uxt,ubt; 
+//	    double uxt,ubt;
 	    d__1 = ux[j - 1];
 	    d__2 = uy[j - 1];
 	    d__3 = uz[j - 1];
@@ -483,7 +483,7 @@ int InitUniformMaxwellianParticles(int beamf,int jmb,
     {
     	   if((2*j-1) == 24933)
     	   {
-    		   int qq = 0;
+//    		   int qq = 0;
     	   }
            xf[2*j-1-1] = xi[j-1];
            yf[2*j-1-1] = yi[j-1];
@@ -561,14 +561,15 @@ int AddBeamParticles(int jmb,
 				   double *xb,double *yb, double *zb,double *ub,double *vb, double *wb
 				  )
 {
-    double x,y,z,vb0,d__1,d__2,d__3,vy,vz,termx,gb0;
-    double vf01,vf02,pinv1,pinv2,mfrq;
+    double x,y,z;//,vb0,d__1,d__2,d__3,vy,vz,termx,gb0;
+//    double vf01,vf02,pinv1,pinv2,mfrq;
 //     double *ux,*uy,*uz;
-    double *ux,*uy,*uz;
-    double beam_y_max,beam_y_min, beam_sh;
+//    double *ux,*uy,*uz;
+//    double beam_y_max;
+    double beam_y_min, beam_sh;
 
     beam_sh = (ly - beam_ly)/2;
-    beam_y_max = ly - beam_sh;
+//    beam_y_max = ly - beam_sh;
     beam_y_min = beam_sh;
 
     for (int j = 1; j <= jmb; j++)
@@ -614,20 +615,21 @@ int getMassCharge(ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays 
 	ions->q_m             =  1.0/1836.0;
 	beam_electrons->q_m   = -1.0;
 
+	return 0;
 }
 
-int AllocateMemoryForArrays(int N,int sorts,ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays *beam_electrons)
+int AllocateMemoryForArrays(int N,ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays *beam_electrons)
 {
 
 	ions->total           = N;
     electrons->total      = 2*N;
     beam_electrons->total = N;
 
-    sorts = 3;
+//    sorts = 3;
 
     AllocateBinaryParticlesArrays(ions,electrons,beam_electrons);
 //    AllocateBinaryParticlesArraysFloat(&(diagnostics[0]),&(diagnostics[1]),&(diagnostics[2]));
-
+    return 0;
 }
 
 int convertParticleArraysToSTLvector(
@@ -665,6 +667,8 @@ int convertParticleArraysToSTLvector(
 
 	  }
 	  int size = vp.size();
+
+	  return 0;
 }
 
 
@@ -679,7 +683,7 @@ int getUniformMaxwellianParticles(std::vector<Particle>  & ion_vp,
     double tex0 = 1e-3;
     double tey0 = 1e-3;
     double tez0 = 1e-3;
-    double tol  = 1e-15;
+//    double tol  = 1e-15;
 
     double Tb   = 0.14;
     double rimp = 0.2;
@@ -691,7 +695,7 @@ int getUniformMaxwellianParticles(std::vector<Particle>  & ion_vp,
     double ly   = 0.05;
     double lz   = 0.05;
 
-    AllocateMemoryForArrays(total,3,&ions,&electrons,&beam);
+    AllocateMemoryForArrays(total,&ions,&electrons,&beam);
 
     getMassCharge(&ions,&electrons,&beam,ni,rbd,lp);
 

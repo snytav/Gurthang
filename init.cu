@@ -192,8 +192,8 @@ void InitGPUParticles()
 	int size;
 	GPUCell<Particle> *d_c,*h_ctrl;
 	GPUCell<Particle> *n;
-	GPUCell<Particle> *h_copy,*h_c;
-	double t;
+//	GPUCell<Particle> *h_c;//*h_copy,
+//	double t;
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlockOne(1,1,1);
 
 	 readControlFile(START_STEP_NUMBER);
@@ -230,10 +230,13 @@ void InitGPUParticles()
     	//printf("%d: %d\n", i, c.busyParticleArray);
         d_c = c.copyCellToDevice();
         cudaMemGetInfo(&m_free,&m_total);
-        double mfree,mtot;
-        mfree = m_free;
-        mtot  = m_total;
+//        double mtot;
+//        mfree = m_free;
+
 #ifdef COPY_CELL_PRINTS
+        double mfree,mtot;
+        mtot  = m_total;
+        mfree = m_free;
         printf("cell %10d Device cell array allocated error %d %s memory: free %10.2f total %10.2f\n",i,err,cudaGetErrorString(err),
         		                                                mfree/1024/1024/1024,mtot/1024/1024/1024);
         puts("");
@@ -514,7 +517,7 @@ virtual void Alloc()
 
       void printPICstatitstics(double m,double q_m, int total_particles)
       {
-    	  int pn_min,pn_ave,pn_max,pn_sum,err;
+    	  int pn_min,pn_ave,pn_max,pn_sum;//,err;
 
               pn_min = 1000000000;
               pn_max = 0;
@@ -572,6 +575,8 @@ virtual void Alloc()
 #endif
     	  			      }
    		      }// END total_particles LOOP
+
+    	  return 0;
 
       }
 

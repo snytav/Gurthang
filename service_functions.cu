@@ -89,8 +89,8 @@ double get_meminfo1(void)
 		if(memcmp(tmp,"Mem:",4)==0)
 		{
 			int	wordcount=0;
-			char *delimiter=" ";
-			char *p=strtok(tmp,delimiter);
+			std::string delimiter=" ";
+			char *p=strtok(tmp,delimiter.c_str());
 			while(*p)
 			{
 				wordcount++;
@@ -151,7 +151,7 @@ void get_load_data_file_names(
     char d_jxfile[100],d_jyfile[100],d_jzfile[100];
     char qxfile[100],qyfile[100],qzfile[100];
     char pfile[100],nextpfile[100];
-    char part_name[100];
+//    char part_name[100];
 
     sprintf(qxfile,"dnqx%06d.dat",nt);
     sprintf(qyfile,"dnqy%06d.dat",nt);

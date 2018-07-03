@@ -152,9 +152,11 @@ __host__ __device__ void  mult(double *u,double *v,double *w,double ps, double p
 __host__ __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
-    double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
-	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
-	double3 sx3,u3;
+//    double bx,by,bz;
+    double tau1,u,v,w,ps;//,su,sv,sw;//,s1,s2,s3,s4,s5,s6,s;
+//	double sx,sy,sz,
+	double x1,y1,z1,pu1,pv1,pw1;
+	double3 sx3;//,u3;
 
 
 	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);

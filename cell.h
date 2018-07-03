@@ -312,13 +312,13 @@ void
  void writeParticleToSurface(int n,Particle *p)
 {
 //   	double3 x;
-   	int size_p = sizeof(Particle);
-   	double *pos;
-   	union Data
-   		{
-   		   int a,b;
-   		   double d;
-   		} data;
+//   	int size_p = sizeof(Particle);
+//   	double *pos;
+//   	union Data
+//   		{
+//   		   int a,b;
+//   		   double d;
+//   		} data;
 
 
    	//surf2Dwrite(t,in_surface,ny*8,nx+shift);
@@ -343,8 +343,8 @@ void
 // 	ParticleArrayWrite(n,14,p->hx);
 // 	ParticleArrayWrite(n,15,p->hy);
 // 	ParticleArrayWrite(n,16,p->hz);
- 	data.a = p->fortran_number;
- 	data.b = (int)p->sort;
+// 	data.a = p->fortran_number;
+// 	data.b = (int)p->sort;
  	double d =  int2double(p->fortran_number, (int)p->sort);
  	ParticleArrayWrite(n,8,d);
 //   	printf("write %5d %3d %3d %5d %25.15e %10d %10d \n",
@@ -358,7 +358,7 @@ void
  		//printf("\n fnum %d sizeof(Particle) %d \n",p->fortran_number,size_p);
  	}
 // 	pos = (double *)&(p->t1);
- 	int i;
+// 	int i;
 //    for(i = 0;i < sizeof(CurrentTensor)/sizeof(double);i++)
 //    {
 //    	ParticleArrayWrite(n,19+i,pos[i]);
@@ -451,7 +451,7 @@ void
 // 		printf("fnum %d sizeof(Particle) %d \n",p->fortran_number,size_p);
 // 	}
 // 	pos = (double *)&(p->t1);
- 	int i;
+// 	int i;
 //    for(i = 0;i < sizeof(CurrentTensor)/sizeof(double);i++)
 //    {
 //    	pos[i] = ParticleArrayRead(n,19+i);
@@ -1112,9 +1112,9 @@ void InverseKernel(double3 x,int3 & i,int3 & i1,
  			  )
 {
 
-	int2 g;
+//	int2 g;
 
-	double2 f;
+//	double2 f;
        // s2 = getCellFraction(x.x,0.0,hx);
 	i.x =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
 	i1.x = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
@@ -2291,7 +2291,7 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
 
      double3 x,x1,E,H;
      double  m,q_m;
-     int flag;
+//     int flag;
      Particle p;
 
      if(i >= number_of_particles) return 0;
@@ -2804,7 +2804,7 @@ double checkCellParticles(int check_point_num,double *x,double *y,double *z,
 	double t,dm,dqm,dx,dy,dz,dpx,dpy,dpz;
 	if(number_of_particles < 0 || number_of_particles > MAX_particles_per_cell)
 	{
-		int qq = 0;
+//		int qq = 0;
 	}
 
 	for(i = 0; i < number_of_particles;i++)

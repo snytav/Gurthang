@@ -258,11 +258,11 @@ global_for_CUDA void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *
 	    unsigned int nx = blockIdx.x;
 		unsigned int ny = blockIdx.y;
 		unsigned int nz = blockIdx.z;
-		int ix,iy,iz,n;
+		int ix,iy,iz;//,n;
 
 		Particle p;
-		Cell<Particle>  *c,*c0 = cells[0],nc,*new_c;
-		c = cells[ n = c0->getGlobalCellNumber(nx,ny,nz)];
+		Cell<Particle>  *c,*c0 = cells[0],nc;//,*new_c;
+		c = cells[c0->getGlobalCellNumber(nx,ny,nz)];
 
 #ifdef FLY_PRINTS
 
@@ -455,7 +455,7 @@ global_for_CUDA void GPU_ArrangeFlights(Cell<Particle>  **cells,int nt, int *d_s
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
-	int ix,iy,iz,snd_ix,snd_iy,snd_iz,num,pos,n;
+	int ix,iy,iz,snd_ix,snd_iy,snd_iz,num,n;
 	Particle p;
 
 	Cell<Particle>  *c,*c0 = cells[0],nc,*snd_c;
@@ -571,7 +571,7 @@ global_for_CUDA void GPU_CollectStrayParticles(Cell<Particle>  **cells,int nt
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
 
-	int busy;
+//	int busy;
 	Particle p;
 	int n;
 //	int i,l,k;
@@ -695,7 +695,7 @@ __device__ void copyCellDouble(CellDouble *dst,CellDouble *src,unsigned int n,ui
 {
 	if(n < CellExtent*CellExtent*CellExtent)
 	{
-		double *d_dst,*d_src,t;
+		double *d_dst,*d_src;//,t;
 
 		d_dst = (double *)(dst->M);
 		d_src = (double *)(src->M);
