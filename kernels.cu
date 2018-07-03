@@ -154,27 +154,12 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
-	// int i1,l1;//,k1;
-//	int i,l,k;
 	Cell<Particle>  *c,*c0 = cells[0];
-	//double t;
 	__shared__ extern CellDouble fd[9];
-	//double *src,*dst;
-	//int pqr2;
-	//CurrentTensor t1,t2;
 
 	c = cells[ c0->getGlobalCellNumber(nx,ny,nz)];
-//	c = cells[ n ];
 
-
-	//nc.writeToArray(jx,*(nc.Jx),threadIdx.x);
-//     for(int i1 = 0; i1 < CellExtent;i1++)
-//     {
-//         for(int l1 = 0; l1 < CellExtent;l1++)
-//	     {
-//	         for(int k1 = 0; k1 < CellExtent; k1++)
-//	         {
-	             int i1,l1,k1;
+	int i1,l1,k1;
 	        	 i1 = threadIdx.x;
 	        	 l1 = threadIdx.y;
 	        	 k1 = threadIdx.z;
