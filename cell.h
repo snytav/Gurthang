@@ -45,7 +45,9 @@ typedef double* double_pointer;
 typedef struct CellDouble {
     double M[CellExtent][CellExtent][CellExtent];
 } CellDouble;
-const int MAX_particles_per_cell = 5000;
+
+#define MAX_PPC   5000
+const int MAX_particles_per_cell = MAX_PPC;
 
 
 
