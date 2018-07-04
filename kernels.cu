@@ -747,27 +747,27 @@ __device__ void copyFieldsToSharedMemory(
 
 }
 
-__device__ void set_cell_double_array_to_zero(CellDouble *ca,int length)
-{
-     for(int i = 0; i<= 100;i++)
-     {
-    	 CellDouble *cd = &(ca[i]);
-    	 cd->M[0][0][0] = 0.0;
-    	 continue;
-
-    	 for(int i1 = 0;i1 < CellExtent;i1++)
-    	 {
-    		for(int l1 = 0;l1 < CellExtent;l1++)
-    		{
-    			for(int k1 = 0;k1 < CellExtent;k1++)
-    			{
-    				cd->M[i1][l1][k1] = 0.0;
-    			}
-    		}
-    	 }
-
-     }
-}
+//__device__ void set_cell_double_array_to_zero(CellDouble *ca,int length)
+//{
+//     for(int i = 0; i<= 100;i++)
+//     {
+//    	 CellDouble *cd = &(ca[i]);
+//    	 cd->M[0][0][0] = 0.0;
+//    	 continue;
+//
+//    	 for(int i1 = 0;i1 < CellExtent;i1++)
+//    	 {
+//    		for(int l1 = 0;l1 < CellExtent;l1++)
+//    		{
+//    			for(int k1 = 0;k1 < CellExtent;k1++)
+//    			{
+//    				cd->M[i1][l1][k1] = 0.0;
+//    			}
+//    		}
+//    	 }
+//
+//     }
+//}
 
 __device__ void MoveAndWriteCurrents(
 									 CellDouble *c_ex,

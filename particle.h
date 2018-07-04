@@ -40,7 +40,7 @@ public:
    double x,y,z,pu,pv,pw,m,q_m;
    particle_sorts sort;
 
-   CurrentTensor t1,t2;
+//   CurrentTensor t1,t2;
 
 #ifdef DEBUG_PLASMA
    int fortran_number;
