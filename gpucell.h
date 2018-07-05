@@ -265,7 +265,8 @@ GPUCell<Particle>* copyCellToDevice()
 			(err25 != 0)
 	  )
 	{
-		//int qq = 0;
+		printf("copyCellToDevice error d_dst %p\n",d_dst);
+		//exit(0);
 	}
 
  //   cudaMemcpy(h_ctrl,d_dst,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
@@ -276,6 +277,11 @@ GPUCell<Particle>* copyCellToDevice()
 
    // printf("before copy return  %e\n",this->ParticleArrayRead(50,1));
    // dbgPrintGPUParticleAttribute(d_dst,50,1," IN_COPY " );
+
+	 if(d_dst == NULL)
+	 {
+	    int qq =0;
+	 }
 
 
      return d_dst;

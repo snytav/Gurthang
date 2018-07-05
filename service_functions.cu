@@ -37,7 +37,7 @@ int setPrintfLimit()
 {
 	size_t sizeP;
 
-	printf("Particle size %lu %lu \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
+	printf("Particle size %lu %lu CurrentTensor %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double),sizeof(CurrentTensor));
 
 	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 

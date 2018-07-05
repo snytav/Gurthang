@@ -1451,19 +1451,23 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   {
 		   Cell<Particle> c000 = (*AllCells)[0];
 		   magf = 1;
+		   cudaError_t err;
 
 		   int size = (Nx+2)*(Ny+2)*(Nz+2);
 
 		   cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		   for(int i = 0;i < size;i++)
 		   {
 		     	Cell<Particle> c,*d_c;
 		   	   	// 	z0 = h_CellArray[i];
 		   	    d_c = c.allocateCopyCellFromDevice();
+		   	 if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		   	    cp[i] = d_c;
 		   }
+		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 		   return 0;
 	   }
 

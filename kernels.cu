@@ -747,27 +747,15 @@ __device__ void copyFieldsToSharedMemory(
 
 }
 
-//__device__ void set_cell_double_array_to_zero(CellDouble *ca,int length)
-//{
-//     for(int i = 0; i<= 100;i++)
-//     {
-//    	 CellDouble *cd = &(ca[i]);
-//    	 cd->M[0][0][0] = 0.0;
-//    	 continue;
-//
-//    	 for(int i1 = 0;i1 < CellExtent;i1++)
-//    	 {
-//    		for(int l1 = 0;l1 < CellExtent;l1++)
-//    		{
-//    			for(int k1 = 0;k1 < CellExtent;k1++)
-//    			{
-//    				cd->M[i1][l1][k1] = 0.0;
-//    			}
-//    		}
-//    	 }
-//
-//     }
-//}
+__device__ void set_cell_double_array_to_zero(CurrentTensorComponent *ca,int length)
+{
+     for(int i = 0; i<= 100;i++)
+     {
+    	ca[i].t[0] = 0.0;
+
+
+     }
+}
 
 __device__ void MoveAndWriteCurrents(
 									 CellDouble *c_ex,
@@ -790,11 +778,11 @@ __device__ void MoveAndWriteCurrents(
     int pqr2;
 	Particle p;
 
-//	CellDouble *jx_all_particles;
+//	CurrentTensorComponent jx_t1[MAX_PPC];
 //
 //	jx_all_particles = (CellDouble *)malloc(MAX_particles_per_cell*sizeof(CellDouble));
 //
-//	set_cell_double_array_to_zero(jx_all_particles,MAX_particles_per_cell);
+//	set_cell_double_array_to_zero(jx_t1,MAX_PPC);
 //	//memset(jx_all_particles,0,sizeof(jx_all_particles));
 
 
