@@ -37,7 +37,7 @@ class Particle
 
 public:  
   
-   double x,y,z,pu,pv,pw,m,q_m;
+   double x,y,z,pu,pv,pw,m,q_m,x1,y1,z1;
    particle_sorts sort;
 
 //   CurrentTensor t1,t2;

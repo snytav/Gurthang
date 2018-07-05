@@ -7,6 +7,8 @@ int main(int argc,char*argv[])
 {
    GPUPlasma<GPUCell> *plasma;
 
+   printf("begin Particle size %d \n", sizeof(Particle));
+
    plasma = new GPUPlasma<GPUCell>(100,4,4,1.1424,0.05,0.05,1.0,2000,1.0,0.001);
 
    plasma->Initialize();
