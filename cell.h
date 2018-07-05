@@ -2123,7 +2123,20 @@ int getParticleTypeNumber(double mass,double q_mass)
 	return num;
 }
 
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+int WriteParticleToCell(Particle *p, int i,double3 x1)
+{
+    		 p->x = x1.x;
+    		 p->y = x1.y;
+    		 p->z = x1.z;
 
+             Reflect(p);
+
+             writeParticleToSurface(i,&p);
+             return 0;
+}
 
 
 #ifdef __CUDACC__
@@ -2132,7 +2145,7 @@ int getParticleTypeNumber(double mass,double q_mass)
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
+Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
@@ -2154,9 +2167,9 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
    		     x1 = p.GetX1();
     		 q_m = p.GetQ2M();
     		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
-    		 p.x = x1.x;
-    		 p.y = x1.y;
-    		 p.z = x1.z;
+    		     		 p.x = x1.x;
+    		     		 p.y = x1.y;
+    		     		 p.z = x1.z;
 
 	         Reflect(&p);
 
@@ -2164,7 +2177,7 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
 
      writeParticleToSurface(i,&p);
 
-     return 0;
+     return (&p);
 }
 
 #ifdef __CUDACC__
@@ -2182,16 +2195,12 @@ int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double ma
 
       if(i >= number_of_particles) return 0;
       readParticleFromSurfaceDevice(i,&p);
- //     jmp = jmp_control;
-//     		 x = p.GetX();
-//     		 GetField(x,E,H,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-//     		 p.Move(E,H,tau);
-     		 m = p.GetMass();
+      m = p.GetMass();
 
-     		 x = p.GetX();
-    		     x1 = p.GetX1();
-     		 q_m = p.GetQ2M();
-     		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
+      x = p.GetX();
+      x1 = p.GetX1();
+      q_m = p.GetQ2M();
+      CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
      		 p.x = x1.x;
      		 p.y = x1.y;
      		 p.z = x1.z;
