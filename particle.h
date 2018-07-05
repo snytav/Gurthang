@@ -157,7 +157,8 @@ void Move(double3 E,double3 H,double tau)
 //    double bx,by,bz;
     double tau1,u,v,w,ps;//,su,sv,sw;//,s1,s2,s3,s4,s5,s6,s;
 //	double sx,sy,sz,
-	double x1,y1,z1,pu1,pv1,pw1;
+//	double x1,y1,z1,
+	double pu1,pv1,pw1;
 	double3 sx3;//,u3;
 
 
@@ -188,9 +189,9 @@ void Move(double3 E,double3 H,double tau)
 	y1 = y + tau * v;
 	z1 = z + tau * w;
 
-	x = x1;
-	y = y1;
-	z = z1;
+//	x = x1;
+//	y = y1;
+//	z = z1;
 
 }
    
@@ -199,6 +200,9 @@ void Collide(double sect){}
 
 __host__ __device__ __forceinline__
    double3 GetX(){double3 d3x; d3x.x = x; d3x.y = y; d3x.z = z; return d3x;}
+
+__host__ __device__ __forceinline__
+   double3 GetX1(){double3 d3x; d3x.x = x1; d3x.y = y1; d3x.z = z1; return d3x;}
 
 __host__ __device__ __forceinline__
    double3 GetV(){double3 d3x; d3x.x = x; d3x.y = y; d3x.z = z; return d3x;}
