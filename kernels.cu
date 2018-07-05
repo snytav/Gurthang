@@ -781,7 +781,8 @@ __device__ void Move(
     while(index < c->number_of_particles)
     {
 
-        c->Move (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+//        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
         writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
         writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
