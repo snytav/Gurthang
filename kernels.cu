@@ -782,6 +782,8 @@ __device__ void Move(
     {
 
         p = c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->WriteParticleToCell(p, index,p->GetX1());
+
 //        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
         writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);

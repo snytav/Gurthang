@@ -2134,7 +2134,7 @@ int WriteParticleToCell(Particle *p, int i,double3 x1)
 
              Reflect(p);
 
-             writeParticleToSurface(i,&p);
+             writeParticleToSurface(i,p);
              return 0;
 }
 
@@ -2171,7 +2171,7 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
     		     		 p.y = x1.y;
     		     		 p.z = x1.z;
 
-	         Reflect(&p);
+//	         Reflect(&p);
 
 
 
