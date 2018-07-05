@@ -15,7 +15,7 @@
 
 
 typedef struct CurrentTensorComponent {
-	short int i11, i12, i13,
+	char i11, i12, i13,
 	 i21, i22, i23,
 	 i31, i32, i33,
 	 i41, i42, i43;
