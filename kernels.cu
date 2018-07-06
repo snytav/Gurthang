@@ -261,7 +261,7 @@ global_for_CUDA void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *
         //return;
 		for(int num = 0;num < c->number_of_particles; num++)
 			{
-			c->readParticleFromSurfaceDevice(num,&p);
+			p = c->readParticleFromSurfaceDevice(num);
 #ifdef FLY_PRINTS
 
 //					printf("resident-begin step %3d %5d %3d %3d p %10d sort %2d num %5d size %5d nx %3u ny %3u nz %3u\n",nt,

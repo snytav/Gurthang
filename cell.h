@@ -352,25 +352,25 @@ void
  #ifdef __CUDACC__
  __host__ __device__
  #endif
- Particle readParticleFromSurfaceDevice(int n,Particle *p)
+ Particle readParticleFromSurfaceDevice(int n)
 {
+    Particle p;
 
+   	p.m = ParticleArrayRead(n,0);
+   	p.x = ParticleArrayRead(n,1);
+   	p.y = ParticleArrayRead(n,2);
+   	p.z = ParticleArrayRead(n,3);
+   	p.pu = ParticleArrayRead(n,4);
+   	p.pv = ParticleArrayRead(n,5);
+   	p.pw = ParticleArrayRead(n,6);
+   	p.q_m = ParticleArrayRead(n,7);
 
-   	p->m = ParticleArrayRead(n,0);
-   	p->x = ParticleArrayRead(n,1);
-   	p->y = ParticleArrayRead(n,2);
-   	p->z = ParticleArrayRead(n,3);
-   	p->pu = ParticleArrayRead(n,4);
-   	p->pv = ParticleArrayRead(n,5);
-   	p->pw = ParticleArrayRead(n,6);
-   	p->q_m = ParticleArrayRead(n,7);
+  	p.x1 = ParticleArrayRead(n,8);
+   	p.y1 = ParticleArrayRead(n,9);
+   	p.z1 = ParticleArrayRead(n,10);
+   	p.sort = (particle_sorts)ParticleArrayRead(n,11);
 
-  	p->x1 = ParticleArrayRead(n,8);
-   	p->y1 = ParticleArrayRead(n,9);
-   	p->z1 = ParticleArrayRead(n,10);
-   	p->sort = (particle_sorts)ParticleArrayRead(n,11);
-
-   	return (*p);
+   	return p;
 }
 
 
@@ -389,7 +389,7 @@ public:
 //    	busy = atomicCAS(&busyParticleArray,0,1);
 //    }while(busy == 1);
 
-	readParticleFromSurfaceDevice(n,p);
+	*p = readParticleFromSurfaceDevice(n);
 
 	i = *number_of_particles-1;
 	if(this->i == 1 && this->l == 0 && this->k == 0)
@@ -2552,7 +2552,7 @@ double checkCellParticles(int check_point_num,double *x,double *y,double *z,
 	{
 		Particle p;
 
-		readParticleFromSurfaceDevice(i,&p);
+		p = readParticleFromSurfaceDevice(i);
 
 		j = p.fortran_number - 1;
 		dm  = fabs(p.m   -   m);
