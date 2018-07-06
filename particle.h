@@ -276,6 +276,9 @@ Particle & operator=(Particle const & src)
 	m   = src.m;
 	q_m = src.q_m;
 	sort = src.sort;
+	x1 = src.x1;
+	y1 = src.y1;
+	z1 = src.z1;
 
 
 #ifdef DEBUG_PLASMA

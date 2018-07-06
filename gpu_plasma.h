@@ -533,6 +533,7 @@ int PushParticles(int nt)
 	memory_monitor("before_CellOrder_StepAllCells",nt);
 
     CellOrder_StepAllCells(nt,	mass,q_mass,1);
+    puts("cell_order");
 
 	memory_monitor("after_CellOrder_StepAllCells",nt);
 
@@ -582,7 +583,10 @@ int readStartPoint(int nt)
 
 		PushParticles(nt);
 
+		puts("push ended");
+
 		ComputeField_SecondHalfStep(nt);
+		puts("field computed-2");
 
 		 Diagnose(nt);
 
@@ -1622,11 +1626,13 @@ int StepAllCells(int nt,double mass,double q_mass)
 {
 	   dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlock(512,1,1);
 	   cudaDeviceSynchronize();
-
+       puts("begin step");
 	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
 	            		     		                 mass,q_mass);
-
+	   puts("end step");
 	   cudaDeviceSynchronize();
+
+	   puts("end step-12");
 
 	   return 0;
 }
@@ -1775,6 +1781,7 @@ int Push(int nt,double mass,double q_mass)
 	StepAllCells_fore_diagnostic(nt);
 
 	StepAllCells(nt,mass,q_mass);
+	puts("after StepAllCell");
 
 	return StepAllCells_post_diagnostic(nt);
 }
@@ -1804,10 +1811,12 @@ int SetCurrentsToZero(int nt)
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		Push(nt,mass,q_mass);
+		puts("Push");
     err = cudaGetLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
         WriteCurrentsFromCellsToArrays(nt);
+        puts("writeCut2arr");
     err = cudaGetLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
@@ -2065,6 +2074,7 @@ int Compute()
 	       Step(nt);
 
 	       memory_status_print(nt);
+	       printf("step %d ===================\n",nt);
 	   }
 	   printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ \n");
 

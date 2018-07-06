@@ -23,10 +23,14 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 
 	 p.Move(fd.E,fd.H,tau);
 	 writeParticleToSurface(i,&p);
-	 p = readParticleFromSurfaceDevice(i);
-	 CurrentToMesh(tau,cells,t1,t2,&p);
 
-	 writeParticleToSurface(i,&p);
+	 Particle p1;
+	 p1 = p;//readParticleFromSurfaceDevice(i);
+
+	 CurrentToMesh(tau,cells,t1,t2,&p1);
+
+	 writeParticleToSurface(i,&p1);
+//	 AccCurrent(i,cells,t1,t2,mass,q_mass,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
 }
 
 #ifdef __CUDACC__
