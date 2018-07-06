@@ -1561,6 +1561,7 @@ L18:  p->x = p->x1;
       p->y = p->y1;
       p->z = p->z1;
 
+      Reflect(p);
 
       return;
 }

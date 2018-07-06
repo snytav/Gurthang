@@ -30,7 +30,7 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
 //	 p.y = p.y1;
 //	 p.z = p.z1;
 
-	 Reflect(&p);
+
 
 
 
