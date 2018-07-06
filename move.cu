@@ -22,9 +22,22 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 	 fd = GetField(&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
 
 	 p.Move(fd.E,fd.H,tau);
-
+	 writeParticleToSurface(i,&p);
+	 p = readParticleFromSurfaceDevice(i);
+	 CurrentToMesh(tau,cells,t1,t2,&p);
 
 	 writeParticleToSurface(i,&p);
+}
+
+#ifdef __CUDACC__
+ __host__ __device__
+ #endif
+ void AccCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
+ 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
+ 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+ {
+	 Particle p;
+	 if(i >= number_of_particles) return;
 
 	 p = readParticleFromSurfaceDevice(i);
 	 CurrentToMesh(tau,cells,t1,t2,&p);
