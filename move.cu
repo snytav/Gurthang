@@ -10,7 +10,6 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
-
      double3 x,x1;
      double  m,q_m;
 //     int flag;
@@ -21,8 +20,10 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
      p = readParticleFromSurfaceDevice(i);
 	 x = p.GetX();
 	 fd = GetField(x,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
+
 	 p.Move(fd.E,fd.H,tau);
 
+	 x = p.GetX();
 	 x1 = p.GetX1();
 	 CurrentToMesh(x,x1,p.m,p.q_m,tau,cells,t1,t2,&p);
 	 p.x = p.x1;
