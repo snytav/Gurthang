@@ -1558,6 +1558,11 @@ if(p->fortran_number == 32587 && p->sort == 2)
 	*cells = 2;
 
 L18:    return;
+
+
+     p->x = p->x1;
+	 p->y = p->y1;
+	 p->z = p->z1;
 }
 
 #ifdef __CUDACC__
@@ -1612,6 +1617,7 @@ L15:
 	}
 */
 	p->SetX(x1);
+
 
 }
 
