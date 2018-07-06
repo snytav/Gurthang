@@ -781,7 +781,7 @@ __device__ void Move(
     while(index < c->number_of_particles)
     {
 
-        p = c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 //        c->WriteParticleToCell(p, index,p->GetX1());
 
 //        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
