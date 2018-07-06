@@ -11,17 +11,18 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
 
-     double3 x,x1,E,H;
+     double3 x,x1;
      double  m,q_m;
 //     int flag;
      Particle p;
+     Field fd;
 
      if(i >= number_of_particles) return 0;
      p = readParticleFromSurfaceDevice(i);
 //     jmp = jmp_control;
     		 x = p.GetX();
-    		 GetField(x,E,H,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-    		 p.Move(E,H,tau);
+    		 fd = GetField(x,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
+    		 p.Move(fd.E,fd.H,tau);
     		 m = p.GetMass();
 
     		 x = p.GetX();
