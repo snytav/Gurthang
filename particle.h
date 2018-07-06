@@ -13,6 +13,9 @@
 
 #define GPU_PARTICLE
 
+typedef struct Field{
+	double3 E,H;
+} Field;
 
 typedef struct CurrentTensorComponent {
 	char i11, i12, i13,
