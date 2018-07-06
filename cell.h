@@ -352,7 +352,7 @@ void
  #ifdef __CUDACC__
  __host__ __device__
  #endif
- void readParticleFromSurfaceDevice(int n,Particle *p)
+ Particle readParticleFromSurfaceDevice(int n,Particle *p)
 {
 
 
@@ -370,6 +370,7 @@ void
    	p->z1 = ParticleArrayRead(n,10);
    	p->sort = (particle_sorts)ParticleArrayRead(n,11);
 
+   	return (*p);
 }
 
 
