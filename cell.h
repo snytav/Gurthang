@@ -2291,7 +2291,7 @@ thrust::host_vector< Particle >  getFlyList()
      for(int n = 0;n < count;n++)
      {
          Particle p;
-         readParticleFromSurfaceDevice(n,&p);
+         p  = readParticleFromSurfaceDevice(n,&p);
          if(!isPointInCell(p.GetX()))
 	     {
 	        removeParticleFromSurfaceDevice(n,&p,&number_of_particles);
@@ -2442,7 +2442,7 @@ double compareParticleLists(Cell<Particle> *c)
        {
     	   Particle p,p1;
 
-    	   readParticleFromSurfaceDevice(i,&p);
+    	  p =  readParticleFromSurfaceDevice(i,&p);
     	   c->readParticleFromSurfaceDevice(i,&p1);
 
     	   printf("particle %5d X %10.3e %10.3e Y %10.3e %10.3e Z %10.3e %10.3e \n \
@@ -2655,7 +2655,7 @@ void SetControlSystemToParticles()
 
     for(i = 0;i < number_of_particles;i++)
     {
-        readParticleFromSurfaceDevice(i,&p);
+        p = readParticleFromSurfaceDevice(i,&p);
 #ifdef ATTRIBUTES_CHECK
    //     p.SetControlSystem(jmp,d_ctrlParticles);
 #endif
