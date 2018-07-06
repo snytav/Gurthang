@@ -25,6 +25,9 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
 
 //	 x = p.GetX();
 //	 x1 = p.GetX1();
+	 writeParticleToSurface(i,&p);
+
+	 p = readParticleFromSurfaceDevice(i);
 	 CurrentToMesh(tau,cells,t1,t2,&p);
 //	 p.x = p.x1;
 //	 p.y = p.y1;
