@@ -17,7 +17,7 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
      Particle p;
      Field fd;
 
-     if(i >= number_of_particles) return 0;
+     if(i >= number_of_particles) return NULL;
      p = readParticleFromSurfaceDevice(i);
 //     jmp = jmp_control;
     		 x = p.GetX();
