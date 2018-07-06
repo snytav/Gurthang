@@ -21,10 +21,11 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
      p = readParticleFromSurfaceDevice(i);
      x = p.GetX();
      fd = GetField(x,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-    		 p.Move(fd.E,fd.H,tau);
-    		 m = p.GetMass();
 
-    		 x = p.GetX();
+     p.Move(fd.E,fd.H,tau);
+     m = p.GetMass();
+
+     x = p.GetX();
    		     x1 = p.GetX1();
     		 q_m = p.GetQ2M();
     		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);

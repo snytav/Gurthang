@@ -328,6 +328,7 @@ void
  	ParticleArrayWrite(n,10,p->z1);
 
  	ParticleArrayWrite(n,11,((double)p->sort));
+ 	ParticleArrayWrite(n,12,((double)p->fortran_number));
 
 }
 
@@ -369,6 +370,7 @@ void
    	p.y1 = ParticleArrayRead(n,9);
    	p.z1 = ParticleArrayRead(n,10);
    	p.sort = (particle_sorts)ParticleArrayRead(n,11);
+   	p.fortran_number = (particle_sorts)ParticleArrayRead(n,12);
 
    	return p;
 }
