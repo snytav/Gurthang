@@ -18,8 +18,8 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
 
      if(i >= number_of_particles) return p;
      p = readParticleFromSurfaceDevice(i);
-	 x = p.GetX();
-	 fd = GetField(x,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
+//	 x = p.GetX();
+	 fd = GetField(&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
 
 	 p.Move(fd.E,fd.H,tau);
 
