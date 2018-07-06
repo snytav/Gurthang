@@ -29,15 +29,15 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
    		     x1 = p.GetX1();
     		 q_m = p.GetQ2M();
     		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
-//    		     		 p.x = x1.x;
-//    		     		 p.y = x1.y;
-//    		     		 p.z = x1.z;
-//
-//	         Reflect(&p);
-//
-//
-//
-//     writeParticleToSurface(i,&p);
+    		     		 p.x = x1.x;
+    		     		 p.y = x1.y;
+    		     		 p.z = x1.z;
+
+	         Reflect(&p);
+
+
+
+     writeParticleToSurface(i,&p);
 
      return (&p);
 }
