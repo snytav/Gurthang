@@ -193,9 +193,9 @@ void Move(double3 E,double3 H,double tau)
 	y1 = y + tau * v;
 	z1 = z + tau * w;
 
-//	x = x1;
-//	y = y1;
-//	z = z1;
+	x = x1;
+	y = y1;
+	z = z1;
 
 }
    
