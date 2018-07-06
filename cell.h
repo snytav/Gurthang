@@ -313,18 +313,7 @@ void
  #endif
  void writeParticleToSurface(int n,Particle *p)
 {
-//   	double3 x;
-//   	int size_p = sizeof(Particle);
-//   	double *pos;
-//   	union Data
-//   		{
-//   		   int a,b;
-//   		   double d;
-//   		} data;
 
-
-   	//surf2Dwrite(t,in_surface,ny*8,nx+shift);
-   	//double x,y,z,pu,pv,pw,m,q_m;
    	ParticleArrayWrite(n,0,p->m);
    	ParticleArrayWrite(n,1,p->x);
    	ParticleArrayWrite(n,2,p->y);
@@ -339,55 +328,6 @@ void
  	ParticleArrayWrite(n,10,p->z1);
 
  	ParticleArrayWrite(n,11,((double)p->sort));
-
-#ifdef DEBUG_PLASMA
-// 	ParticleArrayWrite(n,8,p->next_x.x);
-// 	ParticleArrayWrite(n,9,p->next_x.y);
-// 	ParticleArrayWrite(n,10,p->next_x.z);
-
-// 	ParticleArrayWrite(n,11,p->ex);
-// 	ParticleArrayWrite(n,12,p->ey);
-// 	ParticleArrayWrite(n,13,p->ez);
-//
-// 	ParticleArrayWrite(n,14,p->hx);
-// 	ParticleArrayWrite(n,15,p->hy);
-// 	ParticleArrayWrite(n,16,p->hz);
-// 	data.a = p->fortran_number;
-// 	data.b = (int)p->sort;
-// 	double d =  int2double(p->fortran_number, (int)p->sort);
-// 	ParticleArrayWrite(n,8,d);
-//   	printf("write %5d %3d %3d %5d %25.15e %10d %10d \n",
-//   			i,l,k,n,
-//   			d,
-//   			p->fortran_number,
-//   			(int)p->sort); 	//ParticleArrayWrite(n,9,p->sort);
-#endif
- 	if(p->fortran_number == 270)
- 	{
- 		//printf("\n fnum %d sizeof(Particle) %d \n",p->fortran_number,size_p);
- 	}
-// 	pos = (double *)&(p->t1);
-// 	int i;
-//    for(i = 0;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	ParticleArrayWrite(n,19+i,pos[i]);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("i %d 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e \n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
-//
-// 	pos = (double *)&(p->t2);
-//    for(;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	ParticleArrayWrite(n,19+i,pos[i]);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("i %d 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e\n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
 
 }
 
