@@ -354,14 +354,7 @@ void
  #endif
  void readParticleFromSurfaceDevice(int n,Particle *p)
 {
-//	int size_p = sizeof(Particle);
-//	double *pos;
-//
-//	union Data
-//	{
-//	   int a,b;
-//	   double d;
-//	} data;
+
 
    	p->m = ParticleArrayRead(n,0);
    	p->x = ParticleArrayRead(n,1);
@@ -376,63 +369,6 @@ void
    	p->y1 = ParticleArrayRead(n,9);
    	p->z1 = ParticleArrayRead(n,10);
    	p->sort = (particle_sorts)ParticleArrayRead(n,11);
-
-#ifdef DEBUG_PLASMA
-//   	p->next_x.x = ParticleArrayRead(n,8);
-//   	p->next_x.y = ParticleArrayRead(n,9);
-//   	p->next_x.z = ParticleArrayRead(n,10);
-
-//   	p->ex = ParticleArrayRead(n,11);
-//   	p->ey = ParticleArrayRead(n,12);
-//   	p->ez = ParticleArrayRead(n,13);
-//
-//   	p->hx = ParticleArrayRead(n,14);
-//   	p->hy = ParticleArrayRead(n,15);
-//   	p->hz = ParticleArrayRead(n,16);
-   	double d;
-//   	int a,b;
-//   	d = ParticleArrayRead(n,8);
-//    double2int(d,&a,&b);
-//
-//   	p->fortran_number = a;
-//   	p->sort = (particle_sorts)b;
-
-//   	printf("read %5d %3d %3d %5d %25.15e %10d %10d \n",
-//   			i,l,k,n,
-//   			d,a,b);
-#endif
-// 	if(p->fortran_number == 270)
-// 	{
-// 		printf("fnum %d sizeof(Particle) %d \n",p->fortran_number,size_p);
-// 	}
-// 	pos = (double *)&(p->t1);
-// 	int i;
-//    for(i = 0;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	pos[i] = ParticleArrayRead(n,19+i);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("read i%d 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e \n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
-//
-// 	pos = (double *)&(p->t2);
-//    for(;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	pos[i] = ParticleArrayRead(n,19+i);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("read 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e\n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
-
-/*
-	surf2Dread(&(x.x),particle_surface,1*8,n);
-	surf2Dread(&(x.y),particle_surface,2*8,n);
-	surf2Dread(&(x.z),particle_surface,3*8,n);
-*/
 
 }
 
