@@ -25,7 +25,7 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 	 writeParticleToSurface(i,&p);
 
 	 Particle p1;
-	 p1 = p;//readParticleFromSurfaceDevice(i);
+	 p1 = readParticleFromSurfaceDevice(i);
 
 	 CurrentToMesh(tau,cells,t1,t2,&p1);
 
