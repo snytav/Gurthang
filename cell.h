@@ -338,6 +338,8 @@ void
  	ParticleArrayWrite(n,9,p->y1);
  	ParticleArrayWrite(n,10,p->z1);
 
+ 	ParticleArrayWrite(n,11,((double)p->sort));
+
 #ifdef DEBUG_PLASMA
 // 	ParticleArrayWrite(n,8,p->next_x.x);
 // 	ParticleArrayWrite(n,9,p->next_x.y);
@@ -352,8 +354,8 @@ void
 // 	ParticleArrayWrite(n,16,p->hz);
 // 	data.a = p->fortran_number;
 // 	data.b = (int)p->sort;
- 	double d =  int2double(p->fortran_number, (int)p->sort);
- 	ParticleArrayWrite(n,8,d);
+// 	double d =  int2double(p->fortran_number, (int)p->sort);
+// 	ParticleArrayWrite(n,8,d);
 //   	printf("write %5d %3d %3d %5d %25.15e %10d %10d \n",
 //   			i,l,k,n,
 //   			d,
@@ -433,6 +435,7 @@ void
   	p->x1 = ParticleArrayRead(n,8);
    	p->y1 = ParticleArrayRead(n,9);
    	p->z1 = ParticleArrayRead(n,10);
+   	p->sort = (particle_sorts)ParticleArrayRead(n,11);
 
 #ifdef DEBUG_PLASMA
 //   	p->next_x.x = ParticleArrayRead(n,8);
@@ -447,12 +450,12 @@ void
 //   	p->hy = ParticleArrayRead(n,15);
 //   	p->hz = ParticleArrayRead(n,16);
    	double d;
-   	int a,b;
-   	d = ParticleArrayRead(n,8);
-    double2int(d,&a,&b);
-
-   	p->fortran_number = a;
-   	p->sort = (particle_sorts)b;
+//   	int a,b;
+//   	d = ParticleArrayRead(n,8);
+//    double2int(d,&a,&b);
+//
+//   	p->fortran_number = a;
+//   	p->sort = (particle_sorts)b;
 
 //   	printf("read %5d %3d %3d %5d %25.15e %10d %10d \n",
 //   			i,l,k,n,
