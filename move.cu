@@ -6,7 +6,7 @@
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
+Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
@@ -17,7 +17,7 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
      Particle p;
      Field fd;
 
-     if(i >= number_of_particles) return NULL;
+     if(i >= number_of_particles) return p;
      p = readParticleFromSurfaceDevice(i);
 //     jmp = jmp_control;
     		 x = p.GetX();
@@ -39,5 +39,5 @@ Particle *Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,dou
 
      writeParticleToSurface(i,&p);
 
-     return (&p);
+     return p;
 }

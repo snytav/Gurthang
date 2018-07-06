@@ -776,7 +776,7 @@ __device__ void Move(
 {
 	CurrentTensor t1,t2;
     int pqr2;
-	Particle *p;
+	Particle p;
 
     while(index < c->number_of_particles)
     {
