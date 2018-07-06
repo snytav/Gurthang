@@ -19,21 +19,17 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
 
      if(i >= number_of_particles) return p;
      p = readParticleFromSurfaceDevice(i);
-//     jmp = jmp_control;
-    		 x = p.GetX();
-    		 fd = GetField(x,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-    		 p.Move(fd.E,fd.H,tau);
-    		 m = p.GetMass();
+	 x = p.GetX();
+	 fd = GetField(x,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
+	 p.Move(fd.E,fd.H,tau);
 
-//    		 x = p.GetX();
-   		     x1 = p.GetX1();
-    		 q_m = p.GetQ2M();
-    		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
-//    		     		 p.x = x1.x;
-//    		     		 p.y = x1.y;
-//    		     		 p.z = x1.z;
+	 x1 = p.GetX1();
+	 CurrentToMesh(x,x1,p.m,p.q_m,tau,cells,t1,t2,&p);
+	 p.x = p.x1;
+	 p.y = p.y1;
+	 p.z = p.z1;
 
-	         Reflect(&p);
+	 Reflect(&p);
 
 
 
