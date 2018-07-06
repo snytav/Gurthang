@@ -1394,13 +1394,18 @@ L18:    return;
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-void CurrentToMesh(double3 x,double3 x1,double mass,double q_m,double tau,
+void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
+		double tau,
             		int *cells,CurrentTensor *t1,CurrentTensor *t2,Particle *p)
 {
       double3 x2;
       double s;
       int3 i2,i1;
       int  m,i,l,k;
+      double3 x   = p->GetX();
+      double3 x1  = p->GetX1();
+      double mass = p->m;
+      double q_m  = p->q_m;
 
 #ifdef PARTICLE_TRACE
       if(p->fortran_number == 32587 && p->sort == 2)

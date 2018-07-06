@@ -23,9 +23,9 @@ Particle Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,doub
 
 	 p.Move(fd.E,fd.H,tau);
 
-	 x = p.GetX();
-	 x1 = p.GetX1();
-	 CurrentToMesh(x,x1,p.m,p.q_m,tau,cells,t1,t2,&p);
+//	 x = p.GetX();
+//	 x1 = p.GetX1();
+	 CurrentToMesh(tau,cells,t1,t2,&p);
 	 p.x = p.x1;
 	 p.y = p.y1;
 	 p.z = p.z1;
