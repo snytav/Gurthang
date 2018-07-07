@@ -129,7 +129,7 @@ void copyCells(std::string where,int nt)
 	size_t m_free,m_total;
 	int size = (*AllCells).size();
 	struct sysinfo info;
-	unsigned long c1,c2;
+//	unsigned long c1,c2;
 
     if(first == 1)
     {
@@ -141,10 +141,10 @@ void copyCells(std::string where,int nt)
 
 	for(int i = 0;i < size;i++)
 	{
-		if(i == 141)
-		{
-			int qq = 0;
-		}
+//		if(i == 141)
+//		{
+//			int qq = 0;
+//		}
 		cudaError_t err = cudaMemGetInfo(&m_free,&m_total);
 		sysinfo(&info);
 		m1 = info.freeram;
@@ -176,18 +176,18 @@ void copyCells(std::string where,int nt)
 }
 
 
-double checkGPUArray(double *a,double *d_a,char *name,char *where,int nt)
+double checkGPUArray(double *a,double *d_a,std::string name,std::string where,int nt)
 {
 	 static double *t;
 	 static int f1 = 1;
 	 char fname[1000];
 	 double res;
-	 FILE *f;
+//	 FILE *f;
 #ifndef CHECK_ARRAY_OUTPUT
    return 0.0;
 #endif
 
-	 sprintf(fname,"diff_%s_at_%s_nt%08d.dat",name,where,nt);
+	 sprintf(fname,"diff_%s_at_%s_nt%08d.dat",name.c_str(),where.c_str(),nt);
 
 
 	 if(f1 == 1)
@@ -210,7 +210,9 @@ double checkGPUArray(double *a,double *d_a,char *name,char *where,int nt)
 		 fclose(f);
 	 }
 #else
-	 res = CheckArray(a,t,f);
+//	 res = CheckArray(a,t,f);
+	 int size = (Nx+2)*(Ny+2)*(Nz+2);
+	 res = CheckArraySilent(a,t,size);
 #endif
 
 	 return res;
@@ -531,6 +533,7 @@ int PushParticles(int nt)
 	memory_monitor("before_CellOrder_StepAllCells",nt);
 
     CellOrder_StepAllCells(nt,	mass,q_mass,1);
+    puts("cell_order");
 
 	memory_monitor("after_CellOrder_StepAllCells",nt);
 
@@ -580,7 +583,10 @@ int readStartPoint(int nt)
 
 		PushParticles(nt);
 
+		puts("push ended");
+
 		ComputeField_SecondHalfStep(nt);
+		puts("field computed-2");
 
 		 Diagnose(nt);
 
@@ -917,17 +923,18 @@ void AssignCellsToArraysGPU()
 
 void write3D_GPUArray(char *name,double *d_d)
 {
-	double *d;
+//	double *d;
 
 #ifndef WRITE_3D_DEBUG_ARRAYS
 	return;
-#endif
+#else
 
 	d = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 	cudaError_t err = cudaMemcpy(d,d_d,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
 
 	write3Darray(name,d);
+#endif
 }
 
 void readControlPoint(FILE **f1,char *fncpy,int num,int nt,int part_read,int field_assign,
@@ -971,7 +978,7 @@ void readControlPoint(FILE **f1,char *fncpy,int num,int nt,int part_read,int fie
 
 double checkControlMatrix(char *wh,int nt,char *name, double *d_m)
 {
-	double t_jx,t_jy;//,t_jz;
+	double t_jx;//,t_jy;//,t_jz;
 	char fn[100];
 	FILE *f;
 
@@ -1015,7 +1022,7 @@ void checkCurrentControlPoint(int j,int nt)
 void checkControlPoint(int num,int nt,int check_part)
 {
 	 double t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,t_jx,t_jy,t_jz;
-	 double t_qx,t_qy,t_qz,t_njx,t_njy,t_njz;
+	 double t_qx,t_qy,t_qz;//,t_njx,t_njy,t_njz;
 
 	 if((nt != TOTAL_STEPS) || (num != 600))
 	 {
@@ -1026,7 +1033,7 @@ void checkControlPoint(int num,int nt,int check_part)
 
 	 FILE *f;
 	 char fn_copy[100];
-	 struct sysinfo info;
+//	 struct sysinfo info;
 
 	 memory_monitor("checkControlPoint1",nt);
 
@@ -1091,9 +1098,9 @@ void checkControlPoint(int num,int nt,int check_part)
 	 t_jy = CheckGPUArraySilent(dbgJy,d_Jy);
 	 t_jz = CheckGPUArraySilent(dbgJz,d_Jz);
 
-	 t_njx = CheckGPUArraySilent(dbgJx,d_Jx);
-	 t_njy = CheckGPUArraySilent(dbgJy,d_Jy);
-	 t_njz = CheckGPUArraySilent(dbgJz,d_Jz);
+//	 t_njx = CheckGPUArraySilent(dbgJx,d_Jx);
+//	 t_njy = CheckGPUArraySilent(dbgJy,d_Jy);
+//	 t_njz = CheckGPUArraySilent(dbgJz,d_Jz);
 
 	 memory_monitor("checkControlPoint5",nt);
 
@@ -1161,7 +1168,7 @@ void copyCellCurrentsToDevice(CellDouble *d_jx,CellDouble *d_jy,CellDouble *d_jz
 double CheckArray	(double* a, double* dbg_a,FILE *f)
 	{
 	    Cell<Particle> c = (*AllCells)[0];
-	    int wrong = 0;
+//	    int wrong = 0;
 	    double diff = 0.0;
 
 
@@ -1448,19 +1455,24 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   {
 		   Cell<Particle> c000 = (*AllCells)[0];
 		   magf = 1;
+		   cudaError_t err;
 
 		   int size = (Nx+2)*(Ny+2)*(Nz+2);
 
 		   cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		   for(int i = 0;i < size;i++)
 		   {
 		     	Cell<Particle> c,*d_c;
 		   	   	// 	z0 = h_CellArray[i];
 		   	    d_c = c.allocateCopyCellFromDevice();
+		   	 if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		   	    cp[i] = d_c;
 		   }
+		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+		   return 0;
 	   }
 
 
@@ -1478,15 +1490,13 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 //	   		int cell_sum = 0;
 //	   		int part_number = 0;
 //	   		double t_hx,t_hy,t_hz,*dbg;
-	   		FILE *f;
-	   		char str[200];
+//	   		FILE *f;
+//	   		char str[200];
 	   		//Cell<Particle> **cp;
 
 #ifndef LIST_ALL_PARTICLES
 	   		return;
-#endif
-
-
+#else
 	   		sprintf(str,"List%05d_%s.dat\0",nt,where.c_str());
 
 	   		if((f = fopen(str,"wt")) == NULL) return;
@@ -1512,16 +1522,17 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   	        c.printFileCellParticles(f,cp[i]);
 	   		}
 	   		fclose(f);
+#endif
 	   	}
 
 //
 	double TryCheckCurrent(int nt,double *npJx)
 	{
-		double *dbg,t_hx;//,t_hy,t_hz;
+//		double *dbg;//,t_hx;//,t_hy,t_hz;
 
 
 
-	  	dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+//	  	dbg = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 
 	  	// read magnetic field from "nt+1" exlg file - to consider emh2
 
@@ -1545,7 +1556,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	double checkPeriodicCurrents(int nt)
 	{
-		double *dbg;//,t_hx;//,t_hy;//,t_hz;
+//		double *dbg;//,t_hx;//,t_hy;//,t_hz;
 
 		printf("CHECKING periodic currents !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! \n");
 
@@ -1615,11 +1626,15 @@ int StepAllCells(int nt,double mass,double q_mass)
 {
 	   dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlock(512,1,1);
 	   cudaDeviceSynchronize();
-
+       puts("begin step");
 	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
 	            		     		                 mass,q_mass);
-
+	   GPU_CurrentsAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
+	            		     		                 mass,q_mass);
+	   puts("end step");
 	   cudaDeviceSynchronize();
+
+	   puts("end step-12");
 
 	   return 0;
 }
@@ -1768,6 +1783,7 @@ int Push(int nt,double mass,double q_mass)
 	StepAllCells_fore_diagnostic(nt);
 
 	StepAllCells(nt,mass,q_mass);
+	puts("after StepAllCell");
 
 	return StepAllCells_post_diagnostic(nt);
 }
@@ -1797,10 +1813,12 @@ int SetCurrentsToZero(int nt)
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		Push(nt,mass,q_mass);
+		puts("Push");
     err = cudaGetLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
         WriteCurrentsFromCellsToArrays(nt);
+        puts("writeCut2arr");
     err = cudaGetLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
@@ -2020,6 +2038,7 @@ int memory_monitor(std::string legend,int nt)
 	sysinfo(&info);                                                                //  1   2              3                 4                5
 	fprintf(f,"step %10d %50s GPU memory total %10d free %10d free CPU memory %10u \n",nt,legend.c_str(),((int)m_total)/1024/1024,((int)m_free)/1024/1024,((int)info.freeram)/1024/1024);
 
+	return 0;
 }
 
 int memory_status_print(int nt)
@@ -2057,9 +2076,12 @@ int Compute()
 	       Step(nt);
 
 	       memory_status_print(nt);
+	       printf("step %d ===================\n",nt);
 	   }
 	   printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ \n");
 
+
+	   return 0;
 }
 
 

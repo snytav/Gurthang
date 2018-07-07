@@ -61,7 +61,7 @@ public:
 
 			  if(i == 10)
 			  {
-				  int qq = 0;
+//				  int qq = 0;
 			  }
 			  for(int k = 0;k < mesh.z();k++)
 			  {

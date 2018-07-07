@@ -205,7 +205,7 @@ void AsyncCopy(double *dst,double *src,int n,int size);
 #ifdef __CUDACC__
  int MemoryCopy(void* dst,void *src,size_t size,int dir)
 {
-	int err = 0;
+//	int err = 0;
 
 
 	cudaMemcpyKind cuda_dir;
@@ -217,7 +217,7 @@ void AsyncCopy(double *dst,double *src,int n,int size);
 
 
 
-	return err = (int)cudaMemcpy(dst,src,size,cuda_dir);
+	return ((int)cudaMemcpy(dst,src,size,cuda_dir));
 }
 #else
  int MemoryCopy(void* dst,void *src,size_t size,int dir);

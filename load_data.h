@@ -24,7 +24,7 @@ int readFortranBinaryArray(FILE *f, double* d);
 
 FILE *readPreliminary3Darrays(std::string fn,int nt,int nx,int ny,int nz);
 
-void debugPrintParticleCharacteristicArray(double *p_ch,int np,int nt,char *name,int sort);
+void debugPrintParticleCharacteristicArray(double *p_ch,int np,int nt,std::string name,int sort);
 
 int readBinaryParticleArraysOneSort(
 		  FILE *f,

@@ -13,9 +13,13 @@
 
 #define GPU_PARTICLE
 
+typedef struct Field{
+	double3 E,H;
+} Field;
+
 
 typedef struct CurrentTensorComponent {
-	int i11, i12, i13,
+	char i11, i12, i13,
 	 i21, i22, i23,
 	 i31, i32, i33,
 	 i41, i42, i43;
@@ -37,8 +41,10 @@ class Particle
 
 public:  
   
-   double x,y,z,pu,pv,pw,m,q_m;
+   double x,y,z,pu,pv,pw,m,q_m,x1,y1,z1;
    particle_sorts sort;
+
+//   CurrentTensor t1,t2;
 
 #ifdef DEBUG_PLASMA
    int fortran_number;
@@ -152,9 +158,12 @@ __host__ __device__ void  mult(double *u,double *v,double *w,double ps, double p
 __host__ __device__ __forceinline__
 void Move(double3 E,double3 H,double tau)
 {
-    double bx,by,bz,tau1,u,v,w,ps,su,sv,sw,s1,s2,s3,s4,s5,s6,s;
-	double sx,sy,sz,x1,y1,z1,pu1,pv1,pw1;
-	double3 sx3,u3;
+//    double bx,by,bz;
+    double tau1,u,v,w,ps;//,su,sv,sw;//,s1,s2,s3,s4,s5,s6,s;
+//	double sx,sy,sz,
+//	double x1,y1,z1,
+	double pu1,pv1,pw1;
+	double3 sx3;//,u3;
 
 
 	ElectricMove(E,tau,q_m,&tau1,&pu,&pv,&pw,&ps);
@@ -184,9 +193,9 @@ void Move(double3 E,double3 H,double tau)
 	y1 = y + tau * v;
 	z1 = z + tau * w;
 
-	x = x1;
-	y = y1;
-	z = z1;
+//	x = x1;
+//	y = y1;
+//	z = z1;
 
 }
    
@@ -195,6 +204,9 @@ void Collide(double sect){}
 
 __host__ __device__ __forceinline__
    double3 GetX(){double3 d3x; d3x.x = x; d3x.y = y; d3x.z = z; return d3x;}
+
+__host__ __device__ __forceinline__
+   double3 GetX1(){double3 d3x; d3x.x = x1; d3x.y = y1; d3x.z = z1; return d3x;}
 
 __host__ __device__ __forceinline__
    double3 GetV(){double3 d3x; d3x.x = x; d3x.y = y; d3x.z = z; return d3x;}
@@ -264,6 +276,9 @@ Particle & operator=(Particle const & src)
 	m   = src.m;
 	q_m = src.q_m;
 	sort = src.sort;
+	x1 = src.x1;
+	y1 = src.y1;
+	z1 = src.z1;
 
 
 #ifdef DEBUG_PLASMA

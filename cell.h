@@ -45,7 +45,9 @@ typedef double* double_pointer;
 typedef struct CellDouble {
     double M[CellExtent][CellExtent][CellExtent];
 } CellDouble;
-const int MAX_particles_per_cell = 5000;
+
+#define MAX_PPC   5000
+const int MAX_particles_per_cell = MAX_PPC;
 
 
 
@@ -311,18 +313,7 @@ void
  #endif
  void writeParticleToSurface(int n,Particle *p)
 {
-//   	double3 x;
-   	int size_p = sizeof(Particle);
-   	double *pos;
-   	union Data
-   		{
-   		   int a,b;
-   		   double d;
-   		} data;
 
-
-   	//surf2Dwrite(t,in_surface,ny*8,nx+shift);
-   	//double x,y,z,pu,pv,pw,m,q_m;
    	ParticleArrayWrite(n,0,p->m);
    	ParticleArrayWrite(n,1,p->x);
    	ParticleArrayWrite(n,2,p->y);
@@ -331,54 +322,12 @@ void
    	ParticleArrayWrite(n,5,p->pv);
    	ParticleArrayWrite(n,6,p->pw);
  	ParticleArrayWrite(n,7,p->q_m);
-#ifdef DEBUG_PLASMA
-// 	ParticleArrayWrite(n,8,p->next_x.x);
-// 	ParticleArrayWrite(n,9,p->next_x.y);
-// 	ParticleArrayWrite(n,10,p->next_x.z);
 
-// 	ParticleArrayWrite(n,11,p->ex);
-// 	ParticleArrayWrite(n,12,p->ey);
-// 	ParticleArrayWrite(n,13,p->ez);
-//
-// 	ParticleArrayWrite(n,14,p->hx);
-// 	ParticleArrayWrite(n,15,p->hy);
-// 	ParticleArrayWrite(n,16,p->hz);
- 	data.a = p->fortran_number;
- 	data.b = (int)p->sort;
- 	double d =  int2double(p->fortran_number, (int)p->sort);
- 	ParticleArrayWrite(n,8,d);
-//   	printf("write %5d %3d %3d %5d %25.15e %10d %10d \n",
-//   			i,l,k,n,
-//   			d,
-//   			p->fortran_number,
-//   			(int)p->sort); 	//ParticleArrayWrite(n,9,p->sort);
-#endif
- 	if(p->fortran_number == 270)
- 	{
- 		//printf("\n fnum %d sizeof(Particle) %d \n",p->fortran_number,size_p);
- 	}
-// 	pos = (double *)&(p->t1);
- 	int i;
-//    for(i = 0;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	ParticleArrayWrite(n,19+i,pos[i]);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("i %d 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e \n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
-//
-// 	pos = (double *)&(p->t2);
-//    for(;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	ParticleArrayWrite(n,19+i,pos[i]);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("i %d 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e\n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
+ 	ParticleArrayWrite(n,8,p->x1);
+ 	ParticleArrayWrite(n,9,p->y1);
+ 	ParticleArrayWrite(n,10,p->z1);
+
+ 	ParticleArrayWrite(n,11,((double)p->sort));
 
 }
 
@@ -403,82 +352,25 @@ void
  #ifdef __CUDACC__
  __host__ __device__
  #endif
- void readParticleFromSurfaceDevice(int n,Particle *p)
+ Particle readParticleFromSurfaceDevice(int n)
 {
-//	int size_p = sizeof(Particle);
-//	double *pos;
-//
-//	union Data
-//	{
-//	   int a,b;
-//	   double d;
-//	} data;
+    Particle p;
 
-   	p->m = ParticleArrayRead(n,0);
-   	p->x = ParticleArrayRead(n,1);
-   	p->y = ParticleArrayRead(n,2);
-   	p->z = ParticleArrayRead(n,3);
-   	p->pu = ParticleArrayRead(n,4);
-   	p->pv = ParticleArrayRead(n,5);
-   	p->pw = ParticleArrayRead(n,6);
-   	p->q_m = ParticleArrayRead(n,7);
-#ifdef DEBUG_PLASMA
-//   	p->next_x.x = ParticleArrayRead(n,8);
-//   	p->next_x.y = ParticleArrayRead(n,9);
-//   	p->next_x.z = ParticleArrayRead(n,10);
+   	p.m = ParticleArrayRead(n,0);
+   	p.x = ParticleArrayRead(n,1);
+   	p.y = ParticleArrayRead(n,2);
+   	p.z = ParticleArrayRead(n,3);
+   	p.pu = ParticleArrayRead(n,4);
+   	p.pv = ParticleArrayRead(n,5);
+   	p.pw = ParticleArrayRead(n,6);
+   	p.q_m = ParticleArrayRead(n,7);
 
-//   	p->ex = ParticleArrayRead(n,11);
-//   	p->ey = ParticleArrayRead(n,12);
-//   	p->ez = ParticleArrayRead(n,13);
-//
-//   	p->hx = ParticleArrayRead(n,14);
-//   	p->hy = ParticleArrayRead(n,15);
-//   	p->hz = ParticleArrayRead(n,16);
-   	double d;
-   	int a,b;
-   	d = ParticleArrayRead(n,8);
-    double2int(d,&a,&b);
+  	p.x1 = ParticleArrayRead(n,8);
+   	p.y1 = ParticleArrayRead(n,9);
+   	p.z1 = ParticleArrayRead(n,10);
+   	p.sort = (particle_sorts)ParticleArrayRead(n,11);
 
-   	p->fortran_number = a;
-   	p->sort = (particle_sorts)b;
-
-//   	printf("read %5d %3d %3d %5d %25.15e %10d %10d \n",
-//   			i,l,k,n,
-//   			d,a,b);
-#endif
-// 	if(p->fortran_number == 270)
-// 	{
-// 		printf("fnum %d sizeof(Particle) %d \n",p->fortran_number,size_p);
-// 	}
-// 	pos = (double *)&(p->t1);
- 	int i;
-//    for(i = 0;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	pos[i] = ParticleArrayRead(n,19+i);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("read i%d 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e \n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
-//
-// 	pos = (double *)&(p->t2);
-//    for(;i < sizeof(CurrentTensor)/sizeof(double);i++)
-//    {
-//    	pos[i] = ParticleArrayRead(n,19+i);
-////    	if(p->fortran_number == 270)
-////    	{
-////    	    printf("read 19+i %d  fnum %d sizeof(Particle) %d sizeof(CurrentTensor)/sizeof(double) %d p[i] %e\n",i,19+i,
-////    	    		p->fortran_number,size_p,sizeof(CurrentTensor)/sizeof(double),pos[i]);
-////    	}
-//    }
-
-/*
-	surf2Dread(&(x.x),particle_surface,1*8,n);
-	surf2Dread(&(x.y),particle_surface,2*8,n);
-	surf2Dread(&(x.z),particle_surface,3*8,n);
-*/
-
+   	return p;
 }
 
 
@@ -497,7 +389,7 @@ public:
 //    	busy = atomicCAS(&busyParticleArray,0,1);
 //    }while(busy == 1);
 
-	readParticleFromSurfaceDevice(n,p);
+	*p = readParticleFromSurfaceDevice(n);
 
 	i = *number_of_particles-1;
 	if(this->i == 1 && this->l == 0 && this->k == 0)
@@ -544,7 +436,7 @@ void printCellParticles(char *where,int nt)
 
 	for(int i = 0;i < number_of_particles;i++)
 	{
-		readParticleFromSurfaceDevice(i,&p);
+		p = readParticleFromSurfaceDevice(i);
 		printf("%s step %d i %5d sort %d FN %10d c ( %d %d %d ) pointInCell %d x %15.5e y %15.5e z %15.5e m %15.5e q_m %15.5e px %15.5e %15.5e %15.5e \n",where,nt,
 				i,(int)p.sort,p.fortran_number,this->i,this->l,this->k,isPointInCell(p.GetX()),p.x,p.y,p.z, p.m,p.q_m, p.pu,p.pv,p.pw);
 	}
@@ -1112,9 +1004,9 @@ void InverseKernel(double3 x,int3 & i,int3 & i1,
  			  )
 {
 
-	int2 g;
+//	int2 g;
 
-	double2 f;
+//	double2 f;
        // s2 = getCellFraction(x.x,0.0,hx);
 	i.x =  getCellNumber(x.x,x0,hx);            //(int) (s2 + 1.);  // FORTRAN-StYLE NUMBERING
 	i1.x = getCellNumberCenter(x.x,x0,hx);      //(int) (s2 + 1.5);
@@ -1352,10 +1244,12 @@ double getWrongCurrentAttribute(int num_along_cell,int num_attr)
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+Field GetField(Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
     int3 i,i1;
 	double s1,s2,s3,s4,s5,s6,s11,s21,s31,s41,s51,s61;
+	double3 x = p->GetX();
+	Field fd;
 
 	    if(x.x < 0 || x.y < 0 || x.z < 0)
 	    {
@@ -1369,13 +1263,14 @@ void GetField(double3 x,double3 & E,double3 & H,Particle *p,CellDouble *Ex1,Cell
 
 
 
-        E = GetElectricField(i,i1,
+        fd.E = GetElectricField(i,i1,
 			     s1,s2,s3,s4,s5,s6,
 			     s11,s21,s31,s41,s51,s61,p,Ex1,Ey1,Ez1);
 
-	    H = GetMagneticField(i,i1,
+	    fd.H = GetMagneticField(i,i1,
 			     s1,s2,s3,s4,s5,s6,
 			     s11,s21,s31,s41,s51,s61,p,Hx1,Hy1,Hz1);
+	    return fd;
 }
 
 #ifdef __CUDACC__
@@ -1499,13 +1394,18 @@ L18:    return;
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-void CurrentToMesh(double3 x,double3 x1,double mass,double q_m,double tau,
+void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
+		double tau,
             		int *cells,CurrentTensor *t1,CurrentTensor *t2,Particle *p)
 {
       double3 x2;
       double s;
       int3 i2,i1;
       int  m,i,l,k;
+      double3 x   = p->GetX();
+      double3 x1  = p->GetX1();
+      double mass = p->m;
+      double q_m  = p->q_m;
 
 #ifdef PARTICLE_TRACE
       if(p->fortran_number == 32587 && p->sort == 2)
@@ -1657,7 +1557,13 @@ if(p->fortran_number == 32587 && p->sort == 2)
 
 	*cells = 2;
 
-L18:    return;
+L18:  p->x = p->x1;
+      p->y = p->y1;
+      p->z = p->z1;
+
+      Reflect(p);
+
+      return;
 }
 
 #ifdef __CUDACC__
@@ -1712,6 +1618,7 @@ L15:
 	}
 */
 	p->SetX(x1);
+
 
 }
 
@@ -2093,7 +2000,7 @@ int checkParticleType(int i,double mass,double q_mass)
 {
 	Particle p;
 
-	readParticleFromSurfaceDevice(i,&p);
+	p = readParticleFromSurfaceDevice(i);
 
 	return checkParticleType(p,mass,q_mass);
 }
@@ -2105,7 +2012,7 @@ int getParticleTypeNumber(double mass,double q_mass)
 
 	for(int i = 0; i < number_of_particles;i++)
 	{
-		readParticleFromSurfaceDevice(i,&p);
+		p = readParticleFromSurfaceDevice(i);
 		num += checkParticleType(p,mass,q_mass);
 	}
 	return num;
@@ -2114,206 +2021,55 @@ int getParticleTypeNumber(double mass,double q_mass)
 #ifdef __CUDACC__
  __host__ __device__
  #endif
-virtual
-int Move0(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
-		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+int WriteParticleToCell(Particle *p, int i,double3 x1)
 {
-	return 0;
+    		 p->x = x1.x;
+    		 p->y = x1.y;
+    		 p->z = x1.z;
+
+             Reflect(p);
+
+             writeParticleToSurface(i,p);
+             return 0;
 }
 
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move1(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
-		 CellDouble *Hx1,CellDouble *Hy1)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move2(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
-		 CellDouble *Hx1)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move3(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move4(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1,CellDouble *Ey1)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
-virtual
-int Move5(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control,CellDouble *Ex1)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move6(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move7(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move8(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control,int jmp_control)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move9(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 double *p_control)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move10(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move11(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move12(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move13(unsigned int i,int *cells,CurrentTensor *t1)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
-virtual
-int Move14(unsigned int i,int *cells)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move15(unsigned int i)
-{
-	return 0;
-}
-
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- virtual
-int Move16()
-{
-	return 0;
-}
 
 
 #ifdef __CUDACC__
  __host__ __device__
  #endif
-#ifdef VIRTUAL_FUNCTIONS
-virtual
-#endif
-int Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
-		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
-{
+ int MoveGetCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
+ 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
+ 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+ {
 
-     double3 x,x1,E,H;
-     double  m,q_m;
-     int flag;
-     Particle p;
+      double3 x,x1,E,H;
+      double  m,q_m;
+ //     int flag;
+      Particle p;
 
-     if(i >= number_of_particles) return 0;
-     readParticleFromSurfaceDevice(i,&p);
-//     jmp = jmp_control;
-    		 x = p.GetX();
-    		 GetField(x,E,H,&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
-    		 p.Move(E,H,tau);
-    		 m = p.GetMass();
+      if(i >= number_of_particles) return 0;
+      p = readParticleFromSurfaceDevice(i);
+      m = p.GetMass();
 
-   		     x1 = p.GetX();
-    		 q_m = p.GetQ2M();
-    		 CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
+      x = p.GetX();
+      x1 = p.GetX1();
+      q_m = p.GetQ2M();
+      CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
+     		 p.x = x1.x;
+     		 p.y = x1.y;
+     		 p.z = x1.z;
 
-	         Reflect(&p);
+ 	         Reflect(&p);
 
 
 
-     writeParticleToSurface(i,&p);
+      writeParticleToSurface(i,&p);
 
-     return 0;
-}
+      return 0;
+ }
+
+#include "move.cu"
 
 #ifdef __CUDACC__
  __host__ __device__
@@ -2550,7 +2306,7 @@ thrust::host_vector< Particle >  getFlyList()
      for(int n = 0;n < count;n++)
      {
          Particle p;
-         readParticleFromSurfaceDevice(n,&p);
+         p  = readParticleFromSurfaceDevice(n);
          if(!isPointInCell(p.GetX()))
 	     {
 	        removeParticleFromSurfaceDevice(n,&p,&number_of_particles);
@@ -2567,7 +2323,7 @@ thrust::host_vector< Particle >  getFlyList()
 int getFortranParticleNumber(int n)
 {
     Particle p;
-    readParticleFromSurfaceDevice(n,&p);
+    p = readParticleFromSurfaceDevice(n);
     return p.fortran_number;
 }
 
@@ -2701,7 +2457,7 @@ double compareParticleLists(Cell<Particle> *c)
        {
     	   Particle p,p1;
 
-    	   readParticleFromSurfaceDevice(i,&p);
+    	  p =  readParticleFromSurfaceDevice(i,&p);
     	   c->readParticleFromSurfaceDevice(i,&p1);
 
     	   printf("particle %5d X %10.3e %10.3e Y %10.3e %10.3e Z %10.3e %10.3e \n \
@@ -2804,14 +2560,14 @@ double checkCellParticles(int check_point_num,double *x,double *y,double *z,
 	double t,dm,dqm,dx,dy,dz,dpx,dpy,dpz;
 	if(number_of_particles < 0 || number_of_particles > MAX_particles_per_cell)
 	{
-		int qq = 0;
+//		int qq = 0;
 	}
 
 	for(i = 0; i < number_of_particles;i++)
 	{
 		Particle p;
 
-		readParticleFromSurfaceDevice(i,&p);
+		p = readParticleFromSurfaceDevice(i);
 
 		j = p.fortran_number - 1;
 		dm  = fabs(p.m   -   m);
@@ -2914,7 +2670,7 @@ void SetControlSystemToParticles()
 
     for(i = 0;i < number_of_particles;i++)
     {
-        readParticleFromSurfaceDevice(i,&p);
+        p = readParticleFromSurfaceDevice(i);
 #ifdef ATTRIBUTES_CHECK
    //     p.SetControlSystem(jmp,d_ctrlParticles);
 #endif

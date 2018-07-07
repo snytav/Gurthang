@@ -3,7 +3,11 @@
 
 int InitializeGPU()
 {
+	cudaError_t err = cudaGetLastError();
+	 if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
     InitGPUParticles();
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
     InitGPUFields(&d_Ex,&d_Ey,&d_Ez,
     	          &d_Hx,&d_Hy,&d_Hz,
     		      &d_Jx,&d_Jy,&d_Jz,
@@ -16,10 +20,12 @@ int InitializeGPU()
 				  Qx,Qy,Qz,
 				  Nx,Ny,Nz
             );
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
     setPrintfLimit();
 
-    int err = cudaSetDevice(0);
+    err = cudaSetDevice(0);
 
     printf("InitializeGPU error %d \n",err);
 
@@ -177,9 +183,15 @@ virtual void InitializeCPU()
 
 void Initialize()
 {
+	cudaError_t err = cudaGetLastError();
 	InitializeCPU();
 	copyCellsWithParticlesToGPU();
+	err = cudaGetLastError();
+	 if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 	InitializeGPU();
+
+	err = cudaGetLastError();
+	 if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 }
 
 
@@ -192,24 +204,42 @@ void InitGPUParticles()
 	int size;
 	GPUCell<Particle> *d_c,*h_ctrl;
 	GPUCell<Particle> *n;
-	GPUCell<Particle> *h_copy,*h_c;
-	double t;
+//	GPUCell<Particle> *h_c;//*h_copy,
+//	double t;
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlockOne(1,1,1);
+	cudaError_t err = cudaGetLastError();
 
+	if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+	err = cudaGetLastError();
+	           if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 	 readControlFile(START_STEP_NUMBER);
+	 err = cudaGetLastError();
+	            if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
+
+	 err = cudaGetLastError();
+     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 	size = (*AllCells).size();
-
+	err = cudaGetLastError();
+	           if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 	 size_t m_free,m_total;
 
 	h_ctrl = new Cell<Particle>;
 	n = new Cell<Particle>;
 
+	err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    err = cudaGetLastError();
+               if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
+
     h_CellArray = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
-    cudaError_t err = cudaMalloc(&d_CellArray,size*sizeof(Cell<Particle> *));
+    err = cudaMalloc(&d_CellArray,size*sizeof(Cell<Particle> *));
+
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 //    h_controlParticleNumberArray = (int*)malloc(size*sizeof(int));
-
+    err = cudaGetLastError();
+               if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
     printf("%s : size = %d\n", __FILE__, size);
     for(int i = 0;i < size;i++)
     {
@@ -220,6 +250,8 @@ void InitGPUParticles()
     	h_controlParticleNumberArray[i] = c.number_of_particles;
     	/////////////////////////////////////////
     	*n = c;
+    	err = cudaGetLastError();
+    	           if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 #ifdef ATTRIBUTES_CHECK
     	c.SetControlSystem(jmp,d_ctrlParticles);
 #endif
@@ -229,11 +261,20 @@ void InitGPUParticles()
        // puts("COMPARE------------------------------");
     	//printf("%d: %d\n", i, c.busyParticleArray);
         d_c = c.copyCellToDevice();
+        err = cudaGetLastError();
+                   if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
+        err = cudaGetLastError();
+        if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+
         cudaMemGetInfo(&m_free,&m_total);
-        double mfree,mtot;
-        mfree = m_free;
-        mtot  = m_total;
+//        double mtot;
+//        mfree = m_free;
+        err = cudaGetLastError();
+                   if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 #ifdef COPY_CELL_PRINTS
+        double mfree,mtot;
+        mtot  = m_total;
+        mfree = m_free;
         printf("cell %10d Device cell array allocated error %d %s memory: free %10.2f total %10.2f\n",i,err,cudaGetErrorString(err),
         		                                                mfree/1024/1024/1024,mtot/1024/1024/1024);
         puts("");
@@ -251,8 +292,18 @@ void InitGPUParticles()
         }
 #endif
         ////////////////////////////////////////.
+        err = cudaGetLastError();
+                   if(err != cudaSuccess) { printf("%s:%d - error %d %s cell %d \n",__FILE__,__LINE__,err,cudaGetErrorString(err),i); exit(0);}
+
         h_CellArray[i] = d_c;
-        cudaMemcpy(h_ctrl,d_c,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
+        err = cudaMemcpy(h_ctrl,d_c,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
+
+      //  err = cudaGetLastError();
+           if(err != cudaSuccess)
+           {
+        	   printf("%s:%d - error %d %s cell %d\n",__FILE__,__LINE__,err,cudaGetErrorString(err),i);
+        	   exit(0);
+           }
 #ifdef InitGPUParticles_PRINTS
 	    dbgPrintGPUParticleAttribute(d_c,50,1," CPY " );
 
@@ -267,7 +318,12 @@ void InitGPUParticles()
         		);
 	printf("GPU cell %d ended ******************************************************\n",i);
 #endif
+	err = cudaGetLastError();
+	           if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
     }
+
+    err = cudaGetLastError();
+       if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
     //cudaError_t err;
     err = cudaMemcpy(d_CellArray,h_CellArray,size*sizeof(Cell<Particle> *),cudaMemcpyHostToDevice);
@@ -277,13 +333,17 @@ void InitGPUParticles()
         	exit(0);
         }
 
-//	d_AllCells = new thrust::device_vector<Cell<Particle> >(size);
+    err = cudaGetLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
-//	*d_AllCells = (*AllCells);
+
 #ifdef ATTRIBUTES_CHECK
     GPU_WriteControlSystem<<<dimGrid, dimBlockOne,16000>>>(d_CellArray);
 #endif
 	size = 0;
+
+	err = cudaGetLastError();
+	     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 }
 
@@ -514,7 +574,7 @@ virtual void Alloc()
 
       void printPICstatitstics(double m,double q_m, int total_particles)
       {
-    	  int pn_min,pn_ave,pn_max,pn_sum,err;
+    	  int pn_min,pn_ave,pn_max,pn_sum;//,err;
 
               pn_min = 1000000000;
               pn_max = 0;
@@ -572,6 +632,8 @@ virtual void Alloc()
 #endif
     	  			      }
    		      }// END total_particles LOOP
+
+    	  return 0;
 
       }
 

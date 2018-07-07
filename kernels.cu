@@ -154,50 +154,22 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
-	// int i1,l1;//,k1;
-//	int i,l,k;
 	Cell<Particle>  *c,*c0 = cells[0];
-	//double t;
 	__shared__ extern CellDouble fd[9];
-	//double *src,*dst;
-	//int pqr2;
-	//CurrentTensor t1,t2;
 
 	c = cells[ c0->getGlobalCellNumber(nx,ny,nz)];
-//	c = cells[ n ];
 
-
-	//nc.writeToArray(jx,*(nc.Jx),threadIdx.x);
-//     for(int i1 = 0; i1 < CellExtent;i1++)
-//     {
-//         for(int l1 = 0; l1 < CellExtent;l1++)
-//	     {
-//	         for(int k1 = 0; k1 < CellExtent; k1++)
-//	         {
-	             int i1,l1,k1;
+	int i1,l1,k1;
 	        	 i1 = threadIdx.x;
 	        	 l1 = threadIdx.y;
 	        	 k1 = threadIdx.z;
     	         int n = c->getFortranCellNumber(c->i+i1-1,c->l+l1-1,c->k+k1-1);
 
     	         if (n < 0 ) n = -n;
-        		 double t,t_x,t_y;//,jx_p,jy_p;
-		         //int i_f,l_f;//k_f;
+        		 double t,t_x,t_y;
 		         t_x = c->Jx->M[i1][l1][k1];
 		         int3 i3 = c->getCellTripletNumber(n);
 
-//	         if(fabs(jx[n]) > 1e-15)
-//		         {
-//                     printf("Global: WriteAllCurrents i %d l %d k %d i1 %d l1 %d k1 %d n %5d if %2d lf %d kf %d Jx %15.5e before %15.5e\n",nc.i,nc.k,nc.l,i1,l1,k1,
-//                    		                                                             n,i3.x+1,i3.y+1,i3.z+1,t,jx[n]);
-//		         }
-//		         if(fabs(t) >1e-15)
-//		         {
-//                     printf("Local:  WriteAllCurrents i %d l %d k %d i1 %d l1 %d k1 %d n %5d if %2d lf %d kf %d Jx %15.5e before %15.5e\n",nc.i,nc.k,nc.l,i1,l1,k1,
-//                    		                                                             n,nc.i+i1-1,nc.l+l1-1,nc.k+k1-1,t,jx[n]);
-//		         }
-		         //jx_p = jx[n];
-		         //jy_p = jy[n];
 
 		         cuda_atomicAdd(&(jx[n]),t_x);
 		         t_y= c->Jy->M[i1][l1][k1];
@@ -205,19 +177,6 @@ global_for_CUDA void GPU_WriteAllCurrents(Cell<Particle>  **cells,int n0,
 		         t = c->Jz->M[i1][l1][k1];
 		         cuda_atomicAdd(&(jz[n]),t);
 
-//                 printf("nc.i %3d nc.l %3d nc.k %3d n %5d nr %5d nc.i+i1-1 %2d nc.l+l1-1 %2d nc.k+k1-1 %2d i %3d l %3d k %3d jxb %15.5e jxt %15.e jx %15.5e jyb %15.5e jyt %15.e jy %15.5e \n",
-//                		nc.i,nc.l,nc.k,n,n,
-//                		nc.i+i1-1,nc.l+l1-1,nc.k+k1-1,
-//                		i3.x+1,i3.y+1,i3.z+1,
-//                		jx_p,t_x,jx[n],
-//                		jx_p,t_x,jx[n]);
-
-//	         }
-//	     }
-//     }
-//	nc.writeToArray(jy,*(nc.Jy),threadIdx.x);
-//	nc.writeToArray(jz,*(nc.Jz),threadIdx.x);
-//	nc.writeAllToArrays(jx,jy,jz,rho,threadIdx.x);
 }
 
 template <template <class Particle> class Cell >
@@ -258,11 +217,11 @@ global_for_CUDA void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *
 	    unsigned int nx = blockIdx.x;
 		unsigned int ny = blockIdx.y;
 		unsigned int nz = blockIdx.z;
-		int ix,iy,iz,n;
+		int ix,iy,iz;//,n;
 
 		Particle p;
-		Cell<Particle>  *c,*c0 = cells[0],nc,*new_c;
-		c = cells[ n = c0->getGlobalCellNumber(nx,ny,nz)];
+		Cell<Particle>  *c,*c0 = cells[0],nc;//,*new_c;
+		c = cells[c0->getGlobalCellNumber(nx,ny,nz)];
 
 #ifdef FLY_PRINTS
 
@@ -302,7 +261,7 @@ global_for_CUDA void GPU_MakeDepartureLists(Cell<Particle>  **cells,int nt,int *
         //return;
 		for(int num = 0;num < c->number_of_particles; num++)
 			{
-			c->readParticleFromSurfaceDevice(num,&p);
+			p = c->readParticleFromSurfaceDevice(num);
 #ifdef FLY_PRINTS
 
 //					printf("resident-begin step %3d %5d %3d %3d p %10d sort %2d num %5d size %5d nx %3u ny %3u nz %3u\n",nt,
@@ -455,7 +414,7 @@ global_for_CUDA void GPU_ArrangeFlights(Cell<Particle>  **cells,int nt, int *d_s
 	unsigned int nx = blockIdx.x;
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
-	int ix,iy,iz,snd_ix,snd_iy,snd_iz,num,pos,n;
+	int ix,iy,iz,snd_ix,snd_iy,snd_iz,num,n;
 	Particle p;
 
 	Cell<Particle>  *c,*c0 = cells[0],nc,*snd_c;
@@ -571,7 +530,7 @@ global_for_CUDA void GPU_CollectStrayParticles(Cell<Particle>  **cells,int nt
 	unsigned int ny = blockIdx.y;
 	unsigned int nz = blockIdx.z;
 
-	int busy;
+//	int busy;
 	Particle p;
 	int n;
 //	int i,l,k;
@@ -695,7 +654,7 @@ __device__ void copyCellDouble(CellDouble *dst,CellDouble *src,unsigned int n,ui
 {
 	if(n < CellExtent*CellExtent*CellExtent)
 	{
-		double *d_dst,*d_src,t;
+		double *d_dst,*d_src;//,t;
 
 		d_dst = (double *)(dst->M);
 		d_src = (double *)(src->M);
@@ -788,6 +747,101 @@ __device__ void copyFieldsToSharedMemory(
 
 }
 
+__device__ void set_cell_double_array_to_zero(CurrentTensorComponent *ca,int length)
+{
+     for(int i = 0; i<= 100;i++)
+     {
+    	ca[i].t[0] = 0.0;
+
+
+     }
+}
+
+__device__ void Move(
+									 CellDouble *c_ex,
+									 CellDouble *c_ey,
+									 CellDouble *c_ez,
+									 CellDouble *c_hx,
+									 CellDouble *c_hy,
+									 CellDouble *c_hz,
+									 CellDouble *c_jx,
+									 CellDouble *c_jy,
+									 CellDouble *c_jz,
+									 Cell<Particle>  *c,
+		                             int index,
+		                             int blockDimX,
+		                             double mass,
+		                             double q_mass
+		                             )
+{
+	CurrentTensor t1,t2;
+    int pqr2;
+	Particle p;
+
+    while(index < c->number_of_particles)
+    {
+
+        c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+//        c->AccCurrent    (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+////        c->WriteParticleToCell(p, index,p->GetX1());
+//
+////        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+//
+//        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
+//        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
+//        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+
+        index += blockDimX;
+    }
+
+
+
+    __syncthreads();
+}
+
+__device__ void MoveAccCurrent(
+									 CellDouble *c_ex,
+									 CellDouble *c_ey,
+									 CellDouble *c_ez,
+									 CellDouble *c_hx,
+									 CellDouble *c_hy,
+									 CellDouble *c_hz,
+									 CellDouble *c_jx,
+									 CellDouble *c_jy,
+									 CellDouble *c_jz,
+									 Cell<Particle>  *c,
+		                             int index,
+		                             int blockDimX,
+		                             double mass,
+		                             double q_mass
+		                             )
+{
+	CurrentTensor t1,t2;
+    int pqr2;
+	Particle p;
+
+    while(index < c->number_of_particles)
+    {
+
+     //   c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->AccCurrent    (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+//        c->WriteParticleToCell(p, index,p->GetX1());
+
+//        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+
+        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
+        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
+        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+
+        index += blockDimX;
+    }
+
+
+
+    __syncthreads();
+}
+
+
 __device__ void MoveAndWriteCurrents(
 									 CellDouble *c_ex,
 									 CellDouble *c_ey,
@@ -820,8 +874,12 @@ __device__ void MoveAndWriteCurrents(
 
         index += blockDimX;
     }
+
+
+
     __syncthreads();
 }
+
 
 
 __device__ void copyFromSharedMemoryToCell(
@@ -871,8 +929,55 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 
-	MoveAndWriteCurrents(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 						 c,threadIdx.x,blockDim.x,mass,q_mass);
+//	MoveAccCurrent(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+//							 c,threadIdx.x,blockDim.x,mass,q_mass);
+
+
+//    WriteCurrents(c_jx,c_jy,c_jz,c_jx,c_jy,c_jz,
+//						 c,threadIdx.x,blockDim.x,mass,q_mass);
+
+
+
+    copyFromSharedMemoryToCell(c_jx,c_jy,c_jz,c,threadIdx.x,blockDim.x,blockIdx);
+
+}
+
+template <template <class Particle> class Cell >
+global_for_CUDA void GPU_CurrentsAllCells(Cell<Particle>  **cells,
+		                         int i,
+		                         double *global_jx,
+		                         double mass,
+		                         double q_mass
+		                         )
+{
+	Cell<Particle>  *c,*c0 = cells[0];
+	__shared__ extern CellDouble fd[9];
+	CellDouble *c_jx,*c_jy,*c_jz,*c_ex,*c_ey,*c_ez,*c_hx,*c_hy,*c_hz;
+//	CurrentTensor t1,t2;
+//	int pqr2;
+	Particle p;
+
+	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
+
+	assignSharedWithLocal(&c_jx,&c_jy,&c_jz,&c_ex,&c_ey,&c_ez,&c_hx,&c_hy,&c_hz,fd);
+
+
+
+
+	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
+			threadIdx.x,blockIdx,blockDim.x);
+
+
+//	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+//						 c,threadIdx.x,blockDim.x,mass,q_mass);
+	MoveAccCurrent(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+							 c,threadIdx.x,blockDim.x,mass,q_mass);
+
+
+//    WriteCurrents(c_jx,c_jy,c_jz,c_jx,c_jy,c_jz,
+//						 c,threadIdx.x,blockDim.x,mass,q_mass);
 
 
 

@@ -37,18 +37,18 @@ int setPrintfLimit()
 {
 	size_t sizeP;
 
-	printf("oarticle size %d %d \n",sizeof(Particle),sizeof(Particle)/sizeof(double));
+	printf("Particle size %lu %lu CurrentTensor %d short %d\n",sizeof(Particle),sizeof(Particle)/sizeof(double),sizeof(CurrentTensor),sizeof(char));
 
 	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
-	printf("printf default limit %d \n",sizeP/1024/1024);
+	printf("printf default limit %lu \n",sizeP/1024/1024);
 
 	sizeP *= 10000;
 	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
 
 	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
 
-	printf("printf limit set to %d \n",sizeP/1024/1024);
+	printf("printf limit set to %lu \n",sizeP/1024/1024);
 
 	return 0;
 }
@@ -89,8 +89,8 @@ double get_meminfo1(void)
 		if(memcmp(tmp,"Mem:",4)==0)
 		{
 			int	wordcount=0;
-			char *delimiter=" ";
-			char *p=strtok(tmp,delimiter);
+			std::string delimiter=" ";
+			char *p=strtok(tmp,delimiter.c_str());
 			while(*p)
 			{
 				wordcount++;
@@ -151,7 +151,7 @@ void get_load_data_file_names(
     char d_jxfile[100],d_jyfile[100],d_jzfile[100];
     char qxfile[100],qyfile[100],qzfile[100];
     char pfile[100],nextpfile[100];
-    char part_name[100];
+//    char part_name[100];
 
     sprintf(qxfile,"dnqx%06d.dat",nt);
     sprintf(qyfile,"dnqy%06d.dat",nt);
@@ -169,7 +169,7 @@ void get_load_data_file_names(
 
     sprintf(d_hxfile,"dnhx%06d.dat",2*nt-1);
     sprintf(d_hyfile,"dnhy%06d.dat",2*nt-1);
-    printf(d_hyfile);
+    puts(d_hyfile);
     sprintf(d_hzfile,"dnhz%06d.dat",2*nt-1);
 
     sprintf(jxfile,"dnjx%06d.dat",2*nt);

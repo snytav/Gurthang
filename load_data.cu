@@ -74,27 +74,27 @@ FILE *readPreliminary3Darrays(std::string fn,int nt,int nx,int ny,int nz)
 	     struct sysinfo info;
 
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading electric field Ex
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading electric field Ey
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading electric field Ez
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading magnetic field Hx
 	     readFortranBinaryArray(f,buf);
 	     sysinfo(&info);
-	     printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
+	     printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
 
 	     //reading magnetic field Hy
 	     readFortranBinaryArray(f,buf);
@@ -126,16 +126,16 @@ FILE *readPreliminary3Darrays(std::string fn,int nt,int nx,int ny,int nz)
 	     return f;
 }
 
-void debugPrintParticleCharacteristicArray(double *p_ch,int np,int nt,char *name,int sort)
+void debugPrintParticleCharacteristicArray(double *p_ch,int np,int nt,std::string name,int sort)
 {
-	   char fname[200];
-	   FILE *f;
+//	   char fname[200];
+//	   FILE *f;
 
 #ifndef PRINT_PARTICLE_INITIALS
 	   return;
 
 #else
-	   sprintf(fname,"particle_init_%s_%05d_sort%02d.dat",name,nt,sort);
+	   sprintf(fname,"particle_init_%s_%05d_sort%02d.dat",name.c_str(),nt,sort);
 
 	   if((f = fopen(fname,"wt")) == NULL) return;
 
@@ -261,14 +261,14 @@ int getParticlesOneSortFromFile(
                                 double *m
                                 )
 {
-	     double x,y,z,px,py,pz;
+//	     double x,y,z,px,py,pz;
 	     double *dbg_x,*dbg_y,*dbg_z,*dbg_px,*dbg_py,*dbg_pz;
 	     int total_particles;
 
 
-	     int err;
+//	     int err;
 
-	     if((err = ferror(f)) != 0) return 1;
+	     if((ferror(f)) != 0) return 1;
 
 	     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
 	    		                                             &dbg_px,&dbg_py,&dbg_pz,q_m,m,nt,
@@ -276,26 +276,27 @@ int getParticlesOneSortFromFile(
 
 	    // real_number_of_particle[(int)sort] = total_particles;
 
-	     if((err = ferror(f)) != 0) return 1;
+	     if((ferror(f)) != 0) return 1;
 	     convertParticleArraysToSTLvector(dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz,*q_m,*m,
 	    			  total_particles,sort,vp);
+	     return 0;
 
 }
 std::vector<Particle> readBinaryParticlesOneSortSTL(FILE *f, particle_sorts sort,int nt)
 
 	      	  {
 	      		    double q_m,m;
-	      		    int err;
+//	      		    int err;
 	      		    std::vector<Particle> vp;
 	      		    getParticlesOneSortFromFile(f,sort,nt,vp,&q_m,&m);
 
-	      		    err = ferror(f);
+//	      		    err = ferror(f);
 
 
 	      			struct sysinfo info;
 	                 sysinfo(&info);
-	      			printf("before1  %d free %u \n",nt,info.freeram/1024/1024);
-	      			err = ferror(f);
+	      			printf("before1  %d free %lu \n",nt,info.freeram/1024/1024);
+//	      			err = ferror(f);
                     return vp;
 	      //			printPICstatitstics(m,q_m,total_particles);
 	      	  }

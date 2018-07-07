@@ -265,7 +265,8 @@ GPUCell<Particle>* copyCellToDevice()
 			(err25 != 0)
 	  )
 	{
-		//int qq = 0;
+		printf("copyCellToDevice error d_dst %p\n",d_dst);
+		//exit(0);
 	}
 
  //   cudaMemcpy(h_ctrl,d_dst,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
@@ -276,6 +277,11 @@ GPUCell<Particle>* copyCellToDevice()
 
    // printf("before copy return  %e\n",this->ParticleArrayRead(50,1));
    // dbgPrintGPUParticleAttribute(d_dst,50,1," IN_COPY " );
+
+	 if(d_dst == NULL)
+	 {
+	    int qq =0;
+	 }
 
 
      return d_dst;
@@ -321,7 +327,7 @@ void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::s
 	//printf("Cuda error: %d: %s.\n", code,getErrorString((cudaError_t) code));
     if(h_copy_of_d_src->number_of_particles < 0 || h_copy_of_d_src->number_of_particles > MAX_particles_per_cell)
     {
-    	int qq = 0;
+//    	int qq = 0;
     }
 	//code = cudaMemcpy(h_dst,&h_copy_of_d_src,sizeof(GPUCell<Particle>),cudaMemcpyHostToHost);
 #ifdef COPY_CELLS_MEMORY_PRINTS
@@ -420,9 +426,9 @@ void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::s
 
 GPUCell<Particle>* allocateCopyCellFromDevice()
 {
-	GPUCell<Particle> *h_dst,*h_copy_of_d_src;
+	GPUCell<Particle> *h_dst;//,*h_copy_of_d_src;
 	//static int first = 1;
-	int code;
+//	int code;
 
 
 	   h_dst = new GPUCell<Particle>;
@@ -450,7 +456,7 @@ void freeCopyCellFromDevice(GPUCell<Particle> *h_dst)
 {
 //	GPUCell<Particle> *h_dst,*h_copy_of_d_src;
 	//static int first = 1;
-	int code;
+//	int code;
 
 
 //	   h_dst = new GPUCell<Particle>;
@@ -548,7 +554,7 @@ void addParticlesToCellOnDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_ds
 	//printf("Cuda error: %d: %s.\n", code,getErrorString((cudaError_t) code));
     if(h_copy_of_d_src->number_of_particles < 0 || h_copy_of_d_src->number_of_particles > MAX_particles_per_cell)
     {
-    	int qq = 0;
+//    	int qq = 0;
     }
 	//code = MemoryCopy(h_dst,&h_copy_of_d_src,sizeof(GPUCell<Particle,dims>),cudaMemcpyHostToHost);
 #ifdef COPY_CELLS_MEMORY_PRINTS
