@@ -2075,7 +2075,7 @@ int WriteParticleToCell(Particle *p, int i,double3 x1)
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-void Move(unsigned int i,int *cells,
+void MoveSingleParticle(unsigned int i,int *cells,
 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
@@ -2093,7 +2093,7 @@ void Move(unsigned int i,int *cells,
 #ifdef __CUDACC__
  __host__ __device__
  #endif
- void AccCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
+ void AccumulateCurrentSingleParticle(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
  {
 	 Particle p;
 	 if(i >= number_of_particles) return;

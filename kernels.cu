@@ -778,7 +778,7 @@ __device__ void MoveParticlesInCell(
     while(index < c->number_of_particles)
     {
 
-        c->Move          (index,&pqr2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->MoveSingleParticle          (index,&pqr2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
 
         index += blockDimX;
@@ -789,24 +789,22 @@ __device__ void MoveParticlesInCell(
     __syncthreads();
 }
 
-__device__ void MoveAccCurrent(
+__device__ void AccumulateCurrentWithParticlesInCell(
 									 CellDouble *c_jx,
 									 CellDouble *c_jy,
 									 CellDouble *c_jz,
 									 Cell<Particle>  *c,
 		                             int index,
-		                             int blockDimX//,
-//		                             double mass,
-//		                             double q_mass
+		                             int blockDimX
 		                             )
 {
 	CurrentTensor t1,t2;
     int pqr2;
-//	Particle p;
+
 
     while(index < c->number_of_particles)
     {
-        c->AccCurrent    (index,&pqr2,&t1,&t2);
+        c->AccumulateCurrentSingleParticle    (index,&pqr2,&t1,&t2);
 
         writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
         writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
@@ -814,9 +812,6 @@ __device__ void MoveAccCurrent(
 
         index += blockDimX;
     }
-
-
-
     __syncthreads();
 }
 
@@ -911,7 +906,7 @@ global_for_CUDA void GPU_CurrentsAllCells(Cell<Particle>  **cells,
 	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
 			threadIdx.x,blockIdx,blockDim.x);
 
-	MoveAccCurrent(c_jx,c_jy,c_jz,
+	AccumulateCurrentWithParticlesInCell(c_jx,c_jy,c_jz,
 							 c,threadIdx.x,blockDim.x);
 
 
