@@ -6,12 +6,10 @@
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,//,double mass,double q_mass,
+void Move(unsigned int i,int *cells,
 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
-//     double3 x,x1;
-//     double  m,q_m;
      Particle p;
      Field fd;
 
@@ -26,7 +24,7 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,//,doubl
 #ifdef __CUDACC__
  __host__ __device__
  #endif
- void AccCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)//,double mass,double q_mass)
+ void AccCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
  {
 	 Particle p;
 	 if(i >= number_of_particles) return;

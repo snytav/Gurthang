@@ -771,14 +771,14 @@ __device__ void Move(
 		                             double q_mass
 		                             )
 {
-	CurrentTensor t1,t2;
+//	CurrentTensor t1,t2;
     int pqr2;
-	Particle p;
+//	Particle p;
 
     while(index < c->number_of_particles)
     {
 
-        c->Move          (index,&pqr2,&t1,&t2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->Move          (index,&pqr2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
 
         index += blockDimX;
