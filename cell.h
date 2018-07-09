@@ -46,6 +46,12 @@ typedef struct CellDouble {
     double M[CellExtent][CellExtent][CellExtent];
 } CellDouble;
 
+typedef struct CellTotalField {
+
+	CellDouble *Ex, *Ey, *Ez, *Hx,*Hy, *Hz;
+
+} CellTotalField;
+
 #define MAX_PPC   5000
 const int MAX_particles_per_cell = MAX_PPC;
 
@@ -1244,7 +1250,7 @@ double getWrongCurrentAttribute(int num_along_cell,int num_attr)
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-Field GetField(Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+Field GetField(Particle *p,CellTotalField cf)
 {
     int3 i,i1;
 	double s1,s2,s3,s4,s5,s6,s11,s21,s31,s41,s51,s61;
@@ -1265,11 +1271,11 @@ Field GetField(Particle *p,CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,CellD
 
         fd.E = GetElectricField(i,i1,
 			     s1,s2,s3,s4,s5,s6,
-			     s11,s21,s31,s41,s51,s61,p,Ex1,Ey1,Ez1);
+			     s11,s21,s31,s41,s51,s61,p,cf.Ex,cf.Ey,cf.Ez);
 
 	    fd.H = GetMagneticField(i,i1,
 			     s1,s2,s3,s4,s5,s6,
-			     s11,s21,s31,s41,s51,s61,p,Hx1,Hy1,Hz1);
+			     s11,s21,s31,s41,s51,s61,p,cf.Hx,cf.Hy,cf.Hz);
 	    return fd;
 }
 
@@ -2075,16 +2081,14 @@ int WriteParticleToCell(Particle *p, int i,double3 x1)
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-void MoveSingleParticle(unsigned int i,int *cells,
-		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
-		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+void MoveSingleParticle(unsigned int i,int *cells,CellTotalField cf)
 {
      Particle p;
      Field fd;
 
      if(i >= number_of_particles) return;
      p = readParticleFromSurfaceDevice(i);
-	 fd = GetField(&p,Ex1,Ey1,Ez1,Hx1,Hy1,Hz1);
+	 fd = GetField(&p,cf);
 
 	 p.Move(fd.E,fd.H,tau);
 	 writeParticleToSurface(i,&p);

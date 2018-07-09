@@ -774,11 +774,18 @@ __device__ void MoveParticlesInCell(
 //	CurrentTensor t1,t2;
     int pqr2;
 //	Particle p;
+    CellTotalField cf;
 
     while(index < c->number_of_particles)
     {
+    	cf.Ex = c->Ex;
+    	cf.Ey = c->Ey;
+    	cf.Ez = c->Ez;
+    	cf.Hx = c->Hx;
+    	cf.Hy = c->Hy;
+    	cf.Hz = c->Hz;
 
-        c->MoveSingleParticle          (index,&pqr2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->MoveSingleParticle          (index,&pqr2,cf);
 
 
         index += blockDimX;
