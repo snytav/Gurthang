@@ -10,8 +10,8 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
 {
-     double3 x,x1;
-     double  m,q_m;
+//     double3 x,x1;
+//     double  m,q_m;
      Particle p;
      Field fd;
 
@@ -21,9 +21,6 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 
 	 p.Move(fd.E,fd.H,tau);
 	 writeParticleToSurface(i,&p);
-
-	 Particle p1;
-
 }
 
 #ifdef __CUDACC__
