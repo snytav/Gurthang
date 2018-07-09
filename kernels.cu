@@ -899,7 +899,7 @@ global_for_CUDA void GPU_CurrentsAllCells(Cell<Particle>  **cells,
 	CellDouble *c_jx,*c_jy,*c_jz,*c_ex,*c_ey,*c_ez,*c_hx,*c_hy,*c_hz;
 //	CurrentTensor t1,t2;
 //	int pqr2;
-	Particle p;
+//	Particle p;
 
 	c = cells[ c0->getGlobalCellNumber(blockIdx.x,blockIdx.y,blockIdx.z)];
 
@@ -912,7 +912,7 @@ global_for_CUDA void GPU_CurrentsAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 	MoveAccCurrent(c_jx,c_jy,c_jz,
-							 c,threadIdx.x,blockDim.x);//,mass,q_mass);
+							 c,threadIdx.x,blockDim.x);
 
 
     copyFromSharedMemoryToCell(c_jx,c_jy,c_jz,c,threadIdx.x,blockDim.x,blockIdx);
