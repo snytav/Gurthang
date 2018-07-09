@@ -778,8 +778,7 @@ __device__ void Move(
     while(index < c->number_of_particles)
     {
 
-        c->Move          (index,&pqr2,&t1,&t2,//mass,q_mass,
-        		c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->Move          (index,&pqr2,&t1,&t2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
 
         index += blockDimX;
@@ -807,12 +806,8 @@ __device__ void MoveAccCurrent(
 
     while(index < c->number_of_particles)
     {
-
-     //   c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
         c->AccCurrent    (index,&pqr2,&t1,&t2);//,mass,q_mass);
-//        c->WriteParticleToCell(p, index,p->GetX1());
 
-//        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
 
         writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
         writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
@@ -827,44 +822,43 @@ __device__ void MoveAccCurrent(
 }
 
 
-__device__ void MoveAndWriteCurrents(
-									 CellDouble *c_ex,
-									 CellDouble *c_ey,
-									 CellDouble *c_ez,
-									 CellDouble *c_hx,
-									 CellDouble *c_hy,
-									 CellDouble *c_hz,
-									 CellDouble *c_jx,
-									 CellDouble *c_jy,
-									 CellDouble *c_jz,
-									 Cell<Particle>  *c,
-		                             int index,
-		                             int blockDimX,
-		                             double mass,
-		                             double q_mass
-		                             )
-{
-	CurrentTensor t1,t2;
-    int pqr2;
-	Particle p;
-
-    while(index < c->number_of_particles)
-    {
-
-        c->Move (index,&pqr2,&t1,&t2,//mass,q_mass,
-        		c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
-
-        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
-        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
-        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
-
-        index += blockDimX;
-    }
-
-
-
-    __syncthreads();
-}
+//__device__ void MoveAndWriteCurrents(
+//									 CellDouble *c_ex,
+//									 CellDouble *c_ey,
+//									 CellDouble *c_ez,
+//									 CellDouble *c_hx,
+//									 CellDouble *c_hy,
+//									 CellDouble *c_hz,
+//									 CellDouble *c_jx,
+//									 CellDouble *c_jy,
+//									 CellDouble *c_jz,
+//									 Cell<Particle>  *c,
+//		                             int index,
+//		                             int blockDimX,
+//		                             double mass,
+//		                             double q_mass
+//		                             )
+//{
+//	CurrentTensor t1,t2;
+//    int pqr2;
+//	Particle p;
+//
+//    while(index < c->number_of_particles)
+//    {
+//
+//        c->Move (index,&pqr2,&t1,&t2,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+//
+//        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
+//        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
+//        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+//
+//        index += blockDimX;
+//    }
+//
+//
+//
+//    __syncthreads();
+//}
 
 
 
