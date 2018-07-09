@@ -757,7 +757,7 @@ __device__ void set_cell_double_array_to_zero(CurrentTensorComponent *ca,int len
      }
 }
 
-__device__ void Move(
+__device__ void MoveParticlesInCell(
 									 CellDouble *c_ex,
 									 CellDouble *c_ey,
 									 CellDouble *c_ez,
@@ -871,7 +871,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 
-	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,
+	MoveParticlesInCell(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,
 						 c,threadIdx.x,blockDim.x);//,mass,q_mass);
 //	MoveAccCurrent(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 //							 c,threadIdx.x,blockDim.x,mass,q_mass);
