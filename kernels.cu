@@ -766,9 +766,9 @@ __device__ void Move(
 									 CellDouble *c_hz,
 									 Cell<Particle>  *c,
 		                             int index,
-		                             int blockDimX,
-		                             double mass,
-		                             double q_mass
+		                             int blockDimX//,
+//		                             double mass,
+//		                             double q_mass
 		                             )
 {
 //	CurrentTensor t1,t2;
@@ -795,14 +795,14 @@ __device__ void MoveAccCurrent(
 									 CellDouble *c_jz,
 									 Cell<Particle>  *c,
 		                             int index,
-		                             int blockDimX,
-		                             double mass,
-		                             double q_mass
+		                             int blockDimX//,
+//		                             double mass,
+//		                             double q_mass
 		                             )
 {
 	CurrentTensor t1,t2;
     int pqr2;
-	Particle p;
+//	Particle p;
 
     while(index < c->number_of_particles)
     {
@@ -872,7 +872,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 
 
 	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,
-						 c,threadIdx.x,blockDim.x,mass,q_mass);
+						 c,threadIdx.x,blockDim.x);//,mass,q_mass);
 //	MoveAccCurrent(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 //							 c,threadIdx.x,blockDim.x,mass,q_mass);
 
@@ -912,7 +912,7 @@ global_for_CUDA void GPU_CurrentsAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 	MoveAccCurrent(c_jx,c_jy,c_jz,
-							 c,threadIdx.x,blockDim.x,mass,q_mass);
+							 c,threadIdx.x,blockDim.x);//,mass,q_mass);
 
 
     copyFromSharedMemoryToCell(c_jx,c_jy,c_jz,c,threadIdx.x,blockDim.x,blockIdx);
