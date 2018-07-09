@@ -2081,7 +2081,8 @@ int WriteParticleToCell(Particle *p, int i,double3 x1)
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-void MoveSingleParticle(unsigned int i,int *cells,CellTotalField cf)
+void MoveSingleParticle(unsigned int i,//int *cells,
+		CellTotalField cf)
 {
      Particle p;
      Field fd;
