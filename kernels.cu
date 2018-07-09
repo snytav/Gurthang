@@ -764,9 +764,6 @@ __device__ void Move(
 									 CellDouble *c_hx,
 									 CellDouble *c_hy,
 									 CellDouble *c_hz,
-									 CellDouble *c_jx,
-									 CellDouble *c_jy,
-									 CellDouble *c_jz,
 									 Cell<Particle>  *c,
 		                             int index,
 		                             int blockDimX,
@@ -782,14 +779,7 @@ __device__ void Move(
     {
 
         c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
-//        c->AccCurrent    (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
-////        c->WriteParticleToCell(p, index,p->GetX1());
-//
-////        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
-//
-//        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
-//        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
-//        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+
 
         index += blockDimX;
     }
@@ -800,12 +790,6 @@ __device__ void Move(
 }
 
 __device__ void MoveAccCurrent(
-									 CellDouble *c_ex,
-									 CellDouble *c_ey,
-									 CellDouble *c_ez,
-									 CellDouble *c_hx,
-									 CellDouble *c_hy,
-									 CellDouble *c_hz,
 									 CellDouble *c_jx,
 									 CellDouble *c_jy,
 									 CellDouble *c_jz,
@@ -824,7 +808,7 @@ __device__ void MoveAccCurrent(
     {
 
      //   c->Move          (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
-        c->AccCurrent    (index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
+        c->AccCurrent    (index,&pqr2,&t1,&t2,mass,q_mass);
 //        c->WriteParticleToCell(p, index,p->GetX1());
 
 //        c->MoveGetCurrent(index,&pqr2,&t1,&t2,mass,q_mass,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz);
@@ -929,7 +913,7 @@ global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
 			threadIdx.x,blockIdx,blockDim.x);
 
 
-	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,
 						 c,threadIdx.x,blockDim.x,mass,q_mass);
 //	MoveAccCurrent(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
 //							 c,threadIdx.x,blockDim.x,mass,q_mass);
@@ -969,16 +953,8 @@ global_for_CUDA void GPU_CurrentsAllCells(Cell<Particle>  **cells,
 	copyFieldsToSharedMemory(c_jx,c_jy,c_jz,c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c,
 			threadIdx.x,blockIdx,blockDim.x);
 
-
-//	Move(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
-//						 c,threadIdx.x,blockDim.x,mass,q_mass);
-	MoveAccCurrent(c_ex,c_ey,c_ez,c_hx,c_hy,c_hz,c_jx,c_jy,c_jz,
+	MoveAccCurrent(c_jx,c_jy,c_jz,
 							 c,threadIdx.x,blockDim.x,mass,q_mass);
-
-
-//    WriteCurrents(c_jx,c_jy,c_jz,c_jx,c_jy,c_jz,
-//						 c,threadIdx.x,blockDim.x,mass,q_mass);
-
 
 
     copyFromSharedMemoryToCell(c_jx,c_jy,c_jz,c,threadIdx.x,blockDim.x,blockIdx);

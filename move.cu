@@ -36,9 +36,9 @@ void Move(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double m
 #ifdef __CUDACC__
  __host__ __device__
  #endif
- void AccCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
- 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
- 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+ void AccCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass)
+// 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
+// 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
  {
 	 Particle p;
 	 if(i >= number_of_particles) return;
