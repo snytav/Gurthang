@@ -785,8 +785,7 @@ __device__ void MoveParticlesInCell(
     	cf.Hy = c->Hy;
     	cf.Hz = c->Hz;
 
-        c->MoveSingleParticle          (index,//&pqr2,
-        		cf);
+        c->MoveSingleParticle(index,cf);
 
 
         index += blockDimX;
