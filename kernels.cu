@@ -806,16 +806,17 @@ __device__ void AccumulateCurrentWithParticlesInCell(
 		                             )
 {
 	CurrentTensor t1,t2;
+	DoubleCurrentTensor dt;
     int pqr2;
 
 
     while(index < c->number_of_particles)
     {
-        c->AccumulateCurrentSingleParticle    (index,&pqr2,&t1,&t2);
+        c->AccumulateCurrentSingleParticle    (index,&pqr2,&(dt.t1),&(dt.t2));
 
-        writeCurrentComponent(c_jx,&(t1.Jx),&(t2.Jx),pqr2);
-        writeCurrentComponent(c_jy,&(t1.Jy),&(t2.Jy),pqr2);
-        writeCurrentComponent(c_jz,&(t1.Jz),&(t2.Jz),pqr2);
+        writeCurrentComponent(c_jx,&(dt.t1.Jx),&(dt.t2.Jx),pqr2);
+        writeCurrentComponent(c_jy,&(dt.t1.Jy),&(dt.t2.Jy),pqr2);
+        writeCurrentComponent(c_jz,&(dt.t1.Jz),&(dt.t2.Jz),pqr2);
 
         index += blockDimX;
     }
