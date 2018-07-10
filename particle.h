@@ -57,9 +57,10 @@ public:
 
 };
 
-typedef struct CurrentTensor {
+class CurrentTensor {
+public:
 	CurrentTensorComponent Jx,Jy,Jz;
-} CurrentTensor;
+};
 
 typedef char gpu_string[200];
 
