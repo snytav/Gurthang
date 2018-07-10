@@ -1339,12 +1339,7 @@ void CurrentToMesh(double tau,int *cells,DoubleCurrentTensor *dt,Particle *p)
 	    case 7:  goto L7;
 	}
 
-#ifdef PARTICLE_TRACE
-	 if(p->fortran_number == 32587 && p->sort == 2)
-	        		     {
-	        		    	 printf("inCurrentToMesh_b_pqr 32587 x1 %25.15e \n",x1.x);
-	        		     }
-#endif
+
 	pqr(i1,x,x1,mass,tau,t1,0,p);
 	goto L18;
 L1:
