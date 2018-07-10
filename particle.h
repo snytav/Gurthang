@@ -18,61 +18,9 @@ typedef struct Field{
 } Field;
 
 
-class CurrentTensorComponent {
-public:
-	char i11, i12, i13,
-	 i21, i22, i23,
-	 i31, i32, i33,
-	 i41, i42, i43;
-	double t[4];
+#include "tensor.h"
 
 
-	CurrentTensorComponent & operator=(CurrentTensorComponent & b)
-	{
-		CurrentTensorComponent a;
-
-		a.i11 = b.i11;
-		a.i12 = b.i12;
-		a.i13 = b.i13;
-
-		a.i21 = b.i21;
-		a.i22 = b.i22;
-		a.i23 = b.i23;
-
-		a.i31 = b.i31;
-		a.i32 = b.i32;
-		a.i33 = b.i33;
-
-		a.i41 = b.i41;
-		a.i42 = b.i42;
-		a.i43 = b.i43;
-
-		a.t[0] = b.t[0];
-		a.t[1] = b.t[1];
-		a.t[2] = b.t[2];
-		a.t[3] = b.t[3];
-
-		return a;
-	}
-
-};
-
-class CurrentTensor {
-public:
-	CurrentTensorComponent Jx,Jy,Jz;
-
-
-	CurrentTensor & operator=(CurrentTensor & b)
-	{
-		CurrentTensor a;
-
-		a.Jx = b.Jx;
-		a.Jy = b.Jy;
-		a.Jz = b.Jz;
-
-		return a;
-	}
-};
 
 typedef char gpu_string[200];
 
