@@ -1379,22 +1379,14 @@ L4:
 L5:
 	x2.x = getCellTransitAverage(hx,i1.x,i2.x,x0);                      //x2 = d_1.h1 * ((i1 + i2) * .5 - 1.);
 	x2.z = getCellTransitAverage(hz,i1.z,i2.z,z0);                      //z2 = d_1.h3 * ((k1 + k2) * .5 - 1.);
-/* Computing 2nd power */
-//	d__1 = z1 - z__;
-/* Computing 2nd power */
-//	d__2 = x1 - x;
-//	s = ((z1 - z__) * (z2 - z__) + (x1 - x) * (x2 - x)) / (d__1 * d__1 + d__2 * d__2);
+
 	s = (getCellTransitProduct(x1.z,x.z,x2.z) + getCellTransitProduct(x1.x,x.x,x2.x)) / (pow(x1.z - x.z,2.0) + pow(x1.x - x.x,2.0));
 	x2.y = getRatioBasedX(x1.y,x.y,s); //	y2 = y + (y1 - y) * s;
 	goto L11;
 L6:
 	x2.x = getCellTransitAverage(hx,i1.x,i2.x,x0);  //x2 = d_1.h1 * ((i1 + i2) * .5 - 1.);
 	x2.y = getCellTransitAverage(hy,i1.y,i2.y,y0);  //y2 = d_1.h2 * ((l1 + l2) * .5 - 1.) + y0;
-/* Computing 2nd power */
-	//d__1 = y1 - y;
-/* Computing 2nd power */
-	//d__2 = x1 - x;
-	//s = ((y1 - y) * (y2 - y) + (x1 - x) * (x2 - x)) / (d__1 * d__1 + d__2 * d__2);
+
 	s = (getCellTransitProduct(x1.y,x.y,x2.y) +  getCellTransitProduct(x1.x,x.x,x2.x)) / (pow(x1.y - x.y,2.0) + pow(x1.x - x.x,2.0));
 	x2.z = getRatioBasedX(x1.z,x.z,s); //	z2 = z__ + (z1 - z__) * s;
 	goto L11;
