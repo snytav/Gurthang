@@ -1314,13 +1314,13 @@ void CurrentToMesh(double tau,int *cells,DoubleCurrentTensor *dt,Particle *p)
       i1.y=getCellNumberCenterCurrent(x.y,y0,hy);
       i1.z=getCellNumberCenterCurrent(x.z,z0,hz);
 
-   //   s2=getCellFraction(x1.x,x0,hx);
+
       i2.x=getCellNumberCenterCurrent(x1.x,x0,hx);
 
-   //   s4=getCellFraction(x1.y,y0,hy);
+
       i2.y=getCellNumberCenterCurrent(x1.y,y0,hy);
 
-   //   s6=getCellFraction(x1.z,z0,hz);
+
       i2.z=getCellNumberCenterCurrent(x1.z,z0,hz);
 
       i=abs(i2.x-i1.x);
@@ -1338,8 +1338,7 @@ void CurrentToMesh(double tau,int *cells,DoubleCurrentTensor *dt,Particle *p)
 	    case 6:  goto L6;
 	    case 7:  goto L7;
 	}
-	//pqr(int3 i,double3 x0,double3 x1,double a1)
-	//mass *= d_sign(1.0,q_m);
+
 #ifdef PARTICLE_TRACE
 	 if(p->fortran_number == 32587 && p->sort == 2)
 	        		     {
@@ -1364,29 +1363,11 @@ L2:
 L3:
 	x2.y = getCellTransitAverage(hy,i1.y,i2.y,y0);                     //d_1.h2 * ((l1 + l2) * .5 - 1.) + y0;
 	x2.z = getCellTransitAverage(hz,i1.z,i2.z,z0);                     //d_1.h3 * ((k1 + k2) * .5 - 1.);
-/* Computing 2nd power */
-	//d__1 = z1 - z__;
-/* Computing 2nd power */
-	//d__2 = y1 - y;
-/*      y2=h2*(0.5d0*(l1+l2)-1.d0)+y0
-        z2=h3*(0.5d0*(k1+k2)-1.d0)
-        s=((z1-z)*(z2-z)+(y1-y)*(y2-y))/((z1-z)**2+(y1-y)**2)
-        x2=x+(x1-x)*s  	*/
+
 	s = (getCellTransitProduct(x1.z,x.z,x2.z) + getCellTransitProduct(x1.y,x.y,x2.y))
 			/ (pow(x1.z - x.z,2.0) + pow(x1.y - x.y,2.0));
 	x2.x = getRatioBasedX(x1.x,x.x,s);
-#ifdef PARTICLE_TRACE
-	if(p->fortran_number == 32587 && p->sort == 2)
-	{
-       printf("32587 s %e rz %e ry %e denom %e x2 %e \n",
-    		   s,
-    		   getCellTransitRatio(x1.z,x.z,x2.z),
-    		   getCellTransitRatio(x1.y,x.y,x2.y),
-    		   (pow(x1.z - x.z,2.0) + pow(x1.y - x.y,2.0)),
-    			x2.x
-    		   );
-	}
-#endif
+
 
 	goto L11;
 L4:
@@ -1422,20 +1403,7 @@ L7:
 	x2.y = getCellTransitAverage(hy,i1.y,i2.y,y0);  //y2 = d_1.h2 * ((l1 + l2) * .5 - 1.) + y0;
 	x2.z = getCellTransitAverage(hz,i1.z,i2.z,z0);  //z2 = d_1.h3 * ((k1 + k2) * .5 - 1.);
 L11:
-	//mass *= d_sign(1,q_m);
-#ifdef PARTICLE_TRACE
-if(p->fortran_number == 32587 && p->sort == 2)
-       		     {
-       		    	 printf("inCurrentToMesh_before_couple 32587 x2 %25.15e \n",x2.x);
-       		     }
-#endif
 	pqr(i1, x, x2,  mass,tau,t1,0,p);
-#ifdef PARTICLE_TRACE
-	 if(p->fortran_number == 32587 && p->sort == 2)
-	        		     {
-	        		    	 printf("inCurrentToMesh between 32587 x2 %25.15e \n",x2.x);
-	        		     }
-#endif
 	pqr(i2, x2, x1, mass,tau,t2,1,p);
 
 	*cells = 2;
