@@ -2097,15 +2097,21 @@ void MoveSingleParticle(unsigned int i, CellTotalField cf)
 #ifdef __CUDACC__
  __host__ __device__
  #endif
- void AccumulateCurrentSingleParticle(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
+ DoubleCurrentTensor AccumulateCurrentSingleParticle(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2)
  {
 	 Particle p;
+	 DoubleCurrentTensor dt;
 	 if(i >= number_of_particles) return;
 
 	 p = readParticleFromSurfaceDevice(i);
 	 CurrentToMesh(tau,cells,t1,t2,&p);
 
      writeParticleToSurface(i,&p);
+
+     dt.t1 = *t1;
+     dt.t2 = *t2;
+
+     return dt;
 }
 
 
