@@ -812,7 +812,7 @@ __device__ void AccumulateCurrentWithParticlesInCell(
 
     while(index < c->number_of_particles)
     {
-        dt = c->AccumulateCurrentSingleParticle    (index,&pqr2,&(dt.t1),&(dt.t2));
+        c->AccumulateCurrentSingleParticle    (index,&pqr2,&(dt.t1),&(dt.t2));
 
         writeCurrentComponent(c_jx,&(dt.t1.Jx),&(dt.t2.Jx),pqr2);
         writeCurrentComponent(c_jy,&(dt.t1.Jy),&(dt.t2.Jy),pqr2);
