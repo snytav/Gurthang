@@ -1402,7 +1402,7 @@ L18:    return;
  #endif
 void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
 		double tau,
-            		int *cells,CurrentTensor *t1,CurrentTensor *t2,Particle *p)
+            		int *cells,DoubleCurrentTensor *dt,Particle *p)
 {
       double3 x2;
       double s;
@@ -1412,6 +1412,9 @@ void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
       double3 x1  = p->GetX1();
       double mass = p->m;
       double q_m  = p->q_m;
+
+      CurrentTensor *t1 = &(dt->t1);
+      CurrentTensor *t2 = &(dt->t2);
 
 #ifdef PARTICLE_TRACE
       if(p->fortran_number == 32587 && p->sort == 2)
@@ -2104,7 +2107,7 @@ void MoveSingleParticle(unsigned int i, CellTotalField cf)
 	 if(i >= number_of_particles) return;
 
 	 p = readParticleFromSurfaceDevice(i);
-	 CurrentToMesh(tau,cells,&(dt->t1),&(dt->t2),&p);
+	 CurrentToMesh(tau,cells,dt,&p);
 
      writeParticleToSurface(i,&p);
 
