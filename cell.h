@@ -1293,9 +1293,7 @@ double d_sign(double a, double b)
  #ifdef __CUDACC__
  __host__ __device__
  #endif
-void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
-		double tau,
-            		int *cells,DoubleCurrentTensor *dt,Particle *p)
+void CurrentToMesh(double tau,int *cells,DoubleCurrentTensor *dt,Particle *p)
 {
       double3 x2;
       double s;
@@ -1309,12 +1307,6 @@ void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
       CurrentTensor *t1 = &(dt->t1);
       CurrentTensor *t2 = &(dt->t2);
 
-#ifdef PARTICLE_TRACE
-      if(p->fortran_number == 32587 && p->sort == 2)
-        		     {
-        		    	 printf("inCurrentToMesh 32587 x1 %25.15e \n",x1.x);
-        		     }
-#endif
 
       *cells = 1;
 
@@ -1334,19 +1326,8 @@ void CurrentToMesh(//double3 x,double3 x1,double mass,double q_m,
       i=abs(i2.x-i1.x);
       l=abs(i2.y-i1.y);
       k=abs(i2.z-i1.z);
-#ifdef ATTRIBUTES_CHECK
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,45)] = i;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,46)] = l;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,47)] = k;
-#endif
       m=4*i+2*l+k;
 
-#ifdef PARTICLE_TRACE
-      if(p->fortran_number == 32587 && p->sort == 2)
-     	        		     {
-     	        		    	 printf("inCurrentToMesh  32587 m %d \n",m);
-     	        		     }
-#endif
 
 	switch (m) {
 	    case 1:  goto L1;
