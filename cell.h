@@ -1304,7 +1304,8 @@ void CurrentToMesh(double tau,int *cells,DoubleCurrentTensor *dt,Particle *p)
       double mass = p->m;
       double q_m  = p->q_m;
 //      DoubleCurrentTensor dt;
-      CurrentTensor t;
+//      CurrentTensor t;
+//      CurrentTensor *t1 =&t;
 
       CurrentTensor *t1 = &(dt->t1);
       CurrentTensor *t2 = &(dt->t2);
@@ -1405,8 +1406,8 @@ L18:  p->x = p->x1;
 
 //      *dt1 = dt;
 
-      t = *t1;
-      *t1 = t;
+//      dt->t1 = *t1;
+//      *t1 = t;
 
       return;
 }
@@ -1502,67 +1503,24 @@ void pqr(int3& i,double3& x,double3& x1,double& a1,double tau,CurrentTensor *t1,
 		         int num,Particle *p)
 {
       double dx,dy,dz,a,dx1,dy1,dz1,su,sv,sw,s1,s2,s3;
-     // double xl,yl;//,res,inv_yl;
 
-#ifdef PARTICLE_TRACE
-      if(p->fortran_number == 32587 && p->sort == 2)
-        		     {
-        		    	 printf("pqr 32587 x1 %25.15e \n",x1.x);
-        		     }
-#endif
 
       dx=getCenterRelatedShift(x.x,x1.x,i.x,hx,x0); //0.5d0*(x+x1)-h1*(i-1.5d0)
       dy=getCenterRelatedShift(x.y,x1.y,i.y,hy,y0); //0.5d0*(y+y1)-y0-h2*(l-1.5d0)
       dz=getCenterRelatedShift(x.z,x1.z,i.z,hz,z0); //0.5d0*(z+z1)-h3*(k-1.5d0)
-#ifdef ATTRIBUTES_CHECK
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,48+num)] = dx;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,50+num)] = dy;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,52+num)] = dz;
-#endif
       a = a1;
 
       dx1=hx - dx;
       dy1=hy - dy;
       dz1=hz - dz;
-#ifdef ATTRIBUTES_CHECK
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,90+num)] = dx1;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,92+num)] = dy1;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,94+num)] = dz1;
-#endif
 
       su =x1.x - x.x;
       sv =x1.y - x.y;
       sw =x1.z - x.z;
-#ifdef PARTICLE_TRACE
-      if(p->fortran_number == 32587 && p->sort == 2)
-        		     {
-        		    	 printf("pqr su 32587 x1 %25.15e %25.15e \n",x1.x,su);
-        		     }
-#endif
 
       s1=sv*sw/12.0;
       s2=su*sw/12.0;
       s3=su*sv/12.0;
-#ifdef ATTRIBUTES_CHECK
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,54+num)] = su;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,56+num)] = sv;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,58+num)] = sw;
-#endif
-//      xl = su*a;
-//      yl = tau*hy*hz;
-//#ifdef __CUDACC__
-   //   res = __ddiv_rn(xl,yl);
-//#else
-//      res = xl /yl;
-//      inv_yl = 1.0/yl;
-//#endif
-#ifdef ATTRIBUTES_CHECK
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,106)]     = su*a;
-      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,107)]     = tau*hy*hz;
-//      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,108)]     = res;
-//      d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,109)]     = inv_yl;
-#endif
-     // d_ctrlParticles[ParticleAttributePosition(jmp,p->fortran_number,p->sort,110)]     = su*a/(tau*hy*hz);
 
 
       su=su*a/(tau*hy*hz);
