@@ -1304,6 +1304,7 @@ void CurrentToMesh(double tau,int *cells,DoubleCurrentTensor *dt,Particle *p)
       double mass = p->m;
       double q_m  = p->q_m;
 //      DoubleCurrentTensor dt;
+      CurrentTensor t;
 
       CurrentTensor *t1 = &(dt->t1);
       CurrentTensor *t2 = &(dt->t2);
@@ -1403,6 +1404,9 @@ L18:  p->x = p->x1;
       Reflect(p);
 
 //      *dt1 = dt;
+
+      t = *t1;
+      *t1 = t;
 
       return;
 }
