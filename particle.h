@@ -60,6 +60,18 @@ public:
 class CurrentTensor {
 public:
 	CurrentTensorComponent Jx,Jy,Jz;
+
+
+	CurrentTensor & operator=(CurrentTensor & b)
+	{
+		CurrentTensor a;
+
+		a.Jx = b.Jx;
+		a.Jy = b.Jy;
+		a.Jz = b.Jz;
+
+		return a;
+	}
 };
 
 typedef char gpu_string[200];
