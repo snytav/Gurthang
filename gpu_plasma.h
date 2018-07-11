@@ -94,9 +94,9 @@ using namespace std;
 class Plasma
 {
 public:
-   GPUCell<Particle> **h_CellArray,**d_CellArray;
-   GPUCell<Particle> **cp;
-   thrust::device_vector<GPUCell<Particle> > *d_AllCells;
+   GPUCell **h_CellArray,**d_CellArray;
+   GPUCell **cp;
+   thrust::device_vector<GPUCell> *d_AllCells;
    double *d_Ex,*d_Ey,*d_Ez,*d_Hx,*d_Hy,*d_Hz,*d_Jx,*d_Jy,*d_Jz,*d_Rho,*d_npJx,*d_npJy,*d_npJz;
    double *d_Qx,*d_Qy,*d_Qz;
    double *dbg_x,*dbg_y,*dbg_z,*dbg_px,*dbg_py,*dbg_pz;
@@ -133,7 +133,7 @@ void copyCells(std::string where,int nt)
 
     if(first == 1)
     {
-    	cp = (GPUCell<Particle> **)malloc(size*sizeof(GPUCell<Particle> *));
+    	cp = (GPUCell **)malloc(size*sizeof(GPUCell *));
     }
 
 	unsigned long m1,m2,delta,accum;
@@ -148,7 +148,7 @@ void copyCells(std::string where,int nt)
 		cudaError_t err = cudaMemGetInfo(&m_free,&m_total);
 		sysinfo(&info);
 		m1 = info.freeram;
-	 	GPUCell<Particle> c,*d_c,*z0;
+	 	GPUCell c,*d_c,*z0;
 	 	z0 = h_CellArray[i];
 	 	if(first == 1)
 	 	{
@@ -486,7 +486,7 @@ void ElectricFieldEvaluate(double *locEx,double *locEy,double *locEz,
 
 double3 getMagneticFieldTimeMeshFactors()
 {
-    Cell<Particle> c = (*AllCells)[0];
+    Cell c = (*AllCells)[0];
 	double hx = c.get_hx(),hy = c.get_hy(),hz = c.get_hz();
 	double3 d;
     d.x = tau/(hx);
@@ -516,7 +516,7 @@ virtual void MagneticFieldStageTwo(double *Hx,double *Hy,double *Hz,
 		            int nt,
 		            double *Qx,double *Qy,double *Qz)
 {
-    Cell<Particle> c = (*AllCells)[0];
+    Cell c = (*AllCells)[0];
 
     SimpleMagneticFieldTrace(c,Qx,Hx,Nx+1,Ny,Nz);
     SimpleMagneticFieldTrace(c,Qy,Hy,Nx,Ny+1,Nz);
@@ -669,7 +669,7 @@ int readStartPoint(int nt)
 
 
 
-	  std::vector<GPUCell<Particle> > *AllCells;
+	  std::vector<GPUCell> *AllCells;
 
 	  int getBoundaryLimit(int dir){return ((dir == 0)*Nx  + (dir == 1)*Ny + (dir == 2)*Nz + 2);}
 
@@ -704,7 +704,7 @@ int readStartPoint(int nt)
 	      return 0;
 	  }
 
-	int SimpleMagneticFieldTrace(Cell<Particle> &c,double *Q,double *H,int i_end,int l_end,int k_end)
+	int SimpleMagneticFieldTrace(Cell &c,double *Q,double *H,int i_end,int l_end,int k_end)
 	{
 
 
@@ -719,7 +719,7 @@ int readStartPoint(int nt)
 
 	  int PeriodicBoundaries(double *E,int dir,int start1,int end1,int start2,int end2,int N)
 	  {
-	      Cell<Particle>  c = (*AllCells)[0];
+	      Cell  c = (*AllCells)[0];
 
 	      if(CPU_field == 0)
 	      {
@@ -752,7 +752,7 @@ int readStartPoint(int nt)
 
 int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int end2,int N)
 {
-    Cell<Particle>  c = (*AllCells)[0];
+    Cell  c = (*AllCells)[0];
 
     if(CPU_field == 0)
     {
@@ -785,7 +785,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 
 
-	  int SetPeriodicCurrentComponent(GPUCell<Particle>  **cells,double *J,int dir,int Nx,int Ny,int Nz)
+	  int SetPeriodicCurrentComponent(GPUCell **cells,double *J,int dir,int Nx,int Ny,int Nz)
 	  {
 		  dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
 
@@ -849,7 +849,7 @@ void AssignCellsToArraysGPU()
 	{
 	     for(int n = 0;n < (*AllCells).size();n++)
 	     {
-	         Cell<Particle>  c = (*AllCells)[n];
+	         Cell  c = (*AllCells)[n];
 		 c.writeAllToArrays(Jx,Jy,Jz,Rho,0);
 
 	     }
@@ -863,7 +863,7 @@ void AssignCellsToArraysGPU()
 	  void write3Darray(char *name,double *d)
 	  {
 	    char fname[100];
-	    GPUCell<Particle> c = (*AllCells)[0];
+	    GPUCell c = (*AllCells)[0];
 	    FILE *f;
 
 	    sprintf(fname,"%s_fiel3d.dat",name);
@@ -1124,7 +1124,7 @@ void copyCellCurrentsToDevice(CellDouble *d_jx,CellDouble *d_jy,CellDouble *d_jz
 
 double CheckArray	(double* a, double* dbg_a,FILE *f)
 	{
-	    Cell<Particle> c = (*AllCells)[0];
+	    Cell c = (*AllCells)[0];
 //	    int wrong = 0;
 	    double diff = 0.0;
 
@@ -1161,7 +1161,7 @@ double CheckArray	(double* a, double* dbg_a,FILE *f)
 
 double CheckArray	(double* a, double* dbg_a)
 	{
-	    Cell<Particle> c = (*AllCells)[0];
+	    Cell c = (*AllCells)[0];
 	    int wrong = 0;
 	    double diff = 0.0;
 #ifdef CHECK_ARRAY_DETAIL_PRINTS
@@ -1225,7 +1225,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	int CheckValue(double *a, double *dbg_a, int n)
 	{
-	    Cell<Particle>  c = (*AllCells)[0];
+	    Cell  c = (*AllCells)[0];
 //	    double t  = a[n];
 //	    double dt = dbg_a[n];
 
@@ -1248,7 +1248,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	void read3DarrayLog(char* name, double* d, int offset, int col)
 	{
 	    char str[1000];
-	    Cell<Particle> c = (*AllCells)[0];
+	    Cell c = (*AllCells)[0];
 	    FILE *f;
 
 	    //sprintf(fname,"%s_fiel3d.dat",name);
@@ -1281,7 +1281,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	void read3Darray(char* name, double* d)
 	{
 	  char str[100];
-	  Cell<Particle>  c = (*AllCells)[0];
+	  Cell  c = (*AllCells)[0];
 	  FILE *f;
 
 	  //sprintf(fname,"%s_fiel3d.dat",name);
@@ -1317,7 +1317,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	int PeriodicCurrentBoundaries(double* E, int dirE,int dir, int start1, int end1, int start2, int end2)
 	{
-	      Cell<Particle>  c = (*AllCells)[0];
+	      Cell  c = (*AllCells)[0];
 
 	      int N = getBoundaryLimit(dir);
 
@@ -1367,7 +1367,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	{
 	    for(int n = 0;n < (*AllCells).size();n++)
 	    {
-	        Cell<Particle> c = (*AllCells)[n];
+	        Cell c = (*AllCells)[n];
 
 		c.ClearParticles();
 
@@ -1410,18 +1410,18 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	   int copyCellsWithParticlesToGPU()
 	   {
-		   Cell<Particle> c000 = (*AllCells)[0];
+		   Cell c000 = (*AllCells)[0];
 		   magf = 1;
 		   cudaError_t err;
 
 		   int size = (Nx+2)*(Ny+2)*(Nz+2);
 
-		   cp = (GPUCell<Particle> **)malloc(size*sizeof(GPUCell<Particle> *));
+		   cp = (GPUCell **)malloc(size*sizeof(GPUCell *));
 		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		   for(int i = 0;i < size;i++)
 		   {
-		     	GPUCell<Particle> c,*d_c;
+		     	GPUCell c,*d_c;
 		   	   	// 	z0 = h_CellArray[i];
 		   	    d_c = c.allocateCopyCellFromDevice();
 		   	 if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
@@ -1781,7 +1781,7 @@ int SetCurrentsToZero(int nt)
 
 
 
-double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Particle> **copy_cells,int nt,int sort)
+double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell **copy_cells,int nt,int sort)
 {
 
     double t = 0.0;
@@ -1794,7 +1794,7 @@ double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Par
   //  double x,y,z,px,pz,q_m,*buf,tp,m;
     //double dbg_x,dbg_y,dbg_z,dbg_px,dbg_py,dbg_pz;
 
-    Cell<Particle> c0 = (*AllCells)[0];
+    Cell c0 = (*AllCells)[0];
     //int pn_min/*,pn_ave,pn_max*/;
 
     total_particles = readBinaryParticleArraysOneSort(f,&dbg_x,&dbg_y,&dbg_z,
@@ -1805,7 +1805,7 @@ double checkControlPointParticlesOneSort(int check_point_num,FILE *f,GPUCell<Par
 
    	for(int i = 0;i < size;i++)
    	{
-   	 	GPUCell<Particle> c = *(copy_cells[i]);
+   	 	GPUCell c = *(copy_cells[i]);
 
 #ifdef checkControlPointParticles_PRINT
              printf("cell %d particles %20d \n",i,c.number_of_particles);
@@ -1863,7 +1863,7 @@ double checkControlPointParticles(int check_point_num,FILE *f,char *fname,int nt
 //				int qq = 0;
 //			//	tb  = checkControlPointParticlesOneSort(check_point_num,f,cp);
 //		}
-	GPUCell<Particle> c = *(cp[141]);
+	GPUCell c = *(cp[141]);
 #ifdef checkControlPointParticles_PRINTS
 	printf("checkControlPointParticlesOneSort cell 141 particles %20d \n",c.number_of_particles);
 #endif

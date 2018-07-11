@@ -160,7 +160,7 @@ __host__ __device__ int isNan(double t)
 
 
 
-template<class Particle>
+
 class Cell
 {
 public:
@@ -1259,7 +1259,13 @@ Field GetField(Particle *p,CellTotalField cf)
 
 	    if(x.x < 0 || x.y < 0 || x.z < 0)
 	    {
-	    	return;
+	    	double3 x;
+	    	x.x = 0;
+	    	x.y = 0;
+	    	x.z = 0;
+	    	fd.E = x;
+	    	fd.H = x;
+	    	return fd;
 	    }
 
         InverseKernel(x,
@@ -1771,11 +1777,11 @@ bool Insert(Particle& p)
 //}
 
 
-void copyCellFromHostToDevice(Cell<Particle> *d_p,Cell<Particle> *h_p)
+void copyCellFromHostToDevice(Cell *d_p,Cell *h_p)
 {
      cudaError_t err;
-	 cudaMalloc((void **)&d_p,sizeof(Cell<Particle>));
-     err = cudaMemcpy(d_p,h_p,sizeof(Cell<Particle>),cudaMemcpyHostToDevice);
+	 cudaMalloc((void **)&d_p,sizeof(Cell));
+     err = cudaMemcpy(d_p,h_p,sizeof(Cell),cudaMemcpyHostToDevice);
      if(err != cudaSuccess)
 	 {
 		printf("copyCellFromHostToDevice err %d %s \n",err,cudaGetErrorString(err));
@@ -1880,39 +1886,39 @@ int WriteParticleToCell(Particle *p, int i,double3 x1)
 
 
 
-#ifdef __CUDACC__
- __host__ __device__
- #endif
- int MoveGetCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
- 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
- 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
- {
-
-      double3 x,x1,E,H;
-      double  m,q_m;
- //     int flag;
-      Particle p;
-
-      if(i >= number_of_particles) return 0;
-      p = readParticleFromSurfaceDevice(i);
-      m = p.GetMass();
-
-      x = p.GetX();
-      x1 = p.GetX1();
-      q_m = p.GetQ2M();
-      CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
-     		 p.x = x1.x;
-     		 p.y = x1.y;
-     		 p.z = x1.z;
-
- 	         Reflect(&p);
-
-
-
-      writeParticleToSurface(i,&p);
-
-      return 0;
- }
+//#ifdef __CUDACC__
+// __host__ __device__
+// #endif
+// int MoveGetCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
+// 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
+// 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
+// {
+//
+//      double3 x,x1,E,H;
+//      double  m,q_m;
+// //     int flag;
+//      Particle p;
+//
+//      if(i >= number_of_particles) return 0;
+//      p = readParticleFromSurfaceDevice(i);
+//      m = p.GetMass();
+//
+//      x = p.GetX();
+//      x1 = p.GetX1();
+//      q_m = p.GetQ2M();
+//      CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
+//     		 p.x = x1.x;
+//     		 p.y = x1.y;
+//     		 p.z = x1.z;
+//
+// 	         Reflect(&p);
+//
+//
+//
+//      writeParticleToSurface(i,&p);
+//
+//      return 0;
+// }
 
 #ifdef __CUDACC__
  __host__ __device__
@@ -1940,7 +1946,19 @@ void MoveSingleParticle(unsigned int i, CellTotalField cf)
  {
 	 Particle p;
 //	 DoubleCurrentTensor dt;
-	 if(i >= number_of_particles) return;
+	 if(i >= number_of_particles)
+	 {
+		 dt->t1.Jx.t[0] = 0;
+		 dt->t1.Jx.t[1] = 0;
+		 dt->t1.Jx.t[2] = 0;
+		 dt->t1.Jx.t[3] = 0;
+
+		 dt->t1.Jy = dt->t1.Jx;
+		 dt->t1.Jz = dt->t1.Jx;
+		 dt->t2    = dt->t1;
+
+		 return (*dt);
+	 }
 
 	 p = readParticleFromSurfaceDevice(i);
 	 CurrentToMesh(tau,cells,dt,&p);
@@ -2216,13 +2234,13 @@ int getFortranParticleNumber(int n)
 //    double3 x,x1,E,H;//,v;
 //    double  m,q_m;
 //    Particle p;
-//    Cell<Particle> *c;
+//    Cell *c;
 //#ifndef GPU_PARTICLE
 //    n = threadIdx.x + blockIdx.x*blockDim.x;
 //#endif
 //    readParticleFromSurfaceDevice(n,&p);
 //
-//     c = (Cell<Particle> *)cv;
+//     c = (Cell *)cv;
 //
 //	 x = p.GetX();
 //	 c->GetField(x,E,H,p);
@@ -2245,49 +2263,11 @@ void memcpy(unsigned char *tgt,unsigned char *src,int size)
 	for(i = 0;i < size;i++) tgt[i] = src[i];
 }
 
-//Cell<Particle> & operator=(Cell<Particle> const & src)
-//{
-//	i   = src.i;
-//	l   = src.l;
-//	k   = src.k;
-//	hx  = src.hx;
-//	hy  = src.hy;
-//	hz  = src.hz;
-//	tau = src.tau;
-//	x0  = src.x0;
-//	y0  = src.y0;
-//	z0  = src.z0;
-//	xm  = src.xm;
-//	ym  = src.ym;
-//	zm  = src.zm;
-//
-//	Nx  = src.Nx;
-//	Ny  = src.Ny;
-//	Nz  = src.Nz;
-//
-//	dst.number_of_particles = src.number_of_particles;
-//    if(Jx == NULL || Jy == NULL || Jz == NULL) SetZero();
-//
-//    memcpy((unsigned char *)dst.Jx,(unsigned char *)src.Jx,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Jy,(unsigned char *)src.Jy,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Jz,(unsigned char *)src.Jz,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Ex,(unsigned char *)src.Ex,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Ey,(unsigned char *)src.Ey,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Ez,(unsigned char *)src.Ez,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Hx,(unsigned char *)src.Hx,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Hy,(unsigned char *)src.Hy,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Hz,(unsigned char *)src.Hz,sizeof(CellDouble));
-//    memcpy((unsigned char *)dst.Rho,(unsigned char *)src.Rho,sizeof(CellDouble));
-//
-//    memcpy((unsigned char *)dst.doubParticleArray,
-//       (unsigned char *)src.doubParticleArray,sizeof(Particle)*MAX_particles_per_cell);
-//
-//    return dst;
-//}
+
 #ifdef __CUDACC__
  __host__ __device__
  #endif
-Cell<Particle> & operator=(Cell<Particle> const & src)
+Cell & operator=(Cell const & src)
 {
 	i   = src.i;
 	l   = src.l;
@@ -2325,7 +2305,7 @@ Cell<Particle> & operator=(Cell<Particle> const & src)
     return (*this);
 }
 
-double compareParticleLists(Cell<Particle> *c)
+double compareParticleLists(Cell *c)
 {
 	   char s[100];
 	   double res;
@@ -2369,7 +2349,7 @@ double
 #ifdef VIRTUAL_FUNCTIONS
 virtual
 #endif
-compareToCell(Cell<Particle> & src)
+compareToCell(Cell & src)
 {
 	//double t,t1,t_jx,t_jy,t_jz;
 	double t_ex,t_ey,t_ez,t_hx,t_hy,t_hz,t_rho,t2,t;

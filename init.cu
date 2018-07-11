@@ -38,7 +38,7 @@ int initMeshArrays()
 
 	   Alloc();
 
-	   Cell<Particle> c000;
+	   Cell c000;
 
 	   InitCells();
 	   c000 = (*AllCells)[0];
@@ -102,7 +102,7 @@ void AssignArraysToCells()
    for(int n = 0;n < (*AllCells).size();n++)
    {
 
-       Cell<Particle> c = (*AllCells)[n];
+       Cell c = (*AllCells)[n];
 //	         if(c.i == 1 &&  c.l  == 1 && c.k == 1)
 //	         {
 ////	         	   int j = 0;
@@ -202,8 +202,8 @@ void InitGPUParticles()
  //   :InitParticles(fname,vp)
 {
 	int size;
-	GPUCell<Particle> *d_c,*h_ctrl;
-	GPUCell<Particle> *n;
+	GPUCell *d_c,*h_ctrl;
+	GPUCell *n;
 //	GPUCell<Particle> *h_c;//*h_copy,
 //	double t;
 	dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlockOne(1,1,1);
@@ -224,16 +224,16 @@ void InitGPUParticles()
 	           if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 	 size_t m_free,m_total;
 
-	h_ctrl = new GPUCell<Particle>;
-	n = new GPUCell<Particle>;
+	h_ctrl = new GPUCell;
+	n = new GPUCell;
 
 	err = cudaGetLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
     err = cudaGetLastError();
                if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 
-    h_CellArray = (GPUCell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
-    err = cudaMalloc(&d_CellArray,size*sizeof(Cell<Particle> *));
+    h_CellArray = (GPUCell **)malloc(size*sizeof(Cell*));
+    err = cudaMalloc(&d_CellArray,size*sizeof(Cell *));
 
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
@@ -244,7 +244,7 @@ void InitGPUParticles()
     for(int i = 0;i < size;i++)
     {
         //printf("GPU cell %d begins******************************************************\n",i);
-    	GPUCell<Particle> c;
+    	GPUCell c;
     	c = (*AllCells)[i];
 
     	h_controlParticleNumberArray[i] = c.number_of_particles;
@@ -296,7 +296,7 @@ void InitGPUParticles()
                    if(err != cudaSuccess) { printf("%s:%d - error %d %s cell %d \n",__FILE__,__LINE__,err,cudaGetErrorString(err),i); exit(0);}
 
         h_CellArray[i] = d_c;
-        err = cudaMemcpy(h_ctrl,d_c,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
+        err = cudaMemcpy(h_ctrl,d_c,sizeof(Cell),cudaMemcpyDeviceToHost);
 
       //  err = cudaGetLastError();
            if(err != cudaSuccess)
@@ -326,7 +326,7 @@ void InitGPUParticles()
        if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
     //cudaError_t err;
-    err = cudaMemcpy(d_CellArray,h_CellArray,size*sizeof(Cell<Particle> *),cudaMemcpyHostToDevice);
+    err = cudaMemcpy(d_CellArray,h_CellArray,size*sizeof(Cell *),cudaMemcpyHostToDevice);
     if(err != cudaSuccess)
         {
          	printf("bGPU_WriteControlSystem err %d %s \n",err,cudaGetErrorString(err));
@@ -351,7 +351,7 @@ void InitGPUParticles()
 virtual void Alloc()
 	  {
 
-		  AllCells = new std::vector<GPUCell<Particle> >;
+		  AllCells = new std::vector<GPUCell>;
 
 	     Ex  = new double[(Nx + 2)*(Ny + 2)*(Nz + 2)];
 	     Ey  = new double[(Nx + 2)*(Ny + 2)*(Nz + 2)];
@@ -426,7 +426,7 @@ virtual void Alloc()
 		 {
 		     for(int k = 0;k < Nz+2;k++)
 		     {
-	                 GPUCell<Particle> * c = new GPUCell<Particle>(i,l,k,Lx,Ly,Lz,Nx,Ny,Nz,tau);
+	                 GPUCell* c = new GPUCell(i,l,k,Lx,Ly,Lz,Nx,Ny,Nz,tau);
 	                 c->Init();
 			         (*AllCells).push_back(*c);
 #ifdef INIT_CELLS_DEBUG_PRINT
@@ -581,7 +581,7 @@ virtual void Alloc()
               pn_ave = 0;
  		     for(int n = 0;n < (*AllCells).size();n++)
  		     {
- 		    	 Cell<Particle> & c = (*AllCells)[n];
+ 		    	 Cell & c = (*AllCells)[n];
 
  		    	 pn_ave += c.number_of_particles;
  		    	 if(pn_min > c.number_of_particles) pn_min = c.number_of_particles;
@@ -603,7 +603,7 @@ virtual void Alloc()
 
       int addParticleListToCells(std::vector<Particle>& vp)
       {
-    	  Cell<Particle> c0 = (*AllCells)[0];
+    	  Cell c0 = (*AllCells)[0];
     	  int n;
 
     	  for(int i = 0; i < vp.size();i++)
@@ -617,7 +617,7 @@ virtual void Alloc()
 
     	      n = c0.getPointCell(d);
 
-    	      Cell<Particle> & c = (*AllCells)[n];
+    	      Cell & c = (*AllCells)[n];
 
 
     	      if(c.Insert(p) == true)
@@ -731,7 +731,7 @@ virtual void Alloc()
 	  virtual void InitBeamParticles(int n_per_cell1){}
 	  void Distribute(thrust::host_vector<Particle> &vecp)
 	  {
-	     Cell<Particle> c0 = (*AllCells)[0],c111;
+	     Cell c0 = (*AllCells)[0],c111;
 	     int    n;//,i;
 	     int  vec_size = vecp.size();
 
@@ -745,7 +745,7 @@ virtual void Alloc()
 
 		 n = c0.getPointCell(d);
 
-		 Cell<Particle> & c = (*AllCells)[n];;
+		 Cell & c = (*AllCells)[n];
 	//	 c.SetZero();
 	//	 c = (*AllCells)[n];
 //		 if((vec_size-vecp.size()) == 136)
@@ -772,7 +772,7 @@ virtual void Alloc()
 	     int pn_min = 1000000,pn_max = 0,pn_ave = 0;
 	     for(int n = 0;n < (*AllCells).size();n++)
 	     {
-	    	 Cell<Particle> & c = (*AllCells)[n];
+	    	 Cell & c = (*AllCells)[n];
 
 	    	 pn_ave += c.number_of_particles;
 	    	 if(pn_min > c.number_of_particles) pn_min = c.number_of_particles;

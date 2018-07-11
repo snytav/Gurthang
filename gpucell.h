@@ -14,16 +14,16 @@
 #include <stdlib.h>
 
 
-void dbgPrintGPUParticleAttribute(Cell<Particle> *d_c,int n_particle,int attribute,char *name )
+void dbgPrintGPUParticleAttribute(Cell *d_c,int n_particle,int attribute,char *name )
 {
     double t;
-    Cell<Particle> *h_c;
+    Cell *h_c;
     int shift = (attribute + n_particle*sizeof(Particle)/sizeof(double));
     cudaError_t err;
 
-    h_c = new Cell<Particle>;
+    h_c = new Cell;
 
-    err = cudaMemcpy(h_c,d_c,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
+    err = cudaMemcpy(h_c,d_c,sizeof(Cell),cudaMemcpyDeviceToHost);
     if(err != cudaSuccess)
         {
         	printf("pyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
@@ -46,8 +46,8 @@ __global__ void testKernel(double *vec)
     // 	cuPrintf("vec %15.5e \n",vec[1]);
 }
 
-template <class Particle >
-class GPUCell: public Cell<Particle>
+
+class GPUCell: public Cell
 {
 
 
@@ -73,7 +73,7 @@ public:
  #endif
 
     GPUCell(int i1,int l1,int k1,double Lx,double Ly, double Lz,int Nx1, int Ny1, int Nz1,double tau1):
-       Cell<Particle>(i1,l1,k1,Lx,Ly,Lz,Nx1,Ny1,Nz1,tau1){}
+       Cell(i1,l1,k1,Lx,Ly,Lz,Nx1,Ny1,Nz1,tau1){}
 
 double compareArrayHostToDevice(double *h, double *d,int size,char *legend)
 {
@@ -88,38 +88,38 @@ double compareArrayHostToDevice(double *h, double *d,int size,char *legend)
 	return t;
 }
 
-GPUCell<Particle>* copyCellToDevice()
+GPUCell* copyCellToDevice()
 {
-	GPUCell<Particle> *h_src,*d_dst;//,*h_ctrl;
+	GPUCell *h_src,*d_dst;//,*h_ctrl;
 	int err1,err2,err3,err4,err5,err6,err7,err8,err9,err10;
 	int err11,err12,err13,err14,err15,err16,err17,err18,err19,err20;
 	int err21,err22,err23,err24,err25;
 
 
-	h_src = new GPUCell<Particle>;
+	h_src = new GPUCell;
 	//h_ctrl = new GPUCell<Particle>;
 
-	h_src->number_of_particles = Cell<Particle>::number_of_particles;
-	h_src->Nx = Cell<Particle>::Nx;
-	h_src->Ny = Cell<Particle>::Ny;
-	h_src->Nz = Cell<Particle>::Nz;
-	h_src->hx = Cell<Particle>::hx;
-	h_src->hy = Cell<Particle>::hy;
-	h_src->hz = Cell<Particle>::hz;
-	h_src->i  = Cell<Particle>::i;
-	h_src->k  = Cell<Particle>::k;
-	h_src->l  = Cell<Particle>::l;
-	h_src->x0 = Cell<Particle>::x0;
-	h_src->y0 = Cell<Particle>::y0;
-	h_src->z0 = Cell<Particle>::z0;
-	h_src->xm = Cell<Particle>::xm;
-	h_src->ym = Cell<Particle>::ym;
-	h_src->zm = Cell<Particle>::zm;
-	h_src->tau = Cell<Particle>::tau;
-	h_src->jmp = Cell<Particle>::jmp;
-	h_src->d_ctrlParticles = Cell<Particle>::d_ctrlParticles;
+	h_src->number_of_particles = Cell::number_of_particles;
+	h_src->Nx = Cell::Nx;
+	h_src->Ny = Cell::Ny;
+	h_src->Nz = Cell::Nz;
+	h_src->hx = Cell::hx;
+	h_src->hy = Cell::hy;
+	h_src->hz = Cell::hz;
+	h_src->i  = Cell::i;
+	h_src->k  = Cell::k;
+	h_src->l  = Cell::l;
+	h_src->x0 = Cell::x0;
+	h_src->y0 = Cell::y0;
+	h_src->z0 = Cell::z0;
+	h_src->xm = Cell::xm;
+	h_src->ym = Cell::ym;
+	h_src->zm = Cell::zm;
+	h_src->tau = Cell::tau;
+	h_src->jmp = Cell::jmp;
+	h_src->d_ctrlParticles = Cell::d_ctrlParticles;
 
-	h_src->busyParticleArray = Cell<Particle>::busyParticleArray;
+	h_src->busyParticleArray = Cell::busyParticleArray;
 
 	//cudaPrintfInit();
 	cudaMalloc(&(h_src->doubParticleArray),sizeof(Particle)*MAX_particles_per_cell);
@@ -134,7 +134,7 @@ GPUCell<Particle>* copyCellToDevice()
 	//cudaThreadSynchronize();
 
 
-	cudaMemcpy(h_src->doubParticleArray,Cell<Particle>::doubParticleArray,
+	cudaMemcpy(h_src->doubParticleArray,Cell::doubParticleArray,
 			   sizeof(Particle)*MAX_particles_per_cell,cudaMemcpyHostToDevice);
 	err3 = cudaGetLastError();
 
@@ -149,7 +149,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Jx),sizeof(CellDouble));
 	err4 = getLastError();
 
-	MemoryCopy(h_src->Jx,Cell<Particle>::Jx,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Jx,Cell::Jx,sizeof(CellDouble),HOST_TO_DEVICE);
 	err5 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Jx,(double *)h_src->Jx,sizeof(CellDouble),"Jx");
@@ -157,7 +157,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Jy),sizeof(CellDouble));
 	err6 = getLastError();
 
-	MemoryCopy(h_src->Jy,Cell<Particle>::Jy,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Jy,Cell::Jy,sizeof(CellDouble),HOST_TO_DEVICE);
 	//compareArrayHostToDevice((double *)Cell<Particle,dims>::Jy,(double *)h_src->Jy,sizeof(CellDouble),"Jy");
 	err7 = getLastError();
 
@@ -165,7 +165,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Jz),sizeof(CellDouble));
 	err8 = getLastError();
 
-	MemoryCopy(h_src->Jz,Cell<Particle>::Jz,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Jz,Cell::Jz,sizeof(CellDouble),HOST_TO_DEVICE);
 	err9 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Jz,(double *)h_src->Jz,sizeof(CellDouble),"Jz");
@@ -173,7 +173,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Ex),sizeof(CellDouble));
 	err10 = getLastError();
 
-	MemoryCopy(h_src->Ex,Cell<Particle>::Ex,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Ex,Cell::Ex,sizeof(CellDouble),HOST_TO_DEVICE);
 	err11 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Ex,(double *)h_src->Ex,sizeof(CellDouble),"Ex");
@@ -181,7 +181,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Ey),sizeof(CellDouble));
 	err12 = getLastError();
 
-	MemoryCopy(h_src->Ey,Cell<Particle>::Ey,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Ey,Cell::Ey,sizeof(CellDouble),HOST_TO_DEVICE);
 	err13 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Ey,(double *)h_src->Ey,sizeof(CellDouble),"Ey");
@@ -189,7 +189,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Ez),sizeof(CellDouble));
 	err14 = getLastError();
 
-	MemoryCopy(h_src->Ez,Cell<Particle>::Ez,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Ez,Cell::Ez,sizeof(CellDouble),HOST_TO_DEVICE);
 	err15 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Ez,(double *)h_src->Ez,sizeof(CellDouble),"Ez");
@@ -197,7 +197,7 @@ GPUCell<Particle>* copyCellToDevice()
 	MemoryAllocate((void**)&(h_src->Hx),sizeof(CellDouble));
 	err16 = getLastError();
 
-	MemoryCopy(h_src->Hx,Cell<Particle>::Hx,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Hx,Cell::Hx,sizeof(CellDouble),HOST_TO_DEVICE);
 	err17 = getLastError();
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Hx,(double *)h_src->Hx,sizeof(CellDouble),"Hx");
@@ -205,36 +205,36 @@ GPUCell<Particle>* copyCellToDevice()
 	cudaMalloc(&(h_src->Hy),sizeof(CellDouble));
 	err18 = cudaGetLastError();
 
-	MemoryCopy(h_src->Hy,Cell<Particle>::Hy,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Hy,Cell::Hy,sizeof(CellDouble),HOST_TO_DEVICE);
 	err19 = getLastError();
 
-	//compareArrayHostToDevice((double *)Cell<Particle>::Hy,(double *)h_src->Hy,sizeof(CellDouble),"Hy");
+	//compareArrayHostToDevice((double *)Cell::Hy,(double *)h_src->Hy,sizeof(CellDouble),"Hy");
 
 	MemoryAllocate((void**)&(h_src->Hz),sizeof(CellDouble));
 	err20 = getLastError();
 
-	MemoryCopy(h_src->Hz,Cell<Particle>::Hz,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Hz,Cell::Hz,sizeof(CellDouble),HOST_TO_DEVICE);
 	err21 = getLastError();
 
-	//compareArrayHostToDevice((double *)Cell<Particle>::Hz,(double *)h_src->Hz,sizeof(CellDouble),"Hz");
+	//compareArrayHostToDevice((double *)Cell::Hz,(double *)h_src->Hz,sizeof(CellDouble),"Hz");
 
 	MemoryAllocate((void**)&(h_src->Rho),sizeof(CellDouble));
 	err22 = getLastError();
 
-	MemoryCopy(h_src->Rho,Cell<Particle>::Rho,sizeof(CellDouble),HOST_TO_DEVICE);
+	MemoryCopy(h_src->Rho,Cell::Rho,sizeof(CellDouble),HOST_TO_DEVICE);
 	err23 = getLastError();
 
-	//compareArrayHostToDevice((double *)Cell<Particle>::Rho,(double *)h_src->Rho,sizeof(CellDouble),"Rho");
+	//compareArrayHostToDevice((double *)Cell::Rho,(double *)h_src->Rho,sizeof(CellDouble),"Rho");
 
 	//memcpy((unsigned char *)dst.Jx,(unsigned char *)src.Jx,sizeof(CellDouble));
-	//printf("i %d l %d k %d q_m %15.5e \n",h_src->i,h_src->k,h_src->l,Cell<Particle>::ParticleArrayRead(0,7));
+	//printf("i %d l %d k %d q_m %15.5e \n",h_src->i,h_src->k,h_src->l,Cell::ParticleArrayRead(0,7));
 
-    MemoryAllocate((void**)&d_dst,sizeof(GPUCell<Particle>));
+    MemoryAllocate((void**)&d_dst,sizeof(GPUCell));
 	err24 = getLastError();
 
 
 
-    MemoryCopy(d_dst,h_src,sizeof(GPUCell<Particle>),HOST_TO_DEVICE);
+    MemoryCopy(d_dst,h_src,sizeof(GPUCell),HOST_TO_DEVICE);
 	err25 = getLastError();
 
 	if(
@@ -269,10 +269,10 @@ GPUCell<Particle>* copyCellToDevice()
 		//exit(0);
 	}
 
- //   cudaMemcpy(h_ctrl,d_dst,sizeof(Cell<Particle>),cudaMemcpyDeviceToHost);
+ //   cudaMemcpy(h_ctrl,d_dst,sizeof(Cell),cudaMemcpyDeviceToHost);
 //
   //      dbgPrintGPUParticleAttribute(d_dst,50,1," IN_COPY " );
-  //  cudaMemcpy(Cell<Particle>::doubParticleArray,h_ctrl->doubParticleArray,
+  //  cudaMemcpy(Cell::doubParticleArray,h_ctrl->doubParticleArray,
     //			   sizeof(Particle)*MAX_particles_per_cell,cudaMemcpyDeviceToHost);
 
    // printf("before copy return  %e\n",this->ParticleArrayRead(50,1));
@@ -287,9 +287,9 @@ GPUCell<Particle>* copyCellToDevice()
      return d_dst;
 }
 
-void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::string where,int nt)
+void copyCellFromDevice(GPUCell* d_src,GPUCell* h_dst,std::string where,int nt)
 {
-	static GPUCell<Particle> *h_copy_of_d_src;
+	static GPUCell *h_copy_of_d_src;
 	static int first = 1;
 	int code;
 
@@ -299,7 +299,7 @@ void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::s
 	if(first == 1)
 	{
 	   first = 0;
-	   h_copy_of_d_src = new GPUCell<Particle>;
+	   h_copy_of_d_src = new GPUCell;
 	   h_copy_of_d_src->Init();
 
 	}
@@ -318,7 +318,7 @@ void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::s
 
 	ThreadSynchronize();
 
-	err = MemoryCopy(h_copy_of_d_src,d_src,sizeof(GPUCell<Particle>),DEVICE_TO_HOST);
+	err = MemoryCopy(h_copy_of_d_src,d_src,sizeof(GPUCell),DEVICE_TO_HOST);
 	if(err != 0)
 	{
 		 printf(" copyCellFromDevice1 %d %s \n ",err,getErrorString(err));
@@ -424,14 +424,14 @@ void copyCellFromDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,std::s
 //     return h_dst;
 }
 
-GPUCell<Particle>* allocateCopyCellFromDevice()
+GPUCell* allocateCopyCellFromDevice()
 {
-	GPUCell<Particle> *h_dst;//,*h_copy_of_d_src;
+	GPUCell *h_dst;//,*h_copy_of_d_src;
 	//static int first = 1;
 //	int code;
 
 
-	   h_dst = new GPUCell<Particle>;
+	   h_dst = new GPUCell;
 	//h_ctrl = new GPUCell<Particle>;
 
 //	cudaPrintfInit();
@@ -452,7 +452,7 @@ GPUCell<Particle>* allocateCopyCellFromDevice()
     return h_dst;
 }
 
-void freeCopyCellFromDevice(GPUCell<Particle> *h_dst)
+void freeCopyCellFromDevice(GPUCell *h_dst)
 {
 //	GPUCell<Particle> *h_dst,*h_copy_of_d_src;
 	//static int first = 1;
@@ -485,7 +485,7 @@ void freeCopyCellFromDevice(GPUCell<Particle> *h_dst)
 #ifdef __CUDACC__
 __host__
 #endif
-void printFileCellParticles(FILE *f,GPUCell<Particle> *h_copy_of_d_src)
+void printFileCellParticles(FILE *f,GPUCell *h_copy_of_d_src)
 {
 	Particle p;
 	int sorts[3] = {0,0,0};
@@ -503,9 +503,9 @@ void printFileCellParticles(FILE *f,GPUCell<Particle> *h_copy_of_d_src)
     fprintf(f,"(%3d,%3d,%3d) ========================================================================================== \n",this->i,this->l,this->k);
 	for(int i = 0;i < h_copy_of_d_src->number_of_particles;i++)
 	{
-		h_copy_of_d_src->readParticleFromSurfaceDevice(i,&p);
+		p = h_copy_of_d_src->readParticleFromSurfaceDevice(i);
 		fprintf(f,"(%3d,%3d,%3d) i %3d sort %d FN %10d c  pointInCell %d %15.5e %15.5e %15.5e %15.5e %15.5e %15.5e \n",
-						this->i,this->l,this->k,i,(int)p.sort,p.fortran_number,Cell<Particle>::isPointInCell(p.GetX()),
+						this->i,this->l,this->k,i,(int)p.sort,p.fortran_number,Cell::isPointInCell(p.GetX()),
 				        p.x,p.y,p.z,p.pu ,p.pv,p.pw);
 
 		sorts[(int)p.sort] += 1;
@@ -513,16 +513,16 @@ void printFileCellParticles(FILE *f,GPUCell<Particle> *h_copy_of_d_src)
 	fprintf(f,"ions %3d electrons %3d beam %3d \n",sorts[0],sorts[1],sorts[2]);
 }
 
-double compareToCell(Cell<Particle> & d_src)
+double compareToCell(Cell & d_src)
 {
 	//copyCellFromDevice(&d_src);
 	//dbgPrintGPUParticleAttribute(&d_src,50,1,"COMPARE_TO_CELL" );
-	return Cell<Particle>::compareToCell(d_src);
+	return Cell::compareToCell(d_src);
 }
 
-void addParticlesToCellOnDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_dst,char *where,int nt)
+void addParticlesToCellOnDevice(GPUCell* d_src,GPUCell* h_dst,char *where,int nt)
 {
-	static GPUCell<Particle> *h_copy_of_d_src;
+	static GPUCell *h_copy_of_d_src;
 	static int first = 1;
 	int code;
 
@@ -530,7 +530,7 @@ void addParticlesToCellOnDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_ds
 	if(first == 1)
 	{
 	   first = 0;
-	   h_copy_of_d_src = new GPUCell<Particle>;
+	   h_copy_of_d_src = new GPUCell;
 	   h_copy_of_d_src->Init();
 
 	}
@@ -545,7 +545,7 @@ void addParticlesToCellOnDevice(GPUCell<Particle>* d_src,GPUCell<Particle>* h_ds
 
 	ThreadSynchronize();
 
-	err = MemoryCopy(h_copy_of_d_src,d_src,sizeof(GPUCell<Particle>),DEVICE_TO_HOST);
+	err = MemoryCopy(h_copy_of_d_src,d_src,sizeof(GPUCell),DEVICE_TO_HOST);
 	if(err != 0)
 	{
 		 printf(" copyCellFromDevice1 %d %s \n ",err,getErrorString(err));

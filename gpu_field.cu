@@ -1,7 +1,7 @@
-template <template <class Particle> class Cell >
+
 __global__ void GPU_eme(
-		            Plasma<Cell> *gp,
-		            Cell<Particle>  **cells,
+		            Plasma *gp,
+		            GPUCell  **cells,
 		            int i_s,int l_s,int k_s,
 					double *E,double *H1, double *H2,
 					double *J,double c1,double c2, double tau,
