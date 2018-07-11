@@ -1627,8 +1627,19 @@ int StepAllCells(int nt,double mass,double q_mass)
 	   dim3 dimGrid(Nx+2,Ny+2,Nz+2),dimBlock(512,1,1);
 	   cudaDeviceSynchronize();
        puts("begin step");
-	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
-	            		     		                 mass,q_mass);
+
+
+
+	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx);
+//	            		     		                 mass,q_mass);
+
+//	   void* args[] = { d_CellArray,0,d_Jx,
+//                mass,q_mass };
+
+
+
+
+
 	   GPU_CurrentsAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
 	            		     		                 mass,q_mass);
 	   puts("end step");
