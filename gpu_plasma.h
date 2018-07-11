@@ -90,13 +90,13 @@ using namespace std;
 
 
 
-template <template <class Particle> class Cell >
-class GPUPlasma
+
+class Plasma
 {
 public:
    GPUCell<Particle> **h_CellArray,**d_CellArray;
    GPUCell<Particle> **cp;
-   thrust::device_vector<Cell<Particle> > *d_AllCells;
+   thrust::device_vector<GPUCell<Particle> > *d_AllCells;
    double *d_Ex,*d_Ey,*d_Ez,*d_Hx,*d_Hy,*d_Hz,*d_Jx,*d_Jy,*d_Jz,*d_Rho,*d_npJx,*d_npJy,*d_npJz;
    double *d_Qx,*d_Qy,*d_Qz;
    double *dbg_x,*dbg_y,*dbg_z,*dbg_px,*dbg_py,*dbg_pz;
@@ -133,7 +133,7 @@ void copyCells(std::string where,int nt)
 
     if(first == 1)
     {
-    	cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+    	cp = (GPUCell<Particle> **)malloc(size*sizeof(GPUCell<Particle> *));
     }
 
 	unsigned long m1,m2,delta,accum;
@@ -642,7 +642,7 @@ int readStartPoint(int nt)
 		//puts("GPU-Plasma");
 
 	}
-	virtual ~GPUPlasma(){
+	virtual ~Plasma(){
 		//~Plasma<Cell>();
 		}
 
@@ -669,7 +669,7 @@ int readStartPoint(int nt)
 
 
 
-	  std::vector<Cell<Particle> > *AllCells;
+	  std::vector<GPUCell<Particle> > *AllCells;
 
 	  int getBoundaryLimit(int dir){return ((dir == 0)*Nx  + (dir == 1)*Ny + (dir == 2)*Nz + 2);}
 
@@ -785,7 +785,7 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 
 
 
-	  int SetPeriodicCurrentComponent(Cell<Particle>  **cells,double *J,int dir,int Nx,int Ny,int Nz)
+	  int SetPeriodicCurrentComponent(GPUCell<Particle>  **cells,double *J,int dir,int Nx,int Ny,int Nz)
 	  {
 		  dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
 
@@ -858,41 +858,6 @@ void AssignCellsToArraysGPU()
 	     CheckArray(Jx, dbgJx);
 	}
 
-//	  void ParticleLog()
-//	{
-//	#ifndef DEBUG_PLASMA
-//	     return;
-//	#endif
-//
-//	     FILE *f;
-//	     char  fname[100];
-//	     int   num = 0;
-//
-//	     sprintf(fname,"particles.dat");
-//
-//	     if((f = fopen(fname,"wt")) == NULL) return;
-//
-//	     for(int n = 0;n < (*AllCells).size();n++)
-//	     {
-//	         Cell<Particle>  c = (*AllCells)[n];
-//	#ifdef GPU_PARTICLE
-//	   	 thrust::host_vector<Particle>  pvec_device;// = c.GetParticles();
-//	   	 thrust::host_vector<Particle> pvec = pvec_device;
-//	#else
-//		 thrust::host_vector<Particle>  pvec = c.GetParticles();
-//	#endif
-//
-//		 for(int i = 0;i < pvec.size();i++)
-//		 {
-//		      Particle p = pvec[i];
-//
-//		      p.Print(f,num++);
-//		 }
-//
-//	     }
-//
-//	     fclose(f);
-//	  }
 
 
 	  void write3Darray(char *name,double *d)
@@ -925,16 +890,8 @@ void write3D_GPUArray(char *name,double *d_d)
 {
 //	double *d;
 
-#ifndef WRITE_3D_DEBUG_ARRAYS
 	return;
-#else
 
-	d = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-
-	cudaError_t err = cudaMemcpy(d,d_d,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
-
-	write3Darray(name,d);
-#endif
 }
 
 void readControlPoint(FILE **f1,char *fncpy,int num,int nt,int part_read,int field_assign,
@@ -1423,7 +1380,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 	public:
 
-	  GPUPlasma(int nx,int ny,int nz,double lx,double ly,double lz,double ni1,int n_per_cell1,double q_m,double TAU)
+	  Plasma(int nx,int ny,int nz,double lx,double ly,double lz,double ni1,int n_per_cell1,double q_m,double TAU)
 	   {
 	     Nx = nx;
 	     Ny = ny;
@@ -1459,12 +1416,12 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 		   int size = (Nx+2)*(Ny+2)*(Nz+2);
 
-		   cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+		   cp = (GPUCell<Particle> **)malloc(size*sizeof(GPUCell<Particle> *));
 		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
 
 		   for(int i = 0;i < size;i++)
 		   {
-		     	Cell<Particle> c,*d_c;
+		     	GPUCell<Particle> c,*d_c;
 		   	   	// 	z0 = h_CellArray[i];
 		   	    d_c = c.allocateCopyCellFromDevice();
 		   	 if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
@@ -1496,32 +1453,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 #ifndef LIST_ALL_PARTICLES
 	   		return;
-#else
-	   		sprintf(str,"List%05d_%s.dat\0",nt,where.c_str());
-
-	   		if((f = fopen(str,"wt")) == NULL) return;
-
-
-	   		int size = (*AllCells).size();
-
-//	   		cp = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
-
-	   		copyCells(where,nt);
-
-	   			//h_ctrl = new Cell<Particle>;
-
-	   		for(int i = 0;i < size;i++)
-	   		{
-	   		 	Cell<Particle> c = (*AllCells)[i];
-
-   			    Particle p;
-	 //   			int j;
-
-	   			c.readParticleFromSurfaceDevice(0,&p);
-	   	        //h_c.copyCellFromDevice(&d_c);
-	   	        c.printFileCellParticles(f,cp[i]);
-	   		}
-	   		fclose(f);
 #endif
 	   	}
 

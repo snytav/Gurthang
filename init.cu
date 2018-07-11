@@ -224,15 +224,15 @@ void InitGPUParticles()
 	           if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 	 size_t m_free,m_total;
 
-	h_ctrl = new Cell<Particle>;
-	n = new Cell<Particle>;
+	h_ctrl = new GPUCell<Particle>;
+	n = new GPUCell<Particle>;
 
 	err = cudaGetLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
     err = cudaGetLastError();
                if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); exit(0);}
 
-    h_CellArray = (Cell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
+    h_CellArray = (GPUCell<Particle> **)malloc(size*sizeof(Cell<Particle> *));
     err = cudaMalloc(&d_CellArray,size*sizeof(Cell<Particle> *));
 
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
@@ -351,7 +351,7 @@ void InitGPUParticles()
 virtual void Alloc()
 	  {
 
-		  AllCells = new std::vector<Cell<Particle> >;
+		  AllCells = new std::vector<GPUCell<Particle> >;
 
 	     Ex  = new double[(Nx + 2)*(Ny + 2)*(Nz + 2)];
 	     Ey  = new double[(Nx + 2)*(Ny + 2)*(Nz + 2)];
@@ -426,7 +426,7 @@ virtual void Alloc()
 		 {
 		     for(int k = 0;k < Nz+2;k++)
 		     {
-	                 Cell<Particle> * c = new Cell<Particle>(i,l,k,Lx,Ly,Lz,Nx,Ny,Nz,tau);
+	                 GPUCell<Particle> * c = new GPUCell<Particle>(i,l,k,Lx,Ly,Lz,Nx,Ny,Nz,tau);
 	                 c->Init();
 			         (*AllCells).push_back(*c);
 #ifdef INIT_CELLS_DEBUG_PRINT
