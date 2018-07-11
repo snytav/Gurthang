@@ -852,7 +852,7 @@ __device__ void copyFromSharedMemoryToCell(
 
 template <template <class Particle> class Cell >
 global_for_CUDA void GPU_StepAllCells(Cell<Particle>  **cells,
-		                         int i,
+//		                         int i,
 		                         double *global_jx
 //		                         double mass,
 //		                         double q_mass

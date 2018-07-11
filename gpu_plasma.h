@@ -1630,7 +1630,7 @@ int StepAllCells(int nt,double mass,double q_mass)
 
 
 
-	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx);
+	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,d_Jx);
 //	            		     		                 mass,q_mass);
 
 //	   void* args[] = { d_CellArray,0,d_Jx,
