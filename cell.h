@@ -1790,57 +1790,6 @@ void copyCellFromHostToDevice(Cell *d_p,Cell *h_p)
 }
 
 
-
-//__host__ __device__
-//virtual
-//int Move(unsigned int i)
-//{
-////	return;
-//     double3 x,x1,E,H;//,v;
-//     double  m,q_m;
-//     int flag;
-//     //dim3 dimGrid(1,1,1),dimBlock(1,1,number_of_particles);
-//     //Cell <Particle> *d_c;
-//     Particle p;
-//
-//
-//     //return;
-//     if(i >= number_of_particles) return 0;
-//
-//     /*for(int i = 0;i < number_of_particles;i++)//number_of_particles;i++)
-//     {*/
-//    	     readParticleFromSurfaceDevice(i,&p);
-//
-//
-////    	     if(p.fortran_number == 831)
-////    	     {
-////    	    	 int tt = 0;
-////    	     }
-//    		 x = p.GetX();
-//    		 GetField(x,E,H,&p);
-//    	//	 p.Move(E,H,tau);
-//    		 m = p.GetMass();
-//
-//   		     x1 = p.GetX();
-//   		     printf("%15.5e %15.5e %15.5e \n",x1.x,x1.y,x1.z);
-//
-//    		 q_m = p.GetQ2M();
-//
-//    		 CurrentToMesh(x,x1,m,q_m,tau);
-//
-//	         Reflect(&p);
-//
-//	         flag = p.checkParticle();
-////	         if(flag != 1)
-////	         {
-////	        	 int qq1 = 0;
-////	         }
-//
-////     }
-//
-//     return flag;
-//}
-
 int checkParticleType(Particle p,double mass,double q_mass)
 {
 	return ((fabs(p.m-mass) < PARTICLE_MASS_TOLERANCE) &&
@@ -1884,41 +1833,6 @@ int WriteParticleToCell(Particle *p, int i,double3 x1)
              return 0;
 }
 
-
-
-//#ifdef __CUDACC__
-// __host__ __device__
-// #endif
-// int MoveGetCurrent(unsigned int i,int *cells,CurrentTensor *t1,CurrentTensor *t2,double mass,double q_mass,
-// 		 CellDouble *Ex1,CellDouble *Ey1,CellDouble *Ez1,
-// 		 CellDouble *Hx1,CellDouble *Hy1,CellDouble *Hz1)
-// {
-//
-//      double3 x,x1,E,H;
-//      double  m,q_m;
-// //     int flag;
-//      Particle p;
-//
-//      if(i >= number_of_particles) return 0;
-//      p = readParticleFromSurfaceDevice(i);
-//      m = p.GetMass();
-//
-//      x = p.GetX();
-//      x1 = p.GetX1();
-//      q_m = p.GetQ2M();
-//      CurrentToMesh(x,x1,m,q_m,tau,cells,t1,t2,&p);
-//     		 p.x = x1.x;
-//     		 p.y = x1.y;
-//     		 p.z = x1.z;
-//
-// 	         Reflect(&p);
-//
-//
-//
-//      writeParticleToSurface(i,&p);
-//
-//      return 0;
-// }
 
 #ifdef __CUDACC__
  __host__ __device__
