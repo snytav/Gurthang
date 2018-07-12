@@ -851,9 +851,9 @@ __device__ void copyFromSharedMemoryToCell(
 }
 
 
-global_for_CUDA void GPU_StepAllCells(GPUCell  **cells,
+global_for_CUDA void GPU_StepAllCells(GPUCell  **cells//,
 //		                         int i,
-		                         double *global_jx
+//		                         double *global_jx
 //		                         double mass,
 //		                         double q_mass
 		                         )
