@@ -123,12 +123,12 @@ GPUCell* copyCellToDevice()
 
 	//cudaPrintfInit();
 	cudaMalloc(&(h_src->doubParticleArray),sizeof(Particle)*MAX_particles_per_cell);
-	err1 = cudaGetLastError();
+	err1 = getLastError();
 
 
 
 	cudaMemset(h_src->doubParticleArray,0,sizeof(Particle)*MAX_particles_per_cell);
-	err2 = cudaGetLastError();
+	err2 = getLastError();
 
 	//testKernelBefore<<<1,1>>>(h_src->doubParticleArray,50,1);
 	//cudaThreadSynchronize();
@@ -136,7 +136,7 @@ GPUCell* copyCellToDevice()
 
 	MemoryCopy(h_src->doubParticleArray,Cell::doubParticleArray,
 			   sizeof(Particle)*MAX_particles_per_cell,HOST_TO_DEVICE);
-	err3 = cudaGetLastError();
+	err3 = getLastError();
 
 //	compareArrayHostToDevice((double *)Cell<Particle>::doubParticleArray,
 	//		(double *)h_src->doubParticleArray,sizeof(Particle)*MAX_particles_per_cell,"part");
@@ -203,7 +203,7 @@ GPUCell* copyCellToDevice()
 	//compareArrayHostToDevice((double *)Cell<Particle>::Hx,(double *)h_src->Hx,sizeof(CellDouble),"Hx");
 
 	cudaMalloc(&(h_src->Hy),sizeof(CellDouble));
-	err18 = cudaGetLastError();
+	err18 = getLastError();
 
 	MemoryCopy(h_src->Hy,Cell::Hy,sizeof(CellDouble),HOST_TO_DEVICE);
 	err19 = getLastError();
