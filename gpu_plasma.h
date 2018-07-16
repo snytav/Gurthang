@@ -1887,17 +1887,17 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
 
     cudaDeviceSynchronize();
 
-    cudaError_t err = cudaGetLastError();
+    int err = cudaGetLastError();
 
     if(err != cudaSuccess)
         {
-           printf("MakeParticleList sync error %d %s\n",err,cudaGetErrorString(err));
+           printf("MakeParticleList sync error %d %s\n",err,getErrorString(err));
         }
-    err = cudaMemcpy(stage,*d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+    err = MemoryCopy(stage,*d_stage,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),DEVICE_TO_HOST);
 
     if(err != cudaSuccess)
     {
-       printf("MakeParticleList error %d %s\n",err,cudaGetErrorString(err));
+       printf("MakeParticleList error %d %s\n",err,getErrorString(err));
        exit(0);
     }
 
