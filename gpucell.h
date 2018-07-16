@@ -19,14 +19,14 @@ void dbgPrintGPUParticleAttribute(Cell *d_c,int n_particle,int attribute,char *n
     double t;
     Cell *h_c;
     int shift = (attribute + n_particle*sizeof(Particle)/sizeof(double));
-    cudaError_t err;
+    int err;
 
     h_c = new Cell;
 
-    err = (cudaError_t) MemoryCopy(h_c,d_c,sizeof(Cell),DEVICE_TO_HOST);
+    err = (int) MemoryCopy(h_c,d_c,sizeof(Cell),DEVICE_TO_HOST);
     if(err != cudaSuccess)
         {
-        	printf("pyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+        	printf("pyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
     double *vec = h_c->doubParticleArray + shift;
@@ -303,7 +303,7 @@ void copyCellFromDevice(GPUCell* d_src,GPUCell* h_dst,std::string where,int nt)
 	   h_copy_of_d_src->Init();
 
 	}
-//	cudaError_t err_attr = MemoryCopy(h_wrong_current_particle_attributes,d_wrong_current_particle_attributes,
+//	int err_attr = MemoryCopy(h_wrong_current_particle_attributes,d_wrong_current_particle_attributes,
 //			 sizeof(double)*PARTICLE_ATTRIBUTES*MAX_particles_per_cell,DEVICE_TO_HOST);
 //#endif
 
@@ -324,7 +324,7 @@ void copyCellFromDevice(GPUCell* d_src,GPUCell* h_dst,std::string where,int nt)
 		 printf(" copyCellFromDevice1 %d %s \n ",err,getErrorString(err));
 		 exit(0);
 	}
-	//printf("Cuda error: %d: %s.\n", code,getErrorString((cudaError_t) code));
+	//printf("Cuda error: %d: %s.\n", code,getErrorString((int) code));
     if(h_copy_of_d_src->number_of_particles < 0 || h_copy_of_d_src->number_of_particles > MAX_particles_per_cell)
     {
 //    	int qq = 0;
@@ -490,15 +490,15 @@ void printFileCellParticles(FILE *f,GPUCell *h_copy_of_d_src)
 	Particle p;
 	int sorts[3] = {0,0,0};
 
-//	cudaError_t code = MemoryCopy(this,h_copy_of_d_src,sizeof(GPUCell<Particle>),DEVICE_TO_HOST);
+//	int code = MemoryCopy(this,h_copy_of_d_src,sizeof(GPUCell<Particle>),DEVICE_TO_HOST);
 //	Cell<Particle>::doubParticleArray = (double*)malloc(sizeof(Particle)*MAX_particles_per_cell);
 
 	//num = &(Cell<Particle>::number_of_particles);
-//	cudaError_t code = MemoryCopy(&num,
+//	int code = MemoryCopy(&num,
 //			                      &(h_copy_of_d_src->number_of_particles),
 //					              sizeof(int),DEVICE_TO_HOST);
 
-//	cudaError_t code = MemoryCopy(Cell<Particle>::doubParticleArray,h_copy_of_d_src->doubParticleArray,
+//	int code = MemoryCopy(Cell<Particle>::doubParticleArray,h_copy_of_d_src->doubParticleArray,
 //				                  sizeof(Particle)*MAX_particles_per_cell,DEVICE_TO_HOST);
     fprintf(f,"(%3d,%3d,%3d) ========================================================================================== \n",this->i,this->l,this->k);
 	for(int i = 0;i < h_copy_of_d_src->number_of_particles;i++)
@@ -551,7 +551,7 @@ void addParticlesToCellOnDevice(GPUCell* d_src,GPUCell* h_dst,char *where,int nt
 		 printf(" copyCellFromDevice1 %d %s \n ",err,getErrorString(err));
 		 exit(0);
 	}
-	//printf("Cuda error: %d: %s.\n", code,getErrorString((cudaError_t) code));
+	//printf("Cuda error: %d: %s.\n", code,getErrorString((int) code));
     if(h_copy_of_d_src->number_of_particles < 0 || h_copy_of_d_src->number_of_particles > MAX_particles_per_cell)
     {
 //    	int qq = 0;
