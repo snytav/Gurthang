@@ -892,11 +892,11 @@ global_for_CUDA void GPU_StepAllCells(GPUCell  **cells//,
 }
 
 
-global_for_CUDA void GPU_CurrentsAllCells(GPUCell  **cells,
-		                         int i,
-		                         double *global_jx,
-		                         double mass,
-		                         double q_mass
+global_for_CUDA void GPU_CurrentsAllCells(GPUCell  **cells
+//		                         int i,
+//		                         double *global_jx,
+//		                         double mass,
+//		                         double q_mass
 		                         )
 {
 	Cell  *c,*c0 = cells[0];

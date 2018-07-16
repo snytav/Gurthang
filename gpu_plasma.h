@@ -195,11 +195,11 @@ double checkGPUArray(double *a,double *d_a,std::string name,std::string where,in
 		 t = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 		 f1 = 0;
 	 }
-	 cudaError_t err;
-	 err = cudaMemcpy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+	 int err;
+	 err = MemoryCopy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),DEVICE_TO_HOST);
 	 if(err != cudaSuccess)
 	         {
-	          	printf("bCheckArray err %d %s \n",err,cudaGetErrorString(err));
+	          	printf("bCheckArray err %d %s \n",err,getErrorString(err));
 	        	exit(0);
 	         }
 
@@ -228,11 +228,11 @@ double checkGPUArray(double *a,double *d_a)
 		 t = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 		 f = 0;
 	 }
-	 cudaError_t err;
-	 err = cudaMemcpy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+	 int err;
+	 err = MemoryCopy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),DEVICE_TO_HOST);
 	 if(err != cudaSuccess)
 	         {
-	          	printf("bCheckArray err %d %s \n",err,cudaGetErrorString(err));
+	          	printf("bCheckArray err %d %s \n",err,getErrorString(err));
 	        	exit(0);
 	         }
 
@@ -250,11 +250,33 @@ void virtual emeGPUIterate(int3 s,int3 f,
 {
 	dim3 dimGrid(f.x-s.x+1,1,1),dimBlock(1,f.y-s.y+1,f.z-s.z+1);
 
-    GPU_eme<<<dimGrid,dimBlock>>>(d_CellArray,s,
-    		                            E,H1,H2,
-    					    	  		J,c1,c2,tau,
-    					    	  		d1,d2
-    		);
+//    GPU_eme//<<<dimGrid,dimBlock>>>(d_CellArray,s,
+//    		                            E,H1,H2,
+//    					    	  		J,c1,c2,tau,
+//    					    	  		d1,d2
+//    		);
+    void* args[] = { (void* )&d_CellArray,
+            		           (void *)&s,
+            		           (void *)&E,
+            		           (void *)&H1,
+            		           (void *)&H2,
+            		           (void *)&J,
+                               (void *)&c1,
+                               (void *)&c2,
+                               (void *)&tau,
+                               (void *)&d1,
+                               (void *)&d2,
+            		           0};
+
+              cudaError_t cudaStatus = cudaLaunchKernel(
+              	            (const void*)GPU_eme, // pointer to kernel func.
+              	            dimGrid,                       // grid
+              	            dimBlock,                      // block
+              	            args,                          // arguments
+              	            0,
+              	            0
+              	            );
+
 
 }
 
@@ -606,9 +628,24 @@ int readStartPoint(int nt)
 		}
 		cudaMemset(d_ee,0,sizeof(double));
 
-		GPU_getCellEnergy<<<dimGrid, dimBlockOne,16000>>>(d_CellArray,d_ee,d_Ex,d_Ey,d_Ez);
+//		GPU_getCellEnergy//<<<dimGrid, dimBlockOne,16000>>>(d_CellArray,d_ee,d_Ex,d_Ey,d_Ez);
+		void* args[] = { (void* )&d_CellArray,
+		        		           (void *)&d_ee,
+		        		           (void *)&d_Ex,
+		        		           (void *)&d_Ey,
+		        		           (void *)&d_Ez,
+		        		           0};
+		          cudaError_t cudaStatus = cudaLaunchKernel(
+		          	            (const void*)GPU_getCellEnergy, // pointer to kernel func.
+		          	            dimGrid,                       // grid
+		          	            dimBlockOne,                      // block
+		          	            args,                          // arguments
+		          	            0,
+		          	            0
+		          	            );
 
-        cudaMemcpy(&ee,d_ee,sizeof(double),cudaMemcpyDeviceToHost);
+
+        MemoryCopy(&ee,d_ee,sizeof(double),DEVICE_TO_HOST);
 
         return ee;
 
@@ -698,8 +735,28 @@ int readStartPoint(int nt)
 
    		dim3 dimGrid(i_end+1,l_end+1,k_end+1),dimBlock(1,1,1);
 
-	    GPU_emh1<<<dimGrid,dimBlock>>>(d_CellArray,Q,H,E1,E2,c1,c2,
-	    		d1,d2);
+//	    GPU_emh1//<<<dimGrid,dimBlock>>>(d_CellArray,Q,H,E1,E2,c1,c2,
+//	    		d1,d2);
+	    void* args[] = { (void* )&d_CellArray,
+	            		           (void *)&Q,
+	            		           (void *)&H,
+	            		           (void *)&E1,
+	            		           (void *)&E2,
+	            		           (void *)&c1,
+	                               (void *)&c2,
+	            		           (void *)&d1,
+	                               (void *)&d2,
+	            		           0};
+	              cudaError_t cudaStatus = cudaLaunchKernel(
+	              	            (const void*)GPU_emh1, // pointer to kernel func.
+	              	            dimGrid,                       // grid
+	              	            dimBlock,                      // block
+	              	            args,                          // arguments
+	              	            0,
+	              	            0
+	              	            );
+
+
 
 	      return 0;
 	  }
@@ -710,7 +767,27 @@ int readStartPoint(int nt)
 
 		   		dim3 dimGrid(i_end+1,l_end+1,k_end+1),dimBlock(1,1,1);
 
-			    GPU_emh2<<<dimGrid,dimBlock>>>(d_CellArray,0,0,0,Q,H);
+//			    GPU_emh2//<<<dimGrid,dimBlock>>>(d_CellArray,0,0,0,Q,H);
+			    int i_s = 0;
+			    int l_s = 0;
+			    int k_s = 0;
+
+			    void* args[] = { (void* )&d_CellArray,
+			    		         (void *)&i_s,
+			    		         (void *)&l_s,
+			    		         (void *)&k_s,
+			    		         (void *)&Q,
+			    		         (void *)&H,
+			   	            		     0};
+			   	              cudaError_t cudaStatus = cudaLaunchKernel(
+			   	              	            (const void*)GPU_emh2, // pointer to kernel func.
+			   	              	            dimGrid,                       // grid
+			   	              	            dimBlock,                      // block
+			   	              	            args,                          // arguments
+			   	              	            0,
+			   	              	            0
+			   	              	            );
+
 
 
 	      return 0;
@@ -721,32 +798,69 @@ int readStartPoint(int nt)
 	  {
 	      Cell  c = (*AllCells)[0];
 
-	      if(CPU_field == 0)
-	      {
+//	      if(CPU_field == 0)
+//	      {
 	    		dim3 dimGrid(end1-start1+1,1,end2-start2+1),dimBlock(1,1,1);
 
-	    	    GPU_periodic<<<dimGrid,dimBlock>>>(d_CellArray,start1,start2,E,dir,0,N);
-	    	    GPU_periodic<<<dimGrid,dimBlock>>>(d_CellArray,start1,start2,E,dir,N+1,1);
+//	    	    GPU_periodic//<<<dimGrid,dimBlock>>>(d_CellArray,start1,start2,E,dir,0,N);
+	    	    int zero = 0;
+	    	    void* args[] = { (void* )&d_CellArray,
+	    	   			         (void *)&start1,
+	    	   			    	 (void *)&start2,
+	    	   			         (void *)&E,
+	    	   			    	 (void *)&dir,
+	    	   			    	 (void *)&zero,
+	    	   			    	 (void *)&N,
+	    	   			   	     0};
+	    	     cudaError_t cudaStatus = cudaLaunchKernel(
+	    	   	   	            (const void*)GPU_periodic, // pointer to kernel func.
+	    	   			   	    dimGrid,                       // grid
+	    	   			   	    dimBlock,                      // block
+	    	   			   	    args,                          // arguments
+	    	   			   	    0,
+	    	   			   	    0
+	    	   			   	    );
 
-	      }
-	      else
-	      {
+//	    	    GPU_periodic//<<<dimGrid,dimBlock>>>(d_CellArray,start1,start2,E,dir,N+1,1);
+	    	    int one = 1;
+	    	    int N1 = N+1;
 
-	      for(int k = start2;k <= end2;k++)
-	      {
-		  for(int i = start1;i <= end1;i++)
-		  {
-			  periodicElement(&c,i,k,E,dir,0,N);
-		  }
-	      }
-	      for(int k = start2;k <= end2;k++)
-	      {
-	         for(int i = start1;i <= end1;i++)
-	      	 {
-	        	 periodicElement(&c,i,k,E,dir,N+1,1);
-		  }
-	      }
-	      }
+				void *args1[] = { (void* )&d_CellArray,
+								 (void *)&start1,
+								 (void *)&start2,
+								 (void *)&E,
+								 (void *)&dir,
+								 (void *)&N1,
+								 (void *)&one,
+								 0};
+				 cudaStatus = cudaLaunchKernel(
+								(const void*)GPU_periodic, // pointer to kernel func.
+								dimGrid,                       // grid
+								dimBlock,                      // block
+								args1,                          // arguments
+								0,
+								0
+								);
+//
+//	      }
+//	      else
+//	      {
+//
+//	      for(int k = start2;k <= end2;k++)
+//	      {
+//		  for(int i = start1;i <= end1;i++)
+//		  {
+//			  periodicElement(&c,i,k,E,dir,0,N);
+//		  }
+//	      }
+//	      for(int k = start2;k <= end2;k++)
+//	      {
+//	         for(int i = start1;i <= end1;i++)
+//	      	 {
+//	        	 periodicElement(&c,i,k,E,dir,N+1,1);
+//		  }
+//	      }
+//	      }
 	      return 0;
 	}
 
@@ -758,7 +872,26 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
     {
     	dim3 dimGrid(end1-start1+1,1,end2-start2+1),dimBlock(1,1,1);
 
-   	    GPU_periodic<<<dimGrid,dimBlock>>>(d_CellArray,start1,start2,E,dir,N+1,1);
+//   	    GPU_periodic//<<<dimGrid,dimBlock>>>(d_CellArray,start1,start2,E,dir,N+1,1);
+   	    int N1 = N+1;
+   	    int one = 1;
+     	void* args[] = { (void* )&d_CellArray,
+   	         		           (void *)&start1,
+   	         		           (void *)&start2,
+   	         		           (void *)&E,
+   	         		           (void *)&dir,
+   	         		           (void *)&N1,
+   	                            (void *)&one,
+   	         		           0};
+   	           cudaError_t cudaStatus = cudaLaunchKernel(
+   	           	            (const void*)GPU_periodic, // pointer to kernel func.
+   	           	            dimGrid,                       // grid
+   	           	            dimBlock,                      // block
+   	           	            args,                          // arguments
+   	           	            16000,
+   	           	            0
+   	           	            );
+
 
     }
     else
@@ -789,9 +922,52 @@ int SinglePeriodicBoundary(double *E,int dir,int start1,int end1,int start2,int 
 	  {
 		  dim3 dimGridX(Ny+2,1,Nz+2),dimGridY(Nx+2,1,Nz+2),dimGridZ(Nx+2,1,Ny+2),dimBlock(1,1,1);
 
-          GPU_CurrentPeriodic<<<dimGridX,dimBlock>>>(cells,J,dir,0,0,0,Nx+2);
-	      GPU_CurrentPeriodic<<<dimGridY,dimBlock>>>(cells,J,dir,1,0,0,Ny+2);
-	      GPU_CurrentPeriodic<<<dimGridZ,dimBlock>>>(cells,J,dir,2,0,0,Nz+2);
+
+//          GPU_CurrentPeriodic//<<<dimGridX,dimBlock>>>(cells,J,dir,0,0,0,Nx+2);
+          int dir2 = 0;
+          int i_s  = 0;
+          int k_s  = 0;
+          int N    = Nx+2;
+          void* args[] = { (void* )&cells,
+        		           (void *)&J,
+        		           (void *)&dir,
+        		           (void *)&dir2,
+        		           (void *)&i_s,
+        		           (void *)&k_s,
+                           (void *)&N,
+        		           0};
+          cudaError_t cudaStatus = cudaLaunchKernel(
+          	            (const void*)GPU_CurrentPeriodic, // pointer to kernel func.
+          	            dimGridX,                       // grid
+          	            dimBlock,                      // block
+          	            args,                          // arguments
+          	            16000,
+          	            0
+          	            );
+
+//	      GPU_CurrentPeriodic//<<<dimGridY,dimBlock>>>(cells,J,dir,1,0,0,Ny+2);
+	               dir2 = 1;
+	               N    = Ny+2;
+          cudaStatus = cudaLaunchKernel(
+	               	            (const void*)GPU_CurrentPeriodic, // pointer to kernel func.
+	               	            dimGridY,                       // grid
+	               	            dimBlock,                      // block
+	               	            args,                          // arguments
+	               	            16000,
+	               	            0
+	               	            );
+
+//	      GPU_CurrentPeriodic//<<<dimGridZ,dimBlock>>>(cells,J,dir,2,0,0,Nz+2);
+	      dir2 = 2;
+	      N    = Nz+2;
+	      cudaStatus = cudaLaunchKernel(
+	     	               	            (const void*)GPU_CurrentPeriodic, // pointer to kernel func.
+	     	               	            dimGridZ,                       // grid
+	     	               	            dimBlock,                      // block
+	     	               	            args,                          // arguments
+	     	               	            16000,
+	     	               	            0
+	     	               	            );
 
 		  return 0;
 	  }
@@ -836,7 +1012,17 @@ void AssignCellsToArraysGPU()
 	err= cudaDeviceGetLimit(&sz,cudaLimitStackSize);
 	printf("%s:%d - stack limit %d err %d\n",__FILE__,__LINE__,((int)sz),err);
 
-	GPU_SetFieldsToCells<<<dimGrid, dimBlockExt>>>(d_CellArray,d_Ex,d_Ey,d_Ez,d_Hx,d_Hy,d_Hz);
+//	GPU_SetFieldsCel..ls//<<<dimGrid, dimBlockExt>>>(d_CellArray,d_Ex,d_Ey,d_Ez,d_Hx,d_Hy,d_Hz);
+	void* args[] = { (void* )&d_CellArray,&d_Ex,&d_Ey,&d_Ez,&d_Hx,&d_Hy,&d_Hz,0};
+	cudaError_t cudaStatus = cudaLaunchKernel(
+	                        (const void*)GPU_SetFieldsToCells, // pointer to kernel func.
+	                        dimGrid,                       // grid
+	                        dimBlockExt,                      // block
+	                        args,                          // arguments
+	                        16000,
+	                        0
+	                        );
+
     
 	cudaDeviceSynchronize();
 	err = cudaGetLastError();
@@ -1098,24 +1284,24 @@ void checkControlPoint(int num,int nt,int check_part)
 void copyCellCurrentsToDevice(CellDouble *d_jx,CellDouble *d_jy,CellDouble *d_jz,
 		                      CellDouble *h_jx,CellDouble *h_jy,CellDouble *h_jz)
 {
-	cudaError_t err;
+	int err;
 
- 	err = cudaMemcpy(d_jx,h_jx,sizeof(CellDouble),cudaMemcpyHostToDevice);
+ 	err = MemoryCopy(d_jx,h_jx,sizeof(CellDouble),HOST_TO_DEVICE);
  	if(err != cudaSuccess)
  	        {
- 	         	printf("1copyCellCurrentsToDevice err %d %s \n",err,cudaGetErrorString(err));
+ 	         	printf("1copyCellCurrentsToDevice err %d %s \n",err,getErrorString(err));
  	       	exit(0);
  	        }
- 	err = cudaMemcpy(d_jy,h_jy,sizeof(CellDouble),cudaMemcpyHostToDevice);
+ 	err = MemoryCopy(d_jy,h_jy,sizeof(CellDouble),HOST_TO_DEVICE);
  	if(err != cudaSuccess)
  	        {
- 	         	printf("2copyCellCurrentsToDevice err %d %s \n",err,cudaGetErrorString(err));
+ 	         	printf("2copyCellCurrentsToDevice err %d %s \n",err,getErrorString(err));
  	       	exit(0);
  	        }
- 	err = cudaMemcpy(d_jz,h_jz,sizeof(CellDouble),cudaMemcpyHostToDevice);
+ 	err = MemoryCopy(d_jz,h_jz,sizeof(CellDouble),HOST_TO_DEVICE);
  	if(err != cudaSuccess)
  	        {
- 	         	printf("3copyCellCurrentsToDevice err %d %s \n",err,cudaGetErrorString(err));
+ 	         	printf("3copyCellCurrentsToDevice err %d %s \n",err,getErrorString(err));
  	       	exit(0);
  	        }
 
@@ -1208,7 +1394,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	    	 t = (double *)malloc(sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
 	    	 f = 0;
 	    }
-	    cudaMemcpy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+	    MemoryCopy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),DEVICE_TO_HOST);
 	    err = cudaGetLastError();
 	    if(err != cudaSuccess)
 	            {
@@ -1534,7 +1720,17 @@ int SetCurrentsInCellsToZero(int nt)
 
 	write3D_GPUArray(name,d_Jx);
 
-	GPU_SetAllCurrentsToZero<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
+//	GPU_SetAllCurrentsToZero//<<<dimGrid, dimBlockExt,16000>>>(d_CellArray);
+	void* args[] = { (void* )&d_CellArray,0};
+    cudaError_t cudaStatus = cudaLaunchKernel(
+                 (const void*)GPU_SetAllCurrentsToZero, // pointer to kernel func.
+                 dimGrid,                       // grid
+                 dimBlockExt,                   // block
+                 args,                          // arguments
+                 16000,
+                 0
+             );
+
 
 	return 0;
 }
@@ -1561,13 +1757,13 @@ int StepAllCells(int nt,double mass,double q_mass)
 
 
 
-//	   GPU_StepAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray);//,d_Jx);
+//	   GPU_StepAllCells//<<<dimGrid, dimBlock,16000>>>(d_CellArray);//,d_Jx);
 //	            		     		                 mass,q_mass);
 
 	   void* args[] = { (void* )&d_CellArray,0};
-	   void *d_args;
-	   cudaError_t err = cudaMalloc(&d_args,sizeof(d_CellArray)+sizeof(d_Jx));
-	   cudaError_t err1 = cudaMemcpy(d_args,args,sizeof(d_CellArray)+sizeof(d_Jx),cudaMemcpyHostToDevice);
+//	   void *d_args;
+//	   cudaError_t err = cudaMalloc(&d_args,sizeof(d_CellArray)+sizeof(d_Jx));
+//	   cudaError_t err1 = cudaMemcpy(d_args,args,sizeof(d_CellArray)+sizeof(d_Jx),cudaMemcpyHostToDevice);
 	   cudaError_t cudaStatus = cudaLaunchKernel(
 	                                            (const void*)GPU_StepAllCells, // pointer to kernel func.
 	                                            dimGrid,                       // grid
@@ -1582,8 +1778,16 @@ int StepAllCells(int nt,double mass,double q_mass)
 
 
 
-	   GPU_CurrentsAllCells<<<dimGrid, dimBlock,16000>>>(d_CellArray,0,d_Jx,
-	            		     		                 mass,q_mass);
+//	   GPU_CurrentsAllCells//<<<dimGrid, dimBlock,16000>>>(d_CellArray);//,0,d_Jx,
+	   cudaStatus = cudaLaunchKernel(
+	                                            (const void*)GPU_CurrentsAllCells, // pointer to kernel func.
+	                                            dimGrid,                       // grid
+	                                            dimBlock,                      // block
+	                                            args,                          // arguments
+	                                            16000,
+	                                            0
+	                                           );
+	            		     		                 //mass,q_mass);
 	   puts("end step");
 	   cudaDeviceSynchronize();
 
@@ -1614,7 +1818,23 @@ int WriteCurrentsFromCellsToArrays(int nt)
 	write3D_GPUArray(name,d_Jx);
 
     dim3 dimExt(CellExtent,CellExtent,CellExtent);
-    GPU_WriteAllCurrents<<<dimGrid, dimExt,16000>>>(d_CellArray,0,d_Jx,d_Jy,d_Jz,d_Rho);
+//    GPU_WriteAllCurrents//<<<dimGrid, dimExt,16000>>>(d_CellArray,0,d_Jx,d_Jy,d_Jz,d_Rho);
+    int zero = 0;
+    void* args[] = { (void *)&d_CellArray,
+    		         (void *)&zero,
+    		         (void *)&d_Jx,
+    		         (void *)&d_Jy,
+    		         (void *)&d_Jz,
+    		         (void *)&d_Rho,
+    		         0};
+        cudaError_t cudaStatus = cudaLaunchKernel(
+                     (const void*)GPU_WriteAllCurrents, // pointer to kernel func.
+                     dimGrid,                       // grid
+                     dimExt,                   // block
+                     args,                          // arguments
+                     16000,
+                     0
+                 );
 
     memory_monitor("CellOrder_StepAllCells5",nt);
 
@@ -1643,7 +1863,21 @@ int MakeParticleList(int nt,int *stage,int *stage1,int **d_stage,int **d_stage1)
 
     cudaMalloc(d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
-    GPU_MakeDepartureLists<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,*d_stage);
+//    GPU_MakeDepartureLists//<<<dimGrid, dimBlockOne>>>(d_CellArray,nt,*d_stage);
+
+    void* args[] = {
+    		         (void *)&d_CellArray,
+    		         (void *)&nt,
+    		         (void *)d_stage,
+    		         0};
+        cudaError_t cudaStatus = cudaLaunchKernel(
+                     (const void*)GPU_MakeDepartureLists, // pointer to kernel func.
+                     dimGrid,                       // grid
+                     dimBlockOne,                   // block
+                     args,                          // arguments
+                     16000,
+                     0
+                 );
 
     after_MakeDepartureLists = cudaGetLastError();
     if(after_MakeDepartureLists != cudaSuccess)
@@ -1695,7 +1929,23 @@ int reallyPassParticlesToAnotherCells(int nt,int *stage1,int *d_stage1)
 	cudaMemset(d_stage1,0,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2));
 
 
-	    GPU_ArrangeFlights<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
+//	    GPU_ArrangeFlights//<<<dimGridBulk, dimBlockOne>>>(d_CellArray,nt,d_stage1);
+	    void* args[] = {
+	    		          (void* )&d_CellArray,
+	    		          (void *)&nt,
+	    		          (void*)&d_stage1,
+	    		          0};
+
+	        cudaError_t cudaStatus = cudaLaunchKernel(
+	                     (const void*)GPU_ArrangeFlights, // pointer to kernel func.
+	                     dimGridBulk,                       // grid
+	                     dimBlockOne,                   // block
+	                     args,                          // arguments
+	                     16000,
+	                     0
+	                 );
+
+
 #ifdef BALANCING_PRINTS
 	    CUDA_Errot_t after_ArrangeFlights = cudaGetLastError();
 

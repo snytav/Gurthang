@@ -1779,12 +1779,12 @@ bool Insert(Particle& p)
 
 void copyCellFromHostToDevice(Cell *d_p,Cell *h_p)
 {
-     cudaError_t err;
+     int err;
 	 cudaMalloc((void **)&d_p,sizeof(Cell));
-     err = cudaMemcpy(d_p,h_p,sizeof(Cell),cudaMemcpyHostToDevice);
+     err = MemoryCopy(d_p,h_p,sizeof(Cell),HOST_TO_DEVICE);
      if(err != cudaSuccess)
 	 {
-		printf("copyCellFromHostToDevice err %d %s \n",err,cudaGetErrorString(err));
+		printf("copyCellFromHostToDevice err %d %s \n",err,getErrorString(err));
 		exit(0);
 	 }
 }
