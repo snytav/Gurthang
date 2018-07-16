@@ -1954,7 +1954,7 @@ int reallyPassParticlesToAnotherCells(int nt,int *stage1,int *d_stage1)
             cudaDeviceSynchronize();
 #endif
 
-	err = cudaMemcpy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyDeviceToHost);
+	err = MemoryCopy(stage1,d_stage1,sizeof(int)*(Nx+2)*(Ny+2)*(Nz+2),DEVICE_TO_HOST);
 	if(err != cudaSuccess)
 	{
 	   puts("copy error");
