@@ -2,6 +2,8 @@
 #include <string>
 #include <stdio.h>
 
+#include "archAPI.h"
+
 #include <stdlib.h>
 #include<string.h>
 
@@ -230,106 +232,106 @@ void copyFieldsToGPU(
 		                int Nx,int Ny,int Nz
 		)
 {
-	cudaError_t err;
+	int err;
 
-    err = cudaMemcpy(d_Ex,Ex,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Ex,Ex,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
     {
-    	printf("1copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+    	printf("1copyFieldsToGPU err %d %s \n",err,getErrorString(err));
     	exit(0);
     }
-    err = cudaMemcpy(d_Ey,Ey,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Ey,Ey,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
     {
-     	printf("2copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+     	printf("2copyFieldsToGPU err %d %s \n",err,getErrorString(err));
     	exit(0);
     }
 
-    err = cudaMemcpy(d_Ez,Ez,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Ez,Ez,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("3copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("3copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_Hx,Hx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Hx,Hx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("4copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("4copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
-    err = cudaMemcpy(d_Hy,Hy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Hy,Hy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("5copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("5copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
-    err = cudaMemcpy(d_Hz,Hz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Hz,Hz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("6copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
-        	exit(0);
-        }
-
-    err = cudaMemcpy(d_Jx,Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
-    if(err != cudaSuccess)
-        {
-         	printf("7copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
-        	exit(0);
-        }
-    err = cudaMemcpy(d_Jy,Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
-    if(err != cudaSuccess)
-        {
-         	printf("8copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("6copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_Jz,Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Jx,Jx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("9copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("7copyFieldsToGPU err %d %s \n",err,getErrorString(err));
+        	exit(0);
+        }
+    err = MemoryCopy(d_Jy,Jy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
+    if(err != cudaSuccess)
+        {
+         	printf("8copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_npJx,npJx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Jz,Jz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("10copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("9copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_npJy,npJy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_npJx,npJx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("11copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("10copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_npJz,npJz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_npJy,npJy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("12copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("11copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_Qx,Qx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_npJz,npJz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("13copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("12copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_Qy,Qy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Qx,Qx,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("14copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("13copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 
-    err = cudaMemcpy(d_Qz,Qz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),cudaMemcpyHostToDevice);
+    err = MemoryCopy(d_Qy,Qy,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
     if(err != cudaSuccess)
         {
-         	printf("15copyFieldsToGPU err %d %s \n",err,cudaGetErrorString(err));
+         	printf("14copyFieldsToGPU err %d %s \n",err,getErrorString(err));
+        	exit(0);
+        }
+
+    err = MemoryCopy(d_Qz,Qz,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),HOST_TO_DEVICE);
+    if(err != cudaSuccess)
+        {
+         	printf("15copyFieldsToGPU err %d %s \n",err,getErrorString(err));
         	exit(0);
         }
 }

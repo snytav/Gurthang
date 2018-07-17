@@ -8,6 +8,8 @@
 #ifndef READ_PARTICLES_H_
 #define READ_PARTICLES_H_
 
+#include <stdio.h>
+
 
 #define SORTS 3
 

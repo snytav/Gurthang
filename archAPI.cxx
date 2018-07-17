@@ -104,6 +104,44 @@ int DeviceSynchronize()
 }
 #endif
 
+#ifdef __CUDACC__
+ __device__ void BlockThreadSynchronize()
+ {
+     __syncthreads();
+ }
+#else
+ void BlockThreadSynchronize(){}
+#endif
 
+#ifdef __CUDACC__
+__device__ double MultiThreadAdd(double *address, double val)
+{
+    double assumed,old=*address;
+    do {
+        assumed=old;
+        old= __longlong_as_double(atomicCAS((unsigned long long int*)address,
+                    __double_as_longlong(assumed),
+                    __double_as_longlong(val+assumed)));
+    }while (assumed!=old);
+
+    *address += val;
+
+    old = *address;
+
+    return old;
+}
+#else
+double MultiThreadAdd(double *address, double val){*address += val;}
+#endif
+
+#ifdef __CUDACC__
+ const char *getErrorString(int err)
+{
+	return cudaGetErrorString((cudaError_t)err);
+}
+#else
+const char *getErrorString(int err){return "";}
+
+#endif
 
 

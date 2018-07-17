@@ -316,7 +316,9 @@ void copyCellFromDevice(GPUCell* d_src,GPUCell* h_dst,std::string where,int nt)
 
 //    is the device array of Cell pointers being really copied to Host?
 
-	ThreadSynchronize();
+	cudaThreadSynchronize();
+
+	//ThreadSynchronize();
 
 	err = MemoryCopy(h_copy_of_d_src,d_src,sizeof(GPUCell),DEVICE_TO_HOST);
 	if(err != 0)

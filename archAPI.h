@@ -128,10 +128,7 @@ typedef struct {
 #endif
 
 #ifdef __CUDACC__
-__device__ void BlockThreadSynchronize()
-{
-    __syncthreads();
-}
+__device__ void BlockThreadSynchronize();
 #else
 void BlockThreadSynchronize();
 #endif
@@ -142,22 +139,8 @@ void BlockThreadSynchronize();
 
 //	double assumed,old=*address;
 #ifdef __CUDACC__
-__device__ double MultiThreadAdd(double *address, double val)
-{
-    double assumed,old=*address;
-    do {
-        assumed=old;
-        old= __longlong_as_double(atomicCAS((unsigned long long int*)address,
-                    __double_as_longlong(assumed),
-                    __double_as_longlong(val+assumed)));
-    }while (assumed!=old);
+__device__ double MultiThreadAdd(double *address, double val);
 
-    *address += val;
-
-    old = *address;
-
-    return old;
-}
 #else
 double MultiThreadAdd(double *address, double val);
 #endif
@@ -166,114 +149,53 @@ double MultiThreadAdd(double *address, double val);
 //public:
 //	cudaAPI(){}
 
-#ifdef __CUDACC__
- const char *getErrorString(int err)
-{
-	return cudaGetErrorString((cudaError_t)err);
-}
-#else
 const char *getErrorString(int err);
 
-#endif
+//#ifdef __CUDACC__
+// const char *getErrorString(int err)
+//{
+//	return cudaGetErrorString((cudaError_t)err);
+//}
+//#else
+//const char *getErrorString(int err);
+//
+//#endif
 
 
-#ifdef __CUDACC__
-int SetDevice(int n)
-{
-	return cudaSetDevice(n);
-}
-#else
+
 int SetDevice(int n);
-#endif
 
 #ifdef __CUDACC__
 __device__
-void AsyncCopy(double *dst,double *src,int n,int size)
-{
-	int j;
-	j = n;
-	if(j < size)
-	{
-	   dst[j] = src[j];
-	}
-
-}
+void AsyncCopy(double *dst,double *src,int n,int size);
 #else
 void AsyncCopy(double *dst,double *src,int n,int size);
 #endif
 
-#ifdef __CUDACC__
- int MemoryCopy(void* dst,void *src,size_t size,int dir)
-{
-//	int err = 0;
-
-
-	cudaMemcpyKind cuda_dir;
-
-	if(dir == HOST_TO_DEVICE) cuda_dir = cudaMemcpyHostToDevice;
-	if(dir == HOST_TO_HOST) cuda_dir = cudaMemcpyHostToHost;
-	if(dir == DEVICE_TO_HOST) cuda_dir = cudaMemcpyDeviceToHost;
-	if(dir == DEVICE_TO_DEVICE) cuda_dir = cudaMemcpyDeviceToDevice;
+int MemoryCopy(void* dst,void *src,size_t size,int dir);
 
 
 
-	return ((int)cudaMemcpy(dst,src,size,cuda_dir));
-}
-#else
- int MemoryCopy(void* dst,void *src,size_t size,int dir);
-#endif
+int MemoryAllocate(void** dst,size_t size);
 
-#ifdef __CUDACC__
- int MemoryAllocate(void** dst,size_t size)
-{
-	cudaMalloc(dst,size);
-    return 0;
-}
-#else
- int MemoryAllocate(void** dst,size_t size);
-#endif
+int GetDeviceMemory(size_t *m_free,size_t *m_total);
 
-#ifdef __CUDACC__
- int GetDeviceMemory(size_t *m_free,size_t *m_total)
-{
-	return cudaMemGetInfo(m_free,m_total);
-}
-#else
- int GetDeviceMemory(size_t *m_free,size_t *m_total);
-#endif
-
-#ifdef __CUDACC__
-int MemorySet(void *s, int c, size_t n)
-{
-	cudaMemset(s,c,n);
-
-    return 0;
-}
-#else
 int MemorySet(void *s, int c, size_t n);
-#endif
 
+
+int ThreadSynchronize();
 
 #ifdef __CUDACC__
- int DeviceSynchronize()
-{
+ int __device__ DeviceSynchronize();
 
-	return cudaDeviceSynchronize();
 
-}
 
- int ThreadSynchronize()
-{
-	return cudaThreadSynchronize();
-}
 
- int getLastError()
-{
-	return cudaGetLastError();
-}
+
+ int getLastError();
+
 #else
  int DeviceSynchronize();
- int ThreadSynchronize();
  int getLastError();
 
 #endif
