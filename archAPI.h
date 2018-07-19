@@ -33,6 +33,10 @@
 #define global_for_CUDA __global__
 #endif
 
+#ifndef __CUDACC__
+extern uint3 threadIdx,blockIdx;
+#endif
+
 //#define DETAILED_CURRENTS_WRITE
 //#define OMP_DETAILED_OUTPUT
 //#define OMP_OUTPUT

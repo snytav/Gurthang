@@ -182,3 +182,87 @@ int MemorySet(void *s, int c, size_t n)
 	return memset(s,c,n);
 }
 #endif
+
+int get_num_args(void **args)
+{
+	int i;
+	for(i = 0;args[i] != NULL;i++);
+
+	return i;
+}
+
+#ifndef __CUDACC__
+dim3 threadIdx,blockIdx;
+#endif
+
+typedef void (*func_1)(void);
+
+void call_with_args(const void *func, void **args)
+{
+	int num = get_num_args(args);
+
+	switch(num)
+	{
+		case 0:  func_1 f = (func_1)func;
+			     f();
+				 break;
+
+		case 1:  func(*(args[0]));
+		         break;
+
+		case 2:  func(*(args[0]),*(args[1]));
+		         break;
+
+		case 3:  func(*(args[0]),*(args[1]),*(args[2]));
+		         break;
+
+		case 4:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]));
+		         break;
+
+		case 5:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]),*(args[4]));
+		         break;
+
+		case 6:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]),*(args[4]),*(args[5]));
+		         break;
+
+		case 7:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]),*(args[4]),*(args[5]),*(args[6]));
+		         break;
+
+
+	}
+
+}
+
+int cudaLaunchKernel_onCPU(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, cudaStream_t stream);
+{
+
+	for(int i = 0;i < gridDim.x;i++)
+	{
+		for(int l = 0;l < gridDim.y;l++)
+		{
+			for(int k = 0;k < gridDim.z;k++)
+			{
+				blockIdx.x = i;
+				blockIdx.y = l;
+				blockIdx.z = k;
+
+				for(int i1 = 0;i1 < blockDim.x;i1++)
+				{
+					for(int l1 = 0;l1 < blockDim.y;l1++)
+					{
+						for(int k1 = 0;k1 < blockDim.z;k1++)
+						{
+							threadIdx.x = i1;
+							threadIdx.x = l1;
+							threadIdx.x = k1;
+
+							call_with_args(func, args);
+						}
+					}
+				}
+			}
+		}
+	}
+
+}
+
