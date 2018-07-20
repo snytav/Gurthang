@@ -195,45 +195,80 @@ int get_num_args(void **args)
 dim3 threadIdx,blockIdx;
 #endif
 
-typedef void (*func_1)(void);
+typedef void (*func_0)(void);
+
+typedef void (*func_1)(void*);
+
+typedef void (*func_2)(void*,void*);
+
+typedef void (*func_3)(void*,void*,void*);
+
+typedef void (*func_4)(void*,void*,void*,void*);
+
+typedef void (*func_5)(void*,void*,void*,void*,void*);
+
+typedef void (*func_6)(void*,void*,void*,void*,void*,void*);
+
+typedef void (*func_7)(void*,void*,void*,void*,void*,void*,void*);
 
 void call_with_args(const void *func, void **args)
 {
 	int num = get_num_args(args);
 
-	switch(num)
-	{
-		case 0:  func_1 f = (func_1)func;
-			     f();
-				 break;
-
-		case 1:  func(*(args[0]));
-		         break;
-
-		case 2:  func(*(args[0]),*(args[1]));
-		         break;
-
-		case 3:  func(*(args[0]),*(args[1]),*(args[2]));
-		         break;
-
-		case 4:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]));
-		         break;
-
-		case 5:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]),*(args[4]));
-		         break;
-
-		case 6:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]),*(args[4]),*(args[5]));
-		         break;
-
-		case 7:  func(*(args[0]),*(args[1]),*(args[2]),*(args[3]),*(args[4]),*(args[5]),*(args[6]));
-		         break;
 
 
+	if(num == 0)
+    {
+		func_0 f = (func_0)func;
+	    f();
+    }
+
+	if(num == 1)
+    {
+	   func_1 f1 = (func_1)func;
+	   f1(args[0]);
 	}
+
+	if(num ==2 )
+	{
+		func_2 f2 = (func_2)func;
+        f2(args[0],args[1]);
+	}
+
+	if(num == 3)
+	{
+		func_3 f3 = (func_3)func;
+        f3(args[0],args[1],args[2]);
+	}
+
+    if(num == 4)
+    {
+    	func_4 f4 = (func_4)func;
+        f4(args[0],args[1],args[2],args[3]);
+    }
+
+    if(num == 5)
+    {
+    	func_5 f5 = (func_5)func;
+        f5(args[0],args[1],args[2],args[3],args[4]);
+    }
+
+    if(num == 6)
+    {
+    	func_6 f6 = (func_6)func;
+        f6(args[0],args[1],args[2],args[3],args[4],args[5]);
+    }
+
+	if(num == 7)
+	{
+		func_7 f7 = (func_7)func;
+        f7(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
+	}
+
 
 }
 
-int cudaLaunchKernel_onCPU(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, cudaStream_t stream);
+int cudaLaunchKernel_onCPU(const void *func, dim3 gridDim, dim3 blockDim, void **args, size_t sharedMem, cudaStream_t stream)
 {
 
 	for(int i = 0;i < gridDim.x;i++)
@@ -242,9 +277,11 @@ int cudaLaunchKernel_onCPU(const void *func, dim3 gridDim, dim3 blockDim, void *
 		{
 			for(int k = 0;k < gridDim.z;k++)
 			{
+#ifndef __CUDACC__
 				blockIdx.x = i;
 				blockIdx.y = l;
 				blockIdx.z = k;
+#endif
 
 				for(int i1 = 0;i1 < blockDim.x;i1++)
 				{
@@ -252,10 +289,11 @@ int cudaLaunchKernel_onCPU(const void *func, dim3 gridDim, dim3 blockDim, void *
 					{
 						for(int k1 = 0;k1 < blockDim.z;k1++)
 						{
+#ifndef __CUDACC__
 							threadIdx.x = i1;
 							threadIdx.x = l1;
 							threadIdx.x = k1;
-
+#endif
 							call_with_args(func, args);
 						}
 					}

@@ -12,7 +12,7 @@ CUDALIBS=  -g -L$(CUDALIB) -lcuda -lcudart #-lthrust
 MPIFLAGS=
 CFLAGS=
 
-OBJ = main.o mpi_shortcut.o service_functions.o compare.o maxwell.o load_data.o archAPI.o kernels.o
+OBJ = main.o mpi_shortcut.o service_functions.o compare.o maxwell.o load_data.o archAPI.o 
 #plasma.o
             
 main.o: main.cu $(DEPS)
