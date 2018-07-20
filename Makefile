@@ -21,8 +21,8 @@ main.o: main.cu $(DEPS)
 kernels.o: kernels.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 	--relocatable-device-code=true
 	
-compare.o: compare.cu $(DEPS)
-	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)
+#compare.o: compare.cu $(DEPS)
+#	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)
 	
 load_data.o: load_data.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	

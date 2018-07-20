@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include <math.h>
+
 
 double compare(double *a,double *b,int num,std::string legend,double tol)
 {
