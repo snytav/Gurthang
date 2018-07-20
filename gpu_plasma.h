@@ -4,7 +4,7 @@
  *  Created on: Aug 21, 2013
  *      Author: snytav
  */
-#include "cuPrintf.cu"
+
 
 #ifndef GPU_PLASMA_H_
 #define GPU_PLASMA_H_

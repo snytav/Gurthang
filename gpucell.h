@@ -8,7 +8,7 @@
 #ifndef GPUCELL_H_
 #define GPUCELL_H_
 
-//#include "cuPrintf.cu"
+
 #include "cell.h"
 #include "archAPI.h"
 #include <stdlib.h>
@@ -38,12 +38,12 @@ void dbgPrintGPUParticleAttribute(Cell *d_c,int n_particle,int attribute,char *n
 
 __global__ void testKernelBefore(double *vec,int n_particle,int attribute)
 {
-   //  	cuPrintf("vecBefore %15.5e \n",vec[attribute + n_particle*sizeof(Particle)/sizeof(double)]);
+
 }
 
 __global__ void testKernel(double *vec)
 {
-    // 	cuPrintf("vec %15.5e \n",vec[1]);
+
 }
 
 

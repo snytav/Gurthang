@@ -419,7 +419,7 @@ global_for_CUDA void GPU_ArrangeFlights(GPUCell  **cells,int nt, int *d_stage)
 
 	Cell  *c,*c0 = cells[0],nc,*snd_c;
 		//int first = 1;
-		//cuPrintf("stray %3d %3d %3d \n",nx,ny,nz);
+
 
 	//printf("GPU_ArrangeFlights \n");
 //	return;
@@ -536,7 +536,6 @@ global_for_CUDA void GPU_CollectStrayParticles(Cell **cells,int nt
 //	int i,l,k;
 	Cell  *c,*c0 = cells[0],nc,*new_c;
 	//int first = 1;
-	//cuPrintf("stray %3d %3d %3d \n",nx,ny,nz);
 
 	c = cells[ n = c0->getGlobalCellNumber(nx,ny,nz)];
 
@@ -1088,7 +1087,7 @@ global_for_CUDA void GPU_CurrentPeriodic(GPUCell  **cells,double *E,int dirE, in
 	unsigned int nz = blockIdx.z;
 	Cell  *c0 = cells[0];
 
-//	cuPrintf("i %d k %d N %d dir % dirE %d\n",nx+i_s,nz+k_s,N,dir,dirE);
+
 	periodicCurrentElement(c0,nx+i_s,nz+k_s,E, dir,dirE,N);
 }
 

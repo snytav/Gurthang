@@ -4,7 +4,7 @@
 
 //#define VIRTUAL_FUNCTIONS
 
-//#include "cuPrintf.cu"
+
 
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
