@@ -13,6 +13,13 @@
 
 #define GPU_PARTICLE
 
+#ifndef __CUDACC__
+struct  double3
+{
+    double x, y, z;
+};
+#endif
+
 typedef struct Field{
 	double3 E,H;
 } Field;
@@ -60,7 +67,7 @@ void ElectricMove(double3 E,double tau, double q_m,double *tau1,double *pu,doubl
 		*pu += *tau1*E.x;
 		*pv += *tau1*E.y;
 		*pw += *tau1*E.z;
-		*ps = (*tau1) * rsqrt(((*pu) * (*pu) + (*pv) * (*pv) + (*pw) * (*pw)) * 1. + 1.0);
+		*ps = (*tau1) * pow(((*pu) * (*pu) + (*pv) * (*pv) + (*pw) * (*pw)) * 1. + 1.0,-0.5);
 
 }
 

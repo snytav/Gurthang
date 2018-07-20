@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include<math.h>
 
-#include "rnd.h"
+//#include "rnd.h"
 
 #include "read_particles.h"
 
@@ -12,9 +12,12 @@
 
 #include "particle.h"
 
+#include "maxwell.h"
+
 
 #include "f2c.h"
 #include <stdio.h>
+//#include "rnd.h"
 // #include "run_control.h"
 
 /* Common Block Declarations */
@@ -51,23 +54,23 @@ struct cag05a {
 
 /* Table of constant values */
 
-static integer c__9 = 9;
-static integer c__1 = 1;
-static integer c__3 = 3;
-static integer c__5 = 5;
-static integer c__0 = 0;
-static integer c__2 = 2;
-static doublereal c_b172 = 1.;
-static integer c__12 = 12;
-static doublereal c_b417 = 1.1424;
-static doublereal c_b419 = .5712;
-static doublereal c_b429 = 1.5;
-static integer c__20000 = 20000;
-static doublereal c_b581 = 0.;
-static doublereal c_b582 = .11200000000000002;
-static doublereal c_b587 = .14;
-static doublereal c_b589 = .8;
-static doublereal c_b614 = .001;
+//static integer c__9 = 9;
+//static integer c__1 = 1;
+//static integer c__3 = 3;
+//static integer c__5 = 5;
+//static integer c__0 = 0;
+//static integer c__2 = 2;
+//static doublereal c_b172 = 1.;
+//static integer c__12 = 12;
+//static doublereal c_b417 = 1.1424;
+//static doublereal c_b419 = .5712;
+//static doublereal c_b429 = 1.5;
+//static integer c__20000 = 20000;
+//static doublereal c_b581 = 0.;
+//static doublereal c_b582 = .11200000000000002;
+//static doublereal c_b587 = .14;
+//static doublereal c_b589 = .8;
+//static doublereal c_b614 = .001;
 
 /* ------------------------------------------------------ */
 /* ������� �.�., */
@@ -213,6 +216,166 @@ int in_range(double z0,double z,double z1)
 	return ((z > z0) && (z < z1)) || ((fabs(z - z0) < 1e-13) && (fabs(z - z1) < 1e-13));
 }
 
+int AllocateBinaryParticleArraysOneSort(
+    		  double **dbg_x,
+    		  double **dbg_y,
+    		  double **dbg_z,
+    		  double **dbg_px,
+    		  double **dbg_py,
+    		  double **dbg_pz,
+    		  double **m,
+    		  int total_particles
+    		  )
+      {
+	         *dbg_x = (double *)malloc(sizeof(double)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_x,total_particles,nt,"x",sort);
+
+	         *dbg_y = (double *)malloc(sizeof(double)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_y,total_particles,nt,"y",sort);
+
+	         *dbg_z = (double *)malloc(sizeof(double)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_z,total_particles,nt,"z",sort);
+
+	         *dbg_px = (double *)malloc(sizeof(double)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_px,total_particles,nt,"px",sort);
+
+	         *dbg_py = (double *)malloc(sizeof(double)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_py,total_particles,nt,"py",sort);
+
+	         *dbg_pz = (double *)malloc(sizeof(double)*total_particles);
+
+	         *m      = (double *)malloc(sizeof(double)*total_particles);
+
+	         //debugPrintParticleCharacteristicArray(*dbg_pz,total_particles,nt,"pz",sort);
+
+		 	return 0;
+      }
+
+int AllocateBinaryParticleArraysOneSortFloat(
+    		  float **dbg_x,
+    		  float **dbg_y,
+    		  float **dbg_z,
+    		  float **dbg_px,
+    		  float **dbg_py,
+    		  float **dbg_pz,
+    		  int total_particles
+    		  )
+      {
+	         *dbg_x = (float*)malloc(sizeof(float)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_x,total_particles,nt,"x",sort);
+
+	         *dbg_y = (float*)malloc(sizeof(float)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_y,total_particles,nt,"y",sort);
+
+	         *dbg_z = (float *)malloc(sizeof(float)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_z,total_particles,nt,"z",sort);
+
+	         *dbg_px = (float *)malloc(sizeof(float)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_px,total_particles,nt,"px",sort);
+
+	         *dbg_py = (float *)malloc(sizeof(float)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_py,total_particles,nt,"py",sort);
+
+	         *dbg_pz = (float *)malloc(sizeof(double)*total_particles);
+	         //debugPrintParticleCharacteristicArray(*dbg_pz,total_particles,nt,"pz",sort);
+
+		 	return 0;
+      }
+
+
+
+
+void AllocateBinaryParticlesArrays(
+		  ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays *beam_electrons)
+{
+   AllocateBinaryParticleArraysOneSort(&(ions->dbg_x), &(ions->dbg_y) ,&(ions->dbg_z),
+  		                                         &(ions->dbg_px),&(ions->dbg_py),
+  		                                         &(ions->dbg_pz),
+  		                                         &(ions->m),
+  		                                          ions->total);
+
+   AllocateBinaryParticleArraysOneSort(&(electrons->dbg_x),&(electrons->dbg_y), &(electrons->dbg_z),
+  		                                             &(electrons->dbg_px),&(electrons->dbg_py),&(electrons->dbg_pz),
+  		                                             &(electrons->m),
+  		                                             electrons->total);
+
+   AllocateBinaryParticleArraysOneSort(&(beam_electrons->dbg_x),&(beam_electrons->dbg_y),&(beam_electrons->dbg_z),
+  		                                             &(beam_electrons->dbg_px),&(beam_electrons->dbg_py),&(beam_electrons->dbg_pz),
+  		                                             &(beam_electrons->m),
+  		                                             beam_electrons->total);
+
+   //magf = 1;
+}
+
+void AllocateBinaryParticlesArraysFloat(
+		  ParticleFloatArrays *ions,ParticleFloatArrays *electrons,ParticleFloatArrays *beam_electrons)
+{
+   AllocateBinaryParticleArraysOneSortFloat(&(ions->dbg_x), &(ions->dbg_y) ,&(ions->dbg_z),
+  		                                         &(ions->dbg_px),&(ions->dbg_py),&(ions->dbg_pz),
+  		                                          ions->total);
+
+
+   AllocateBinaryParticleArraysOneSortFloat(&(electrons->dbg_x),&(electrons->dbg_y), &(electrons->dbg_z),
+  		                                             &(electrons->dbg_px),&(electrons->dbg_py),&(electrons->dbg_pz),
+  		                                             electrons->total);
+
+   AllocateBinaryParticleArraysOneSortFloat(&(beam_electrons->dbg_x),&(beam_electrons->dbg_y),&(beam_electrons->dbg_z),
+  		                                             &(beam_electrons->dbg_px),&(beam_electrons->dbg_py),&(beam_electrons->dbg_pz),
+  		                                             beam_electrons->total);
+
+   //magf = 1;
+}
+
+
+int writeParamsFile(double tex0,double tey0,double tez0,
+                         double Tb,double rimp,
+                         double rbd,double ni,
+	                      double lx,double ly,double lz,
+	                      int lp,int nx,int ny,int nz,
+	                      double tau,double B0,
+	                      double bx,double by,double bz,
+	                      double py,double pz,
+	                      int beam_plasma,int start_from_file,
+	                      int ts,int ms,int phase
+	                      )
+	  {
+		  FILE *f;
+
+		  if((f = fopen("000_params.dat","wt")) == NULL) return 1;
+
+//		  fprintf(f,"\n");
+		  fprintf(f,"%15.5e plasma electron temperature along X \n ",tex0);
+		  fprintf(f,"%15.5e plasma electron temperature along Y \n ",tey0);
+		  fprintf(f,"%15.5e plasma electron temperature along Z \n ",tez0);
+		  fprintf(f,"%15.5e beam impulse\n ",rimp);
+		  fprintf(f,"%15.5e beam velocity dispersion \n ",Tb);
+		  fprintf(f,"%15.5e beam and plasma density ratio \n ",rbd);
+		  fprintf(f,"%15.5e plasma density \n ",ni);
+		  fprintf(f,"%15.5e external magnetic field (along X) \n ",B0);
+		  fprintf(f,"%15.5e domain size X \n ",lx);
+		  fprintf(f,"%15.5e domain size Y \n ",ly);
+		  fprintf(f,"%15.5e domain size Z \n ",lz);
+		  fprintf(f,"%15.5e plasma size Y \n ",py);
+		  fprintf(f,"%15.5e plasma size Z \n ",pz);
+		  fprintf(f,"%15.5e beam size X \n ",bx);
+		  fprintf(f,"%15.5e beam size Y \n ",by);
+		  fprintf(f,"%15.5e beam size Z \n ",bz);
+		  fprintf(f,"%15d   average number of particles in cell \n ",lp);
+		  fprintf(f,"%15d   number of mesh nodes along X \n ",nx);
+		  fprintf(f,"%15d   number of mesh nodes along Y \n ",ny);
+		  fprintf(f,"%15d   number of mesh nodes along Z \n ",nz);
+		  fprintf(f,"%15.5e timestep \n ",tau);
+		  fprintf(f,"%15d   1 if beam-plasma interaction, 0 if beam-beam \n",beam_plasma);
+		  fprintf(f,"%15d   moment to start from saved\n ",start_from_file);
+		  fprintf(f,"%15d   phase to start from save\n ",phase);
+		  fprintf(f,"%15d   total steps \n ",ts);
+		  fprintf(f,"%15d   number of steps between diagnostic files \n ",ms);
+
+
+         fclose(f);
+         return 0;
+	  }
+
 int InitUniformMaxwellianParticles(int beamf,int jmb,
 				   double tex0,double tey0,double tez0,
 				   double beam_lx, double beam_ly,double beam_lz,int *jmb_real,
@@ -257,6 +420,7 @@ int InitUniformMaxwellianParticles(int beamf,int jmb,
 	wi[j - 1] = 0.0;
     }
     
+
 //    parasetrandombeam_();
 /*     END RANDOM GENERATOR */
 /* ****************** BEAM **************************************** */
@@ -285,18 +449,20 @@ int InitUniformMaxwellianParticles(int beamf,int jmb,
 	    
 	}
 	
+	//1st beam particle impulse:    0.20296063288436139
 	for (j = 1; j <= *jmb_real; j++)
 	{
-	    double uxt,ubt; 
+//	    double uxt,ubt;
 	    d__1 = ux[j - 1];
 	    d__2 = uy[j - 1];
 	    d__3 = uz[j - 1];
 	    
 	    vb0 = sqrt(1.0 - d__1 * d__1 - d__2 * d__2 - d__3 * d__3);
-// 	    uxt = ux[j - 1];
-// 	    ubt = uxt/vb0;
-// 	    ub[j-1] = ubt;
+
 	    ub[j - 1] = ux[j - 1] / vb0;
+
+	    double t = fabs(ub[j - 1]-0.20296063288436139);
+
 	    vb[j - 1] = uy[j - 1] / vb0;
 	    wb[j - 1] = uz[j - 1] / vb0;
 #ifdef DEBUG_INITIAL_PARTICLE_PRINTS
@@ -317,7 +483,7 @@ int InitUniformMaxwellianParticles(int beamf,int jmb,
     {
     	   if((2*j-1) == 24933)
     	   {
-    		   int qq = 0;
+//    		   int qq = 0;
     	   }
            xf[2*j-1-1] = xi[j-1];
            yf[2*j-1-1] = yi[j-1];
@@ -395,14 +561,15 @@ int AddBeamParticles(int jmb,
 				   double *xb,double *yb, double *zb,double *ub,double *vb, double *wb
 				  )
 {
-    double x,y,z,vb0,d__1,d__2,d__3,vy,vz,termx,gb0;
-    double vf01,vf02,pinv1,pinv2,mfrq;
+    double x,y,z;//,vb0,d__1,d__2,d__3,vy,vz,termx,gb0;
+//    double vf01,vf02,pinv1,pinv2,mfrq;
 //     double *ux,*uy,*uz;
-    double *ux,*uy,*uz;
-    double beam_y_max,beam_y_min, beam_sh;
+//    double *ux,*uy,*uz;
+//    double beam_y_max;
+    double beam_y_min, beam_sh;
 
     beam_sh = (ly - beam_ly)/2;
-    beam_y_max = ly - beam_sh;
+//    beam_y_max = ly - beam_sh;
     beam_y_min = beam_sh;
 
     for (int j = 1; j <= jmb; j++)
@@ -440,32 +607,68 @@ int getMassCharge(ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays 
 		double ni,double rbd,int lp)
 {
     //int lp = ((double)N)/(Nx*Ny*Nz);
-	electrons->m[0]      = -ni/lp;                 //!!!!!!
-	ions->m[0]           =  2.0*ni/lp*(1.0+rbd);
-	beam_electrons->m[0] = electrons->m[0]*rbd*2.0;
+	electrons->m[0]      = -ni/lp/2.0;                 //!!!!!!
+	ions->m[0]           =  (ni+rbd)/lp;
+	beam_electrons->m[0] =  -rbd/lp;
 
 	electrons->q_m        = -1.0;
 	ions->q_m             =  1.0/1836.0;
 	beam_electrons->q_m   = -1.0;
 
+	return 0;
 }
 
-int AllocateMemoryForArrays(int N,int sorts)
+int AllocateMemoryForArrays(int N,ParticleArrays *ions,ParticleArrays *electrons,ParticleArrays *beam_electrons)
 {
 
-	initial[0].total    = N;
-    initial[1].total    = 2*N;
-    initial[2].total    = N;
+	ions->total           = N;
+    electrons->total      = 2*N;
+    beam_electrons->total = N;
 
-    diagnostics[0].total    = N;
-    diagnostics[1].total    = 2*N;
-    diagnostics[2].total    = N;
+//    sorts = 3;
 
-    sorts = 3;
+    AllocateBinaryParticlesArrays(ions,electrons,beam_electrons);
+//    AllocateBinaryParticlesArraysFloat(&(diagnostics[0]),&(diagnostics[1]),&(diagnostics[2]));
+    return 0;
+}
 
-    AllocateBinaryParticlesArrays(&(initial[0]),&(initial[1]),&(initial[2]));
-    AllocateBinaryParticlesArraysFloat(&(diagnostics[0]),&(diagnostics[1]),&(diagnostics[2]));
+int convertParticleArraysToSTLvector(
+		  double *dbg_x,
+		  double *dbg_y,
+		  double *dbg_z,
+		  double *dbg_px,
+		  double *dbg_py,
+		  double *dbg_pz,
+		  double q_m,
+		  double m,
+		  int total_particles,
+		  particle_sorts sort,
+		  std::vector<Particle> & vp
+		  )
+{
+	  double x,y,z,px,py,pz;
 
+	  for(int i = 0; i < total_particles;i++)
+	  {
+		  x   = dbg_x[i];
+		  y   = dbg_y[i];
+		  z   = dbg_z[i];
+		  px   = dbg_px[i];
+		  py   = dbg_py[i];
+		  pz   = dbg_pz[i];
+
+
+		  Particle p(x,y,z,px,py,pz,m,q_m);
+
+		  p.fortran_number = i+1;
+		  p.sort = sort;
+
+		  vp.push_back(p);
+
+	  }
+	  int size = vp.size();
+
+	  return 0;
 }
 
 
@@ -473,33 +676,79 @@ int getUniformMaxwellianParticles(std::vector<Particle>  & ion_vp,
 		                           std::vector<Particle>  & el_vp,
 		                           std::vector<Particle>  & beam_vp)
 {
+	ParticleArrays ions,electrons,beam;
 
-    int total = 160000;
+    int total = 1600000,jmb;
 
-    tex0 = 1e-3;
-    tey0 = 1e-3;
-    tez0 = 1e-3;
-    tol  = 1e-15;
+    double tex0 = 1e-3;
+    double tey0 = 1e-3;
+    double tez0 = 1e-3;
+//    double tol  = 1e-15;
 
-    Tb   = 0.0;
-    rimp = 0.2;
-    rbd  = 1.0e-2;
-    ni   = 1.0;
-    meh  = 0;
-    lp   = 100;
+    double Tb   = 0.14;
+    double rimp = 0.2;
+    double rbd  = 2.0e-3;
+    double ni   = 1.0;
+    int    meh  = 0;
+    int    lp   = 1000;
+    double lx   = 1.1424;
+    double ly   = 0.05;
+    double lz   = 0.05;
 
-    int AllocateMemoryForArrays(total,3);
+    AllocateMemoryForArrays(total,&ions,&electrons,&beam);
 
-	InitUniformMaxwellianParticles(1,N,tex0,tey0,tez0,
-					  beam_max.x,beam_max.y,beam_max.z(),&jmb_real,
-					  xmax.x,xmax.y,xmax.z(),meh,Tb,rimp,rbd,
-						  initial[0].dbg_x,initial[0].dbg_y,initial[0].dbg_z,
-						  initial[0].dbg_px,initial[0].dbg_py,initial[0].dbg_pz,
-						  initial[2].dbg_x,initial[2].dbg_y,initial[2].dbg_z,
-						  initial[2].dbg_px,initial[2].dbg_py,initial[2].dbg_pz,
-						  initial[1].dbg_x,initial[1].dbg_y,initial[1].dbg_z,
-						  initial[1].dbg_px,initial[1].dbg_py,initial[1].dbg_pz);
+    getMassCharge(&ions,&electrons,&beam,ni,rbd,lp);
 
+	InitUniformMaxwellianParticles(1,total,tex0,tey0,tez0,
+					  lx,ly,lz,
+					  &jmb,
+					  lx,ly,lz,
+					  meh,Tb,rimp,rbd,
+						 ions.dbg_x,ions.dbg_y,ions.dbg_z,
+						 ions.dbg_px,ions.dbg_py,ions.dbg_pz,
+						  beam.dbg_x,beam.dbg_y,beam.dbg_z,
+						  beam.dbg_px,beam.dbg_py,beam.dbg_pz,
+						  electrons.dbg_x,electrons.dbg_y,electrons.dbg_z,
+						  electrons.dbg_px,electrons.dbg_py,electrons.dbg_pz);
+
+	 convertParticleArraysToSTLvector(
+			 beam.dbg_x,
+			 beam.dbg_y,
+			 beam.dbg_z,
+			 beam.dbg_px,
+			 beam.dbg_py,
+			 beam.dbg_pz,
+			 beam.q_m,
+			 *(beam.m),
+	 		 beam.total,
+	 		 BEAM_ELECTRON,
+	 		 beam_vp);
+
+	 convertParticleArraysToSTLvector(
+			 ions.dbg_x,
+			 ions.dbg_y,
+			 ions.dbg_z,
+			 ions.dbg_px,
+			 ions.dbg_py,
+			 ions.dbg_pz,
+			 ions.q_m,
+			 *(ions.m),
+	 		 ions.total,
+	 		 ION,
+	 		 ion_vp);
+
+	 convertParticleArraysToSTLvector(
+	 			 electrons.dbg_x,
+	 			 electrons.dbg_y,
+	 			 electrons.dbg_z,
+	 			 electrons.dbg_px,
+	 			 electrons.dbg_py,
+	 			 electrons.dbg_pz,
+	 			 electrons.q_m,
+	 			 *(electrons.m),
+	 	 		 electrons.total,
+	 	 		 PLASMA_ELECTRON,
+	 	 		 el_vp);
 
 	return 0;
 
