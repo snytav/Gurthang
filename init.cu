@@ -1,7 +1,9 @@
 //#include "load_data.h"
 
+#include "gou_plasma.h"
 
-int InitializeGPU()
+
+int Plasma::InitializeGPU()
 {
 	int err = getLastError();
 	 if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
@@ -32,7 +34,7 @@ int InitializeGPU()
     return 0;
 }
 
-int initMeshArrays()
+int Plasma::initMeshArrays()
 {
 	   initControlPointFile();
 
@@ -51,7 +53,7 @@ int initMeshArrays()
 }
 
 
-void LoadTestData(int nt,
+void Plasma::LoadTestData(int nt,
 		            int part_nt,
 		            std::vector<Particle> & ion_vp,
 		            std::vector<Particle> & el_vp,
@@ -69,7 +71,7 @@ void LoadTestData(int nt,
    magf = 1;
 }
 
-void AssignArraysToCells()
+void Plasma::AssignArraysToCells()
 {
    for(int n = 0;n < (*AllCells).size();n++)
    {
@@ -80,7 +82,7 @@ void AssignArraysToCells()
    }
 }
 
-int compare(Particle p,Particle p1)
+int Plasma::compare(Particle p,Particle p1)
 {
 	int tx = comd(p.x,p1.x);
 	int ty = comd(p.y,p1.y);
@@ -93,7 +95,7 @@ int compare(Particle p,Particle p1)
 	return (tx && ty && tz && tpx && tpy && tpz);
 }
 
-double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
+double Plasma::compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
 {
 	double t = 0.0,s = v.size(),s1 = v1.size();
 
@@ -110,7 +112,7 @@ double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
 
 
 
-virtual void InitializeCPU()
+void Plasma::InitializeCPU()
 {
    std::vector<Particle> ion_vp,el_vp,beam_vp;
    std::vector<Particle> ion_vp1,el_vp1,beam_vp1;
@@ -138,7 +140,7 @@ virtual void InitializeCPU()
 
 }
 
-void Initialize()
+void Plasma::Initialize()
 {
 	int err = getLastError();
 	InitializeCPU();
@@ -155,7 +157,7 @@ void Initialize()
 
 
 
-void InitGPUParticles()
+void Plasma::InitGPUParticles()
  //   :InitParticles(fname,vp)
 {
 	int size;
@@ -301,8 +303,7 @@ void InitGPUParticles()
 
 }
 
-
-virtual void Alloc()
+void Plasma::Alloc()
 	  {
 
 		  AllCells = new std::vector<GPUCell>;
@@ -352,7 +353,7 @@ virtual void Alloc()
 	#endif
 	  }
 
-	  virtual void InitFields()
+	  void Plasma::InitFields()
 	  {
 	     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
 	     {
@@ -372,7 +373,7 @@ virtual void Alloc()
 	     }
 	  }
 
-	  virtual void InitCells()
+	  void Plasma::InitCells()
 	  {
 	     for(int i = 0;i < Nx+2;i++)
 	     {
@@ -393,7 +394,7 @@ virtual void Alloc()
 	     }
 	  }
 
-	  virtual void InitCurrents()
+	  void Plasma::InitCurrents()
 	  {
 	     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
 	     {

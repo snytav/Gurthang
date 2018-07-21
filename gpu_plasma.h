@@ -710,7 +710,24 @@ int readStartPoint(int nt)
 
 	  int getBoundaryLimit(int dir){return ((dir == 0)*Nx  + (dir == 1)*Ny + (dir == 2)*Nz + 2);}
 
-#include "init.cu"
+//#include "init.cu"
+	  virtual void InitializeCPU();
+	  int InitializeGPU();
+	  int initMeshArrays();
+	  void LoadTestData(int nt,
+	  		            int part_nt,
+	  		            std::vector<Particle> & ion_vp,
+	  		            std::vector<Particle> & el_vp,
+	  		            std::vector<Particle> & beam_vp);
+	  void AssignArraysToCells();
+	  int compare(Particle p,Particle p1);
+	  double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1);
+	  void Initialize();
+	  void InitGPUParticles();
+	  virtual void Alloc();
+	  virtual void InitFields();
+	  virtual void InitCells();
+	  virtual void InitCurrents();
 
 
 
