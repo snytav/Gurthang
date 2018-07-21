@@ -57,7 +57,6 @@ void LoadTestData(int nt,
 		            std::vector<Particle> & el_vp,
 		            std::vector<Particle> & beam_vp)
 {
-  // LoadMeshData(nt);
 
    if(nt > 1)
    	 {
@@ -76,10 +75,7 @@ void AssignArraysToCells()
    {
 
        Cell c = (*AllCells)[n];
-//	         if(c.i == 1 &&  c.l  == 1 && c.k == 1)
-//	         {
-////	         	   int j = 0;
-//	         }
+
 	     c.readFieldsFromArrays(Ex,Ey,Ez,Hx,Hy,Hz);
    }
 }
@@ -127,25 +123,13 @@ virtual void InitializeCPU()
    {
       LoadTestData(START_STEP_NUMBER,START_STEP_NUMBER, ion_vp,el_vp,beam_vp);
 
-//      writeParamsFile(tex0,tey0,tez0,
-//      					Tb,rimp,rbd,ni,
-//      				xmax.x,xmax.y,xmax.z(),
-//      				    lp,mesh.x,mesh.y,mesh.z(),
-//      				    tau,Bx0,beam_max.x,beam_max.y,beam_max.z(),
-//      				    plasma_dim_y,plasma_dim_z,
-//      				    beam_plasma,nt_start_from_file,
-//      				    total_steps,minor_steps,start_phase);
    }
    else
    {
 	   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
 
    }
-//   getUniformMaxwellianParticles(ion_vp1,el_vp1,beam_vp1);
-//
-//   double tb = compareParticleList(beam_vp,beam_vp1);
-//   double ti = compareParticleList(ion_vp,ion_vp1);
-//   double te = compareParticleList(el_vp,el_vp1);
+
 
    addAllParticleListsToCells(ion_vp1,el_vp1,beam_vp1);
 
