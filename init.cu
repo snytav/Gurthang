@@ -213,10 +213,7 @@ void InitGPUParticles()
     	c.SetControlSystem(jmp,d_ctrlParticles);
 #endif
 
-    	//t = c.compareToCell(*n);
 
-       // puts("COMPARE------------------------------");
-    	//printf("%d: %d\n", i, c.busyParticleArray);
         d_c = c.copyCellToDevice();
         err = getLastError();
                    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); exit(0);}
