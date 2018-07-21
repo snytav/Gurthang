@@ -27,9 +27,7 @@ kernels.o: kernels.cu $(DEPS)
 load_data.o: load_data.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
 	
-#maxwell.o: maxwell.cu $(DEPS)
-#	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
-	
+
 service_functions.o: service_functions.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
 
