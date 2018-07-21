@@ -625,17 +625,7 @@ virtual void Alloc()
 		 return 0;
 	  }
 
-//	  string getBinaryFileName(int nt)
-//	  {
-//		  char part_name[100];
-//		  string s;
-//
-//		  sprintf(part_name,"mumu000%08d.dat",nt);
-//
-//		  s = part_name;
-//
-//		  return s;
-//	  }
+
 
 	  virtual void InitBinaryParticles(int nt)
 	  {
@@ -668,9 +658,9 @@ virtual void Alloc()
 
 	     for(int j = 0;j < total_ions;j++)
 	     {
-		z = 0.0;//Lz * rnd_uniform();
-		y = 0.0;//meh * Ly + Ly * rnd_uniform();
-		x = 0.0;//Lx * rnd_uniform();
+		z = 0.0;
+		y = 0.0;
+		x = 0.0;
 
 		p = new Particle(x,y,z,0.0,0.0,0.0,ni,q_m);
 
@@ -700,17 +690,7 @@ virtual void Alloc()
 		 n = c0.getPointCell(d);
 
 		 Cell & c = (*AllCells)[n];
-	//	 c.SetZero();
-	//	 c = (*AllCells)[n];
-//		 if((vec_size-vecp.size()) == 136)
-//		 {
-//			 i = 0;
-//		 }
 
-//		 if(c.i == 0 && c.k == 0 && c.l == 0)
-//		 {
-//			 int z67 = 0;
-//		 }
 
 		 if(c.Insert(p) == true)
 		 {
