@@ -50,33 +50,6 @@ int initMeshArrays()
 	   return 0;
 }
 
-//int LoadParticleData(int nt,
-//		               std::vector<Particle> & ion_vp,
-//		               std::vector<Particle> & el_vp,
-//		               std::vector<Particle> & beam_vp)
-//{
-//
-//	 FILE *f;
-//
-//	 std::string part_name = getMumuFileName(nt);
-//
-//	 if((f = readPreliminary3Darrays(part_name,nt,Nx,Ny,Nz)) == NULL) return 1;
-//
-////		 std::vector<Particle> ion_vp,el_vp,beam_vp;
-//
-//	 readBinaryParticlesAllSorts(f,nt,ion_vp,el_vp,beam_vp);
-//
-//	 fclose(f);
-//
-//
-//
-//
-//
-//
-//	 return 0;
-//}
-
-//	  int LoadData(i)
 
 void LoadTestData(int nt,
 		            int part_nt,
