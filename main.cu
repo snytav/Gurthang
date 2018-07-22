@@ -1,7 +1,10 @@
+#include "kernels.cu"
 #include "gpu_plasma.h"
 #include <stdlib.h>
 #include "mpi_shortcut.h"
 //TODO: gpu cell in the global array at copy from there appears to be not initialized
+
+
 
 int main(int argc,char*argv[])
 {

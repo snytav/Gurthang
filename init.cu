@@ -1,6 +1,6 @@
 //#include "load_data.h"
 
-#include "gou_plasma.h"
+//#include "gpu_plasma.h"
 
 
 int Plasma::InitializeGPU()
@@ -410,7 +410,7 @@ void Plasma::Alloc()
 	     }
 	  }
 
-	  void InitCurrents(string fnjx,string fnjy,string fnjz,
+	  void Plasma::InitCurrents(string fnjx,string fnjy,string fnjz,
 	                    string dbg_fnjx,string dbg_fnjy,string dbg_fnjz,
 	                    string np_fnjx,string np_fnjy,string np_fnjz,
 			            int dbg)
@@ -434,53 +434,53 @@ void Plasma::Alloc()
 	#endif
 	   }
 
-	  void InitFields(char *fnex,char *fney,char *fnez,
-			          char *fnhx,char *fnhy,char *fnhz,
-			          char *dbg_fnex,char *dbg_fney,char *dbg_fnez,
-			          char *dbg_0fnex,char *dbg_0fney,char *dbg_0fnez,
-			          char *np_ex,char *np_ey,char *np_ez,
-			          char *dbg_fnhx,char *dbg_fnhy,char *dbg_fnhz)
-	  {
-	     InitFields();
+//	  void InitFields(char *fnex,char *fney,char *fnez,
+//			          char *fnhx,char *fnhy,char *fnhz,
+//			          char *dbg_fnex,char *dbg_fney,char *dbg_fnez,
+//			          char *dbg_0fnex,char *dbg_0fney,char *dbg_0fnez,
+//			          char *np_ex,char *np_ey,char *np_ez,
+//			          char *dbg_fnhx,char *dbg_fnhy,char *dbg_fnhz)
+//	  {
+//	     InitFields();
+//
+//	      //double t271 = Hy[27];
+//
+//	     read3Darray(fnex, Ex);
+//	     read3Darray(fney, Ey);
+//	     read3Darray(fnez, Ez);
+//	     read3Darray(fnhx, Hx);
+//	     read3Darray(fnhy, Hy);
+//	     read3Darray(fnhz, Hz);
+//
+//	#ifdef DEBUG_PLASMA
+//	     read3Darray(dbg_fnex, dbgEx);
+//	     read3Darray(dbg_fney, dbgEy);
+//	     read3Darray(dbg_fnez, dbgEz);
+//
+//	     read3Darray(dbg_0fnex, dbgEx0);
+//	     read3Darray(dbg_0fney, dbgEy0);
+//	     read3Darray(dbg_0fnez, dbgEz0);
+//
+//	     read3Darray(dbg_fnhx, dbgHx);
+//	     read3Darray(dbg_fnhy, dbgHy);
+//	     read3Darray(dbg_fnhz, dbgHz);
+//
+//	     read3DarrayLog(np_ex, npEx,50,8);
+//	     read3DarrayLog(np_ey, npEy,50,8);
+//	     read3DarrayLog(np_ez, npEz,50,8);
+//	#endif
+//
+//	  //   double t27 = Hy[27];
+//
+//	  }
 
-	      //double t271 = Hy[27];
 
-	     read3Darray(fnex, Ex);
-	     read3Darray(fney, Ey);
-	     read3Darray(fnez, Ez);
-	     read3Darray(fnhx, Hx);
-	     read3Darray(fnhy, Hy);
-	     read3Darray(fnhz, Hz);
-
-	#ifdef DEBUG_PLASMA
-	     read3Darray(dbg_fnex, dbgEx);
-	     read3Darray(dbg_fney, dbgEy);
-	     read3Darray(dbg_fnez, dbgEz);
-
-	     read3Darray(dbg_0fnex, dbgEx0);
-	     read3Darray(dbg_0fney, dbgEy0);
-	     read3Darray(dbg_0fnez, dbgEz0);
-
-	     read3Darray(dbg_fnhx, dbgHx);
-	     read3Darray(dbg_fnhy, dbgHy);
-	     read3Darray(dbg_fnhz, dbgHz);
-
-	     read3DarrayLog(np_ex, npEx,50,8);
-	     read3DarrayLog(np_ey, npEy,50,8);
-	     read3DarrayLog(np_ez, npEz,50,8);
-	#endif
-
-	  //   double t27 = Hy[27];
-
-	  }
-
-
-	  virtual void InitParticles(thrust::host_vector<Particle> & vp)
+	  void Plasma::InitParticles(thrust::host_vector<Particle> & vp)
 	  {
 	     InitIonParticles(n_per_cell,ion_q_m,vp);
 	  }
 
-	  virtual void InitParticles(char *fname,thrust::host_vector<Particle>& vp)
+	  void Plasma::InitParticles(char *fname,thrust::host_vector<Particle>& vp)
 	  {
 	     FILE *f;
 	     char str[1000];
@@ -527,7 +527,7 @@ void Plasma::Alloc()
 
 
 
-      void printPICstatitstics(double m,double q_m, int total_particles)
+      void Plasma::printPICstatitstics(double m,double q_m, int total_particles)
       {
     	  int pn_min,pn_ave,pn_max,pn_sum;//,err;
 
@@ -556,7 +556,7 @@ void Plasma::Alloc()
       }
 
 
-      int addParticleListToCells(std::vector<Particle>& vp)
+      int Plasma::addParticleListToCells(std::vector<Particle>& vp)
       {
     	  Cell c0 = (*AllCells)[0];
     	  int n;
@@ -600,7 +600,7 @@ void Plasma::Alloc()
 
 
 
-	  int addAllParticleListsToCells(std::vector<Particle> & ion_vp,
+	  int Plasma::addAllParticleListsToCells(std::vector<Particle> & ion_vp,
 			                         std::vector<Particle> & el_vp,
 			                         std::vector<Particle> & beam_vp)
 	  {
@@ -614,7 +614,7 @@ void Plasma::Alloc()
 
 
 //
-	  int readParticles(FILE *f,int nt)
+	  int Plasma::readParticles(FILE *f,int nt)
 	  {
 		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
@@ -628,7 +628,7 @@ void Plasma::Alloc()
 
 
 
-	  virtual void InitBinaryParticles(int nt)
+	  void Plasma::InitBinaryParticles(int nt)
 	  {
 	     FILE *f;
 	     std::string part_name  = getMumuFileName(nt);
@@ -649,8 +649,8 @@ void Plasma::Alloc()
 
 
 
-	  virtual void InitElectronParticles(){}
-	  virtual void InitIonParticles(int n_per_cell1,double q_m,thrust::host_vector<Particle> &vecp)
+	 // virtual void InitElectronParticles(){}
+	  void Plasma::InitIonParticles(int n_per_cell1,double q_m,thrust::host_vector<Particle> &vecp)
 	  {
 	     int total_ions = Nx*Ny*Nz*n_per_cell;
 	     Particle *p;
@@ -673,8 +673,8 @@ void Plasma::Alloc()
 	     }
 	  }
 
-	  virtual void InitBeamParticles(int n_per_cell1){}
-	  void Distribute(thrust::host_vector<Particle> &vecp)
+//	  virtual void InitBeamParticles(int n_per_cell1){}
+	  void Plasma::Distribute(thrust::host_vector<Particle> &vecp)
 	  {
 	     Cell c0 = (*AllCells)[0],c111;
 	     int    n;//,i;

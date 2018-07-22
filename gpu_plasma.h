@@ -728,6 +728,21 @@ int readStartPoint(int nt)
 	  virtual void InitFields();
 	  virtual void InitCells();
 	  virtual void InitCurrents();
+	  void InitCurrents(string fnjx,string fnjy,string fnjz,
+	  	                    string dbg_fnjx,string dbg_fnjy,string dbg_fnjz,
+	  	                    string np_fnjx,string np_fnjy,string np_fnjz,
+	  			            int dbg);
+	  virtual void InitParticles(thrust::host_vector<Particle> & vp);
+	  virtual void InitParticles(char *fname,thrust::host_vector<Particle>& vp);
+	  void printPICstatitstics(double m,double q_m, int total_particles);
+	  int addParticleListToCells(std::vector<Particle>& vp);
+	  int addAllParticleListsToCells(std::vector<Particle> & ion_vp,
+	  			                         std::vector<Particle> & el_vp,
+	  			                         std::vector<Particle> & beam_vp);
+	  int readParticles(FILE *f,int nt);
+	  virtual void InitBinaryParticles(int nt);
+	  virtual void InitIonParticles(int n_per_cell1,double q_m,thrust::host_vector<Particle> &vecp);
+	  void Distribute(thrust::host_vector<Particle> &vecp);
 
 
 

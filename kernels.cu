@@ -1,5 +1,6 @@
 
-
+#ifndef KERNELS_CU
+#define KERNELS_CU
 
 __device__ double cuda_atomicAdd(double *address, double val)
 {
@@ -1122,3 +1123,5 @@ global_for_CUDA void copy_pointers(Cell  **cells,int *d_flags,double_pointer *d_
 	c->d_wrong_current_particle_attributes = d_pointers[blockIdx.x];
 
 }
+
+#endif
