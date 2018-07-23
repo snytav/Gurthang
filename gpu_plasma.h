@@ -70,6 +70,7 @@
 
 #include "memory_control.h"
 
+#include "wrap_kernel.cu"
 #include "kernels.cu"
 
 #include <vector>

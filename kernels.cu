@@ -1,45 +1,8 @@
 
 
 
-__device__ double cuda_atomicAdd(double *address, double val)
-{
-    double assumed,old=*address;
-    do {
-        assumed=old;
-        old= __longlong_as_double(atomicCAS((unsigned long long int*)address,
-                    __double_as_longlong(assumed),
-                    __double_as_longlong(val+assumed)));
-    }while (assumed!=old);
-
-    //printf("NEW ATOMIC ADD\n");
-
-    return old;
-}
 
 
-__global__
-void GPU_getCellEnergy(
-		GPUCell **cells,double *d_ee,
-		double *d_Ex,double *d_Ey,double *d_Ez)
-{
-	unsigned int i = blockIdx.x;
-	unsigned int l= blockIdx.y;
-	unsigned int k = blockIdx.z;
-	//int i,l,k;
-	Cell *c0 = cells[0],nc;
-	double t,ex,ey,ez;
-	__shared__ extern CellDouble fd[9];
-	//double *src;//,*dst;
-	int n  = c0->getGlobalCellNumber(i,l,k);
-
-	ex = d_Ex[n];
-	ey = d_Ey[n];
-	ez = d_Ez[n];
-
-	t = ex*ex+ey*ey+ez*ez;
-
-	cuda_atomicAdd(d_ee,t);
-}
 
 template <template <class Particle> class Cell >
 global_for_CUDA
