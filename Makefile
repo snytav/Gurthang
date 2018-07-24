@@ -12,14 +12,17 @@ CUDALIBS=  -g -L$(CUDALIB) -lcuda -lcudart #-lthrust
 MPIFLAGS=
 CFLAGS=
 
-OBJ = main.o mpi_shortcut.o service_functions.o compare.o maxwell.o load_data.o archAPI.o 
+OBJ = main.o mpi_shortcut.o service_functions.o compare.o maxwell.o load_data.o archAPI.o wrap_kernel.o gpucell.o
 #plasma.o
             
 main.o: main.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 
 	
-kernels.o: kernels.cu $(DEPS)
-	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 	--relocatable-device-code=true
+gpucell.o: gpucell.cu $(DEPS)
+	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 	
+	
+wrap_kernel.o: wrap_kernel.cu $(DEPS)
+	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 	#--relocatable-device-code=true
 	
 #compare.o: compare.cu $(DEPS)
 #	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)

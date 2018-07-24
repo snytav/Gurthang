@@ -20,6 +20,10 @@
 #include "types.h"
 #include "particle.h"
 
+#include "archAPI.h"
+
+#include "service_functions.h"
+
 #define CellExtent 5
 #define PARTICLE_MASS_TOLERANCE 1e-15
 #define WRONG_PARTICLE_TYPE -13333
@@ -135,26 +139,7 @@ void removeParticleFromSurfaceHost(int n,Particle *d_p,int *np)
 #endif
 */
 
-__host__ __device__ int isNan(double t)
-{
-    if(t > 0)
-    {
-		//int i = 0;
-    }
-    else
-    {
-	   if(t <= 0)
-	   {
-		  //int i = 0;
-	   }
-	   else
-	   {
-		  return 1;
-	   }
-    }
 
-    return 0;
-}
 
 
 

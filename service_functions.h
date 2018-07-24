@@ -37,6 +37,10 @@ double get_meminfo1(void);
 
 int setPrintfLimit();
 
+__host__ __device__ int isNan(double t);
+
+
+
 void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz);
 
 void InitGPUFields(
@@ -67,6 +71,9 @@ void copyFieldsToGPU(
 		                int Nx,int Ny,int Nz
 		);
 
+
+hostdevice_for_CUDA
+double CheckArraySize(double* a, double* dbg_a,int size);
 
 
 #endif /* SERVICE_FUNCTIONS_H_ */

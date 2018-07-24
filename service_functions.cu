@@ -79,6 +79,29 @@ double get_meminfo(void)
 
 }
 
+__host__ __device__ int isNan(double t)
+{
+    if(t > 0)
+    {
+		//int i = 0;
+    }
+    else
+    {
+	   if(t <= 0)
+	   {
+		  //int i = 0;
+	   }
+	   else
+	   {
+		  return 1;
+	   }
+    }
+
+    return 0;
+}
+
+
+
 double get_meminfo1(void)
 {
 	double retval=0;
@@ -373,4 +396,32 @@ void InitGPUFields(
     		);
 }
 
+hostdevice_for_CUDA
+double CheckArraySize(double* a, double* dbg_a,int size)
+	{
+	//    Cell<Particle> c = (*AllCells)[0];
+	    int wrong = 0;
+#ifdef CHECK_ARRAY_SIZE_DEBUG_PRINTS
+	    printf("begin array checking1=============================\n");
+#endif
+	    for(int n = 0;n < size;n++)
+	    {
+	        //double t  = a[n];
+	//	double dt = dbg_a[n];
 
+	        if(fabs(a[n] - dbg_a[n]) > SIZE_TOLERANCE)
+		{
+
+		   //int3 i = c.getCellTripletNumber(n);
+#ifdef CHECK_ARRAY_SIZE_DEBUG_PRINTS
+		   printf("n %5d %15.5e dbg %15.5e diff %15.5e wrong %10d \n",
+				   n,a[n],dbg_a[n],fabs(a[n] - dbg_a[n]),wrong++);
+#endif
+		}
+	    }
+#ifdef CHECK_ARRAY_SIZE_DEBUG_PRINTS
+	    printf("  end array checking=============================\n");
+#endif
+
+	    return (1.0-((double)wrong/(size)));
+	}
