@@ -102,43 +102,7 @@ global_for_CUDA void GPU_WriteControlSystem(Cell<Particle>  **cells)
 
 
 
-global_for_CUDA void GPU_ControlAllCellsCurrents(Cell  **cells,int n,int i,CellDouble *jx,CellDouble *jy,CellDouble *jz)
-{
-//	unsigned int nx = blockIdx.x;
-//	unsigned int ny = blockIdx.y;
-//	unsigned int nz = blockIdx.z;
-//	int i,l,k;
-	Cell  *c,*c0 = cells[0],nc;
-	//double t;
-	__shared__ extern CellDouble fd[9];
-	//double *src;
-	//int pqr2;
-//	CurrentTensor t1,t2;
-
-//	c = cells[ c0->getGlobalCellNumber(nx,ny,nz)];
-	c = cells[ n ];
-
-	nc = *c;
-
-	// double cjx,cjy,cjz;
-
-//	              cjx = CheckArraySize((double *)jx,(double *)(nc.Jx),sizeof(CellDouble)/sizeof(double));
-//	              cjy = CheckArraySize((double *)jy,(double *)(nc.Jy),sizeof(CellDouble)/sizeof(double));
-//	              cjz = CheckArraySize((double *)jz,(double *)(nc.Jz),sizeof(CellDouble)/sizeof(double));
-#ifdef GPU_CONTROL_ALL_CELLS_CURRENTS_PRINT
-//	              printf("cell (%d,%d,%d) particle %d currents %.5f %.5f %.5f \n",nc.i,nc.l,nc.k,i,cjx,cjy,cjz);
-#endif
-
-
-}
 
 
 
-global_for_CUDA void copy_pointers(Cell  **cells,int *d_flags,double_pointer *d_pointers)
-{
-	Cell  *c = cells[blockIdx.x];
 
-	c->flag_wrong_current_cell = d_flags[blockIdx.x];
-	c->d_wrong_current_particle_attributes = d_pointers[blockIdx.x];
-
-}
