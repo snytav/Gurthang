@@ -58,6 +58,7 @@ double compareArrayHostToDevice(double *h, double *d,int size,char *legend)
 
 	MemoryCopy(h_d,d,size,DEVICE_TO_HOST);
 
+
 	t = compare(h,h_d,size/sizeof(double),legend,TOLERANCE);
 
 	return t;
@@ -97,12 +98,12 @@ GPUCell* copyCellToDevice()
 	h_src->busyParticleArray = Cell::busyParticleArray;
 
 	//cudaPrintfInit();
-	cudaMalloc(&(h_src->doubParticleArray),sizeof(Particle)*MAX_particles_per_cell);
+	MemoryAllocate((void **)&(h_src->doubParticleArray),sizeof(Particle)*MAX_particles_per_cell);
 	err1 = getLastError();
 
 
 
-	cudaMemset(h_src->doubParticleArray,0,sizeof(Particle)*MAX_particles_per_cell);
+	MemorySet(h_src->doubParticleArray,0,sizeof(Particle)*MAX_particles_per_cell);
 	err2 = getLastError();
 
 	//testKernelBefore<<<1,1>>>(h_src->doubParticleArray,50,1);
@@ -177,7 +178,7 @@ GPUCell* copyCellToDevice()
 
 	//compareArrayHostToDevice((double *)Cell<Particle>::Hx,(double *)h_src->Hx,sizeof(CellDouble),"Hx");
 
-	cudaMalloc(&(h_src->Hy),sizeof(CellDouble));
+	MemoryAllocate((void **)&(h_src->Hy),sizeof(CellDouble));
 	err18 = getLastError();
 
 	MemoryCopy(h_src->Hy,Cell::Hy,sizeof(CellDouble),HOST_TO_DEVICE);
@@ -291,7 +292,9 @@ void copyCellFromDevice(GPUCell* d_src,GPUCell* h_dst,std::string where,int nt)
 
 //    is the device array of Cell pointers being really copied to Host?
 
+#ifdef __CUDACC__
 	cudaThreadSynchronize();
+#endif
 
 	//ThreadSynchronize();
 

@@ -10,6 +10,8 @@
 #ifndef SERVICE_FUNCTIONS_H_
 #define SERVICE_FUNCTIONS_H_
 
+#include "archAPI.h"
+
 #include <string>
 
 double CheckArraySilent	(double* a, double* dbg_a,int size);
@@ -72,7 +74,7 @@ void copyFieldsToGPU(
 		);
 
 
-hostdevice_for_CUDA
+__host__ __device__
 double CheckArraySize(double* a, double* dbg_a,int size);
 
 

@@ -29,9 +29,23 @@
 #define DEVICE_TO_DEVICE -131316
 
 #ifdef __CUDACC__
-#define hostdevice_for_CUDA __host__ __device__
+//define hostdevice_for_CUDA __host__ __device__
 #define global_for_CUDA __global__
 #endif
+
+#ifndef __CUDACC__
+#define __host__
+#define __device__
+#define cudaSuccess 0
+#endif
+
+#ifndef __CUDACC__
+typedef struct
+{
+    unsigned int x, y, z;
+} uint3;
+#endif
+
 
 #ifndef __CUDACC__
 extern uint3 threadIdx,blockIdx;
@@ -43,20 +57,13 @@ extern uint3 threadIdx,blockIdx;
 #define OMP_NUM_THREADS 100
 
 #ifndef __CUDACC__
-typedef struct
-{
-    double x, y, z;
-} double3;
+
 
 typedef struct
 {
     int x, y, z;
 } int3;
 
-struct uint3
-{
-    unsigned int x, y, z;
-};
 
 struct dim3
 {
@@ -141,6 +148,8 @@ void BlockThreadSynchronize();
 
 #endif
 
+
+
 //	double assumed,old=*address;
 #ifdef __CUDACC__
 __device__ double MultiThreadAdd(double *address, double val);
@@ -172,8 +181,11 @@ int SetDevice(int n);
 #ifdef __CUDACC__
 __device__
 void AsyncCopy(double *dst,double *src,int n,int size);
+
 #else
+
 void AsyncCopy(double *dst,double *src,int n,int size);
+
 #endif
 
 int MemoryCopy(void* dst,void *src,size_t size,int dir);

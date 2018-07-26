@@ -5,12 +5,13 @@
 //#define VIRTUAL_FUNCTIONS
 
 
-
+#ifdef __CUDACC__
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include <thrust/generate.h>
 #include <thrust/sort.h>
 #include <thrust/copy.h>
+#endif
 //#include <cstdlib>
 
 #include <stdlib.h>
@@ -61,7 +62,7 @@ const int MAX_particles_per_cell = MAX_PPC;
 
 
 
-surface<void, 2> particle_surface;
+//surface<void, 2> particle_surface;
 
 __shared__ CellDouble fd[9];
 
@@ -1765,9 +1766,9 @@ bool Insert(Particle& p)
 void copyCellFromHostToDevice(Cell *d_p,Cell *h_p)
 {
      int err;
-	 cudaMalloc((void **)&d_p,sizeof(Cell));
+	 MemoryAllocate((void **)&d_p,sizeof(Cell));
      err = MemoryCopy(d_p,h_p,sizeof(Cell),HOST_TO_DEVICE);
-     if(err != cudaSuccess)
+     if(err != 0)
 	 {
 		printf("copyCellFromHostToDevice err %d %s \n",err,getErrorString(err));
 		exit(0);
@@ -2092,30 +2093,30 @@ void readFieldsFromArrays(double *glob_Ex,double *glob_Ey,double *glob_Ez,double
      readField(glob_Hz,*Hz);
 }
 
-#ifdef __CUDACC__
- __host__ __device__
- #endif
-thrust::host_vector< Particle >  getFlyList()
-{
-   thrust::host_vector<Particle> fl;
-
-     int count;
-
-     count = number_of_particles;
-
-     for(int n = 0;n < count;n++)
-     {
-         Particle p;
-         p  = readParticleFromSurfaceDevice(n);
-         if(!isPointInCell(p.GetX()))
-	     {
-	        removeParticleFromSurfaceDevice(n,&p,&number_of_particles);
-	        fl.push_back(p);
-	     }
-     }
-     int s = fl.size();
-     return fl;
-}
+//#ifdef __CUDACC__
+// __host__ __device__
+// #endif
+//thrust::host_vector< Particle >  getFlyList()
+//{
+//   thrust::host_vector<Particle> fl;
+//
+//     int count;
+//
+//     count = number_of_particles;
+//
+//     for(int n = 0;n < count;n++)
+//     {
+//         Particle p;
+//         p  = readParticleFromSurfaceDevice(n);
+//         if(!isPointInCell(p.GetX()))
+//	     {
+//	        removeParticleFromSurfaceDevice(n,&p,&number_of_particles);
+//	        fl.push_back(p);
+//	     }
+//     }
+//     int s = fl.size();
+//     return fl;
+//}
 
 #ifdef __CUDACC__
  __host__ __device__

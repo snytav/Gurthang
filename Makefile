@@ -18,9 +18,10 @@ OBJ = main.o mpi_shortcut.o service_functions.o compare.o maxwell.o load_data.o 
 main.o: main.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 
 	
-init.o: init.cu $(DEPS)
-	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 
-	
+#init.o: init.cu $(DEPS)
+#	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 
+
+
 wrap_kernel.o: wrap_kernel.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS) 	#--relocatable-device-code=true
 	

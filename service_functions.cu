@@ -396,7 +396,7 @@ void InitGPUFields(
     		);
 }
 
-hostdevice_for_CUDA
+__host__ __device__
 double CheckArraySize(double* a, double* dbg_a,int size)
 	{
 	//    Cell<Particle> c = (*AllCells)[0];

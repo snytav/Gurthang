@@ -14,10 +14,10 @@
 #define GPU_PARTICLE
 
 #ifndef __CUDACC__
-struct  double3
+typedef struct
 {
     double x, y, z;
-};
+} double3;
 #endif
 
 typedef struct Field{

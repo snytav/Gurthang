@@ -97,7 +97,7 @@ class Plasma
 public:
    GPUCell **h_CellArray,**d_CellArray;
    GPUCell **cp;
-   thrust::device_vector<GPUCell> *d_AllCells;
+//   thrust::device_vector<GPUCell> *d_AllCells;
    double *d_Ex,*d_Ey,*d_Ez,*d_Hx,*d_Hy,*d_Hz,*d_Jx,*d_Jy,*d_Jz,*d_Rho,*d_npJx,*d_npJy,*d_npJz;
    double *d_Qx,*d_Qy,*d_Qz;
    double *dbg_x,*dbg_y,*dbg_z,*dbg_px,*dbg_py,*dbg_pz;
@@ -175,7 +175,7 @@ void copyCells(std::string where,int nt)
 //		{
 //			int qq = 0;
 //		}
-		cudaError_t err = cudaMemGetInfo(&m_free,&m_total);
+		int err = GetDeviceMemory(&m_free,&m_total);
 		sysinfo(&info);
 		m1 = info.freeram;
 	 	GPUCell c,*d_c,*z0;
@@ -868,7 +868,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	{
 	    static double *t;
 	    static int f = 1;
-	    cudaError_t err;
+	    int err;
 
 
 	    if(f == 1)
@@ -877,10 +877,10 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	    	 f = 0;
 	    }
 	    MemoryCopy(t,d_a,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2),DEVICE_TO_HOST);
-	    err = cudaGetLastError();
+	    err = getLastError();
 	    if(err != cudaSuccess)
 	            {
-	             	printf("CheckArraySilent err %d %s \n",err,cudaGetErrorString(err));
+	             	printf("CheckArraySilent err %d %s \n",err,getErrorString(err));
 	            	exit(0);
 	            }
 
@@ -1048,7 +1048,7 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	void printPICstatitstics(double m,double q_m, int total_particles);
 	int readParticles(FILE *f,int nt);
 	void InitBinaryParticles(int nt);
-	void Distribute(thrust::host_vector<Particle> &vecp);
+	void Distribute(std::vector<Particle> &vecp);
 
 
 
@@ -1082,23 +1082,23 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	   {
 		   Cell c000 = (*AllCells)[0];
 		   magf = 1;
-		   cudaError_t err;
+		   int err;
 
 		   int size = (Nx+2)*(Ny+2)*(Nz+2);
 
 		   cp = (GPUCell **)malloc(size*sizeof(GPUCell *));
-		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+		   if((err = getLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
 		   for(int i = 0;i < size;i++)
 		   {
 		     	GPUCell c,*d_c;
 		   	   	// 	z0 = h_CellArray[i];
 		   	    d_c = c.allocateCopyCellFromDevice();
-		   	 if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+		   	 if((err = getLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
 		   	    cp[i] = d_c;
 		   }
-		   if((err = cudaGetLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+		   if((err = getLastError() ) != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 		   return 0;
 	   }
 
@@ -1171,28 +1171,28 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 
 int SetCurrentArraysToZero()
 {
-    cudaError_t err = cudaGetLastError();
-    err = cudaGetLastError();
+    int err = getLastError();
+    err = getLastError();
 	printf("%s: %d [%d,%d,%d]\n",__FILE__, __LINE__, Nx,Ny,Nz);
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
-	memset(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
-    memset(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
-	memset(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
-	cudaMemset(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
-	cudaMemset(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
-	cudaMemset(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
+	MemorySet(Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
+    MemorySet(Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
+	MemorySet(Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
+	MemorySet(d_Jx,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
+	MemorySet(d_Jy,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
+	MemorySet(d_Jz,0,sizeof(double)*(Nx+2)*(Ny+2)*(Nz+2));
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 	return 0;
 }
 
@@ -1219,9 +1219,9 @@ int StepAllCells_post_diagnostic(int nt)
 	  memory_monitor("CellOrder_StepAllCells4",nt);
 
       ListAllParticles(nt,"aStepAllCells");
-      cudaError_t err2 = cudaGetLastError();
+      int err2 = getLastError();
 	  char err_s[200];
-      strcpy(err_s,cudaGetErrorString(err2));
+      strcpy(err_s,getErrorString(err2));
 
       return (int)err2;
 }
@@ -1250,13 +1250,13 @@ int Push(int nt,double mass,double q_mass)
 
 int SetCurrentsToZero(int nt)
 {
-    cudaError_t err = cudaGetLastError();
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    int err = getLastError();
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 	SetCurrentArraysToZero();
 
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
 	return SetCurrentsInCellsToZero(nt);
 }
@@ -1264,27 +1264,27 @@ int SetCurrentsToZero(int nt)
 
 	void CellOrder_StepAllCells(int nt,double mass,double q_mass,int first)
 	{
-    cudaError_t err = cudaGetLastError();
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    int err = getLastError();
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 		SetCurrentsToZero(nt);
 
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
 		Push(nt,mass,q_mass);
 		puts("Push");
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
         WriteCurrentsFromCellsToArrays(nt);
         puts("writeCut2arr");
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
         reorder_particles(nt);
-    err = cudaGetLastError();
-    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,cudaGetErrorString(err)); }
+    err = getLastError();
+    if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 	}
 
 
@@ -1493,7 +1493,7 @@ int memory_monitor(std::string legend,int nt)
 	struct sysinfo info;
 
 
-	cudaError_t err = cudaMemGetInfo(&m_free,&m_total);
+	int err = GetDeviceMemory(&m_free,&m_total);
 
 	sysinfo(&info);                                                                //  1   2              3                 4                5
 	fprintf(f,"step %10d %50s GPU memory total %10d free %10d free CPU memory %10u \n",nt,legend.c_str(),((int)m_total)/1024/1024,((int)m_free)/1024/1024,((int)info.freeram)/1024/1024);
@@ -1507,7 +1507,7 @@ int memory_status_print(int nt)
 	struct sysinfo info;
 
 
-	cudaMemGetInfo(&m_free,&m_total);
+	GetDeviceMemory(&m_free,&m_total);
 	sysinfo(&info);
 
 	#ifdef MEMORY_PRINTS
@@ -1524,7 +1524,7 @@ int Compute()
 	   printf("----------------------------------------------------------- \n");
 	   size_t m_free,m_total;
 
-	   cudaMemGetInfo(&m_free,&m_total);
+	   GetDeviceMemory(&m_free,&m_total);
 
 
 
