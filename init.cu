@@ -1,5 +1,35 @@
 //#include "load_data.h"
 
+#include "cell.h"
+#include "gpu_plasma.h"
+
+ void InitFields(int Nx,int Ny,int Nz,
+              double *Ex,double *Ey,double *Ez,
+              double *Hx,double *Hy,double *Hz,
+              double *dbgEx,double *dbgEy,double *dbgEz,
+              double *dbgHx,double *dbgHy,double *dbgHz)
+	  {
+	     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
+	     {
+	         Ex[i] = 0.0;
+	         Ey[i] = 0.0;
+	         Ez[i] = 0.0;
+	         Hx[i] = 0.0;
+	         Hy[i] = 0.0;
+	         Hz[i] = 0.0;
+
+	         dbgEx[i] = 0.0;
+	         dbgEy[i] = 0.0;
+	         dbgEz[i] = 0.0;
+	         dbgHx[i] = 0.0;
+	         dbgHy[i] = 0.0;
+	         dbgHz[i] = 0.0;
+	     }
+	  }
+
+
+void InitGPUParticles();
+
 void dbgPrintGPUParticleAttribute(Cell *d_c,int n_particle,int attribute,char *name )
 {
     double t;
@@ -22,7 +52,9 @@ void dbgPrintGPUParticleAttribute(Cell *d_c,int n_particle,int attribute,char *n
     printf("%s %10.3e \n",name,t);
 }
 
-int InitializeGPU()
+
+
+int Plasma::InitializeGPU()
 {
 	int err = getLastError();
 	 if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
@@ -53,7 +85,33 @@ int InitializeGPU()
     return 0;
 }
 
-int initMeshArrays()
+int Plasma::initControlPointFile()
+{
+	   f_prec_report = fopen("control_points.dat","wt");
+	   fclose(f_prec_report);
+
+	   return 0;
+}
+
+void InitCurrents(int Nx,int Ny,int Nz,double *Jx,double *Jy,double *Jz,double *Rho,
+		          double *dbgJx,double *dbgJy,double *dbgJz)
+	  {
+	     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
+	     {
+	         Jx[i]  = 0.0;
+	         Jy[i]  = 0.0;
+	         Jz[i]  = 0.0;
+	         Rho[i] = 0.0;
+
+	         dbgJx[i]  = 0.0;
+	         dbgJy[i]  = 0.0;
+	         dbgJz[i]  = 0.0;
+
+	     }
+	  }
+
+
+int Plasma::initMeshArrays()
 {
 	   initControlPointFile();
 
@@ -64,15 +122,31 @@ int initMeshArrays()
 	   InitCells();
 	   c000 = (*AllCells)[0];
 
-	   InitFields();
+	   InitFields(Nx,Ny,Nz,
+			      Ex,Ey,Ez,
+			      Hx,Hy,Hz,
+			      dbgEz,dbgEy,dbgEz,
+			      dbgHx,dbgHy,dbgHz);
 	   c000 = (*AllCells)[0];
-	   InitCurrents();
+	   InitCurrents(Nx,Ny,Nz,Jx,Jy,Jz,Rho,
+	   		          dbgJx,dbgJy,dbgJz);
 
 	   return 0;
 }
 
+void Plasma::ClearAllParticles(void )
+	{
+	    for(int n = 0;n < (*AllCells).size();n++)
+	    {
+	        Cell c = (*AllCells)[n];
 
-void LoadTestData(int nt,
+		c.ClearParticles();
+
+	    }
+	}
+
+
+void Plasma::LoadTestData(int nt,
 		            int part_nt,
 		            std::vector<Particle> & ion_vp,
 		            std::vector<Particle> & el_vp,
@@ -90,7 +164,7 @@ void LoadTestData(int nt,
    magf = 1;
 }
 
-void AssignArraysToCells()
+void Plasma::AssignArraysToCells()
 {
    for(int n = 0;n < (*AllCells).size();n++)
    {
@@ -131,7 +205,7 @@ double compareParticleList(std::vector<Particle> v,std::vector<Particle> v1)
 
 
 
-virtual void InitializeCPU()
+void Plasma::InitializeCPU()
 {
    std::vector<Particle> ion_vp,el_vp,beam_vp;
    std::vector<Particle> ion_vp1,el_vp1,beam_vp1;
@@ -159,7 +233,7 @@ virtual void InitializeCPU()
 
 }
 
-void Initialize()
+void Plasma::Initialize()
 {
 	int err = getLastError();
 	InitializeCPU();
@@ -176,7 +250,7 @@ void Initialize()
 
 
 
-void InitGPUParticles()
+void Plasma::InitGPUParticles()
  //   :InitParticles(fname,vp)
 {
 	int size;
@@ -323,7 +397,7 @@ void InitGPUParticles()
 }
 
 
-virtual void Alloc()
+void Plasma::Alloc()
 	  {
 
 		  AllCells = new std::vector<GPUCell>;
@@ -373,27 +447,8 @@ virtual void Alloc()
 	#endif
 	  }
 
-	  virtual void InitFields()
-	  {
-	     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
-	     {
-	         Ex[i] = 0.0;
-	         Ey[i] = 0.0;
-	         Ez[i] = 0.0;
-	         Hx[i] = 0.0;
-	         Hy[i] = 0.0;
-	         Hz[i] = 0.0;
 
-	         dbgEx[i] = 0.0;
-	         dbgEy[i] = 0.0;
-	         dbgEz[i] = 0.0;
-	         dbgHx[i] = 0.0;
-	         dbgHy[i] = 0.0;
-	         dbgHz[i] = 0.0;
-	     }
-	  }
-
-	  virtual void InitCells()
+	  void Plasma::InitCells()
 	  {
 	     for(int i = 0;i < Nx+2;i++)
 	     {
@@ -414,140 +469,126 @@ virtual void Alloc()
 	     }
 	  }
 
-	  virtual void InitCurrents()
-	  {
-	     for(int i = 0;i < (Nx+2)*(Ny+2)*(Nz+2);i++)
-	     {
-	         Jx[i]  = 0.0;
-	         Jy[i]  = 0.0;
-	         Jz[i]  = 0.0;
-	         Rho[i] = 0.0;
-
-	         dbgJx[i]  = 0.0;
-	         dbgJy[i]  = 0.0;
-	         dbgJz[i]  = 0.0;
-
-	     }
-	  }
-
-	  void InitCurrents(string fnjx,string fnjy,string fnjz,
-	                    string dbg_fnjx,string dbg_fnjy,string dbg_fnjz,
-	                    string np_fnjx,string np_fnjy,string np_fnjz,
-			            int dbg)
-	  {
-
-	     read3Darray(np_fnjx, npJx);
-	     read3Darray(np_fnjy, npJy);
-	     read3Darray(np_fnjz, npJz);
-
-	     if(dbg == 0)
-	     {
-	        read3Darray(fnjx, Jx);
-	        read3Darray(fnjy, Jy);
-	        read3Darray(fnjz, Jz);
-	     }
-	#ifdef DEBUG_PLASMA
-	     read3Darray(dbg_fnjx, dbgJx);
-	     read3Darray(dbg_fnjy, dbgJy);
-	     read3Darray(dbg_fnjz, dbgJz);
-
-	#endif
-	   }
-
-	  void InitFields(char *fnex,char *fney,char *fnez,
-			          char *fnhx,char *fnhy,char *fnhz,
-			          char *dbg_fnex,char *dbg_fney,char *dbg_fnez,
-			          char *dbg_0fnex,char *dbg_0fney,char *dbg_0fnez,
-			          char *np_ex,char *np_ey,char *np_ez,
-			          char *dbg_fnhx,char *dbg_fnhy,char *dbg_fnhz)
-	  {
-	     InitFields();
-
-	      //double t271 = Hy[27];
-
-	     read3Darray(fnex, Ex);
-	     read3Darray(fney, Ey);
-	     read3Darray(fnez, Ez);
-	     read3Darray(fnhx, Hx);
-	     read3Darray(fnhy, Hy);
-	     read3Darray(fnhz, Hz);
-
-	#ifdef DEBUG_PLASMA
-	     read3Darray(dbg_fnex, dbgEx);
-	     read3Darray(dbg_fney, dbgEy);
-	     read3Darray(dbg_fnez, dbgEz);
-
-	     read3Darray(dbg_0fnex, dbgEx0);
-	     read3Darray(dbg_0fney, dbgEy0);
-	     read3Darray(dbg_0fnez, dbgEz0);
-
-	     read3Darray(dbg_fnhx, dbgHx);
-	     read3Darray(dbg_fnhy, dbgHy);
-	     read3Darray(dbg_fnhz, dbgHz);
-
-	     read3DarrayLog(np_ex, npEx,50,8);
-	     read3DarrayLog(np_ey, npEy,50,8);
-	     read3DarrayLog(np_ez, npEz,50,8);
-	#endif
-
-	  //   double t27 = Hy[27];
-
-	  }
 
 
-	  virtual void InitParticles(thrust::host_vector<Particle> & vp)
-	  {
-	     InitIonParticles(n_per_cell,ion_q_m,vp);
-	  }
+//	  void InitCurrents(string fnjx,string fnjy,string fnjz,
+//	                    string dbg_fnjx,string dbg_fnjy,string dbg_fnjz,
+//	                    string np_fnjx,string np_fnjy,string np_fnjz,
+//			            int dbg)
+//	  {
+//
+//	     read3Darray(np_fnjx, npJx);
+//	     read3Darray(np_fnjy, npJy);
+//	     read3Darray(np_fnjz, npJz);
+//
+//	     if(dbg == 0)
+//	     {
+//	        read3Darray(fnjx, Jx);
+//	        read3Darray(fnjy, Jy);
+//	        read3Darray(fnjz, Jz);
+//	     }
+//	#ifdef DEBUG_PLASMA
+//	     read3Darray(dbg_fnjx, dbgJx);
+//	     read3Darray(dbg_fnjy, dbgJy);
+//	     read3Darray(dbg_fnjz, dbgJz);
+//
+//	#endif
+//	   }
 
-	  virtual void InitParticles(char *fname,thrust::host_vector<Particle>& vp)
-	  {
-	     FILE *f;
-	     char str[1000];
-	     double x,y,z,px,py,pz,q_m,m;
-	     int n = 0;
+//	  void InitFields(char *fnex,char *fney,char *fnez,
+//			          char *fnhx,char *fnhy,char *fnhz,
+//			          char *dbg_fnex,char *dbg_fney,char *dbg_fnez,
+//			          char *dbg_0fnex,char *dbg_0fney,char *dbg_0fnez,
+//			          char *np_ex,char *np_ey,char *np_ez,
+//			          char *dbg_fnhx,char *dbg_fnhy,char *dbg_fnhz)
+//	  {
+//	     InitFields();
+//
+//	      //double t271 = Hy[27];
+//
+//	     read3Darray(fnex, Ex);
+//	     read3Darray(fney, Ey);
+//	     read3Darray(fnez, Ez);
+//	     read3Darray(fnhx, Hx);
+//	     read3Darray(fnhy, Hy);
+//	     read3Darray(fnhz, Hz);
+//
+//	#ifdef DEBUG_PLASMA
+//	     read3Darray(dbg_fnex, dbgEx);
+//	     read3Darray(dbg_fney, dbgEy);
+//	     read3Darray(dbg_fnez, dbgEz);
+//
+//	     read3Darray(dbg_0fnex, dbgEx0);
+//	     read3Darray(dbg_0fney, dbgEy0);
+//	     read3Darray(dbg_0fnez, dbgEz0);
+//
+//	     read3Darray(dbg_fnhx, dbgHx);
+//	     read3Darray(dbg_fnhy, dbgHy);
+//	     read3Darray(dbg_fnhz, dbgHz);
+//
+//	     read3DarrayLog(np_ex, npEx,50,8);
+//	     read3DarrayLog(np_ey, npEy,50,8);
+//	     read3DarrayLog(np_ez, npEz,50,8);
+//	#endif
+//
+//	  //   double t27 = Hy[27];
+//
+//	  }
 
-	     if((f = fopen(fname,"rt")) == NULL) return;
 
-	     while(fgets(str,1000,f) != NULL)
-	     {
-	          x   = atof(str);
-	          y   = atof(str + 25);
-	          z   = atof(str + 50);
-	          px  = atof(str + 75);
-	          py  = atof(str + 100);
-	          pz  = atof(str + 125);
-	          m   = fabs(atof(str + 150));
-	          q_m = atof(str + 175);
-	#undef GPU_PARTICLE
-		  Particle *p = new Particle(x,y,z,px,py,pz,m,q_m);
-//		      if(n == 829)
-//		      {
-//		    	  int qq = 0;
-//		    	  qq = 1;
-//		      }
-		  p->fortran_number = ++n;
-		  vp.push_back(*p);
-	#define GPU_PARTICLE
-
-	     }
-
-
-         dbg_x = (double *)malloc(sizeof(double)*vp.size());
-         dbg_y = (double *)malloc(sizeof(double)*vp.size());
-         dbg_z = (double *)malloc(sizeof(double)*vp.size());
-         dbg_px = (double *)malloc(sizeof(double)*vp.size());
-         dbg_py = (double *)malloc(sizeof(double)*vp.size());
-         dbg_pz = (double *)malloc(sizeof(double)*vp.size());
-
-         total_particles = vp.size();
-
-	     magf = 1;
-	  }
+//	  virtual void InitParticles(thrust::host_vector<Particle> & vp)
+//	  {
+//	     InitIonParticles(n_per_cell,ion_q_m,vp);
+//	  }
+//
+//	  virtual void InitParticles(char *fname,thrust::host_vector<Particle>& vp)
+//	  {
+//	     FILE *f;
+//	     char str[1000];
+//	     double x,y,z,px,py,pz,q_m,m;
+//	     int n = 0;
+//
+//	     if((f = fopen(fname,"rt")) == NULL) return;
+//
+//	     while(fgets(str,1000,f) != NULL)
+//	     {
+//	          x   = atof(str);
+//	          y   = atof(str + 25);
+//	          z   = atof(str + 50);
+//	          px  = atof(str + 75);
+//	          py  = atof(str + 100);
+//	          pz  = atof(str + 125);
+//	          m   = fabs(atof(str + 150));
+//	          q_m = atof(str + 175);
+//	#undef GPU_PARTICLE
+//		  Particle *p = new Particle(x,y,z,px,py,pz,m,q_m);
+////		      if(n == 829)
+////		      {
+////		    	  int qq = 0;
+////		    	  qq = 1;
+////		      }
+//		  p->fortran_number = ++n;
+//		  vp.push_back(*p);
+//	#define GPU_PARTICLE
+//
+//	     }
+//
+//
+//         dbg_x = (double *)malloc(sizeof(double)*vp.size());
+//         dbg_y = (double *)malloc(sizeof(double)*vp.size());
+//         dbg_z = (double *)malloc(sizeof(double)*vp.size());
+//         dbg_px = (double *)malloc(sizeof(double)*vp.size());
+//         dbg_py = (double *)malloc(sizeof(double)*vp.size());
+//         dbg_pz = (double *)malloc(sizeof(double)*vp.size());
+//
+//         total_particles = vp.size();
+//
+//	     magf = 1;
+//	  }
 
 
 
-      void printPICstatitstics(double m,double q_m, int total_particles)
+      void Plasma::printPICstatitstics(double m,double q_m, int total_particles)
       {
     	  int pn_min,pn_ave,pn_max,pn_sum;//,err;
 
@@ -576,7 +617,7 @@ virtual void Alloc()
       }
 
 
-      int addParticleListToCells(std::vector<Particle>& vp)
+      int Plasma::addParticleListToCells(std::vector<Particle>& vp)
       {
     	  Cell c0 = (*AllCells)[0];
     	  int n;
@@ -620,7 +661,7 @@ virtual void Alloc()
 
 
 
-	  int addAllParticleListsToCells(std::vector<Particle> & ion_vp,
+	  int Plasma::addAllParticleListsToCells(std::vector<Particle> & ion_vp,
 			                         std::vector<Particle> & el_vp,
 			                         std::vector<Particle> & beam_vp)
 	  {
@@ -634,7 +675,7 @@ virtual void Alloc()
 
 
 //
-	  int readParticles(FILE *f,int nt)
+	  int Plasma::readParticles(FILE *f,int nt)
 	  {
 		 std::vector<Particle> ion_vp,el_vp,beam_vp;
 
@@ -648,7 +689,7 @@ virtual void Alloc()
 
 
 
-	  virtual void InitBinaryParticles(int nt)
+	  void Plasma::InitBinaryParticles(int nt)
 	  {
 	     FILE *f;
 	     std::string part_name  = getMumuFileName(nt);
@@ -669,32 +710,32 @@ virtual void Alloc()
 
 
 
-	  virtual void InitElectronParticles(){}
-	  virtual void InitIonParticles(int n_per_cell1,double q_m,thrust::host_vector<Particle> &vecp)
-	  {
-	     int total_ions = Nx*Ny*Nz*n_per_cell;
-	     Particle *p;
-	     //double ami = ni /((double)n_per_cell);
-	     double x,y,z;
+	//  virtual void InitElectronParticles(){}
+//	  virtual void InitIonParticles(int n_per_cell1,double q_m,thrust::host_vector<Particle> &vecp)
+//	  {
+//	     int total_ions = Nx*Ny*Nz*n_per_cell;
+//	     Particle *p;
+//	     //double ami = ni /((double)n_per_cell);
+//	     double x,y,z;
+//
+//	     for(int j = 0;j < total_ions;j++)
+//	     {
+//		z = 0.0;
+//		y = 0.0;
+//		x = 0.0;
+//
+//		p = new Particle(x,y,z,0.0,0.0,0.0,ni,q_m);
+//
+//	#ifdef DEBUG_PLASMA
+////		printf("particle %d \n",j);
+//	#endif
+//
+//		vecp.push_back(*p);
+//	     }
+//	  }
 
-	     for(int j = 0;j < total_ions;j++)
-	     {
-		z = 0.0;
-		y = 0.0;
-		x = 0.0;
-
-		p = new Particle(x,y,z,0.0,0.0,0.0,ni,q_m);
-
-	#ifdef DEBUG_PLASMA
-//		printf("particle %d \n",j);
-	#endif
-
-		vecp.push_back(*p);
-	     }
-	  }
-
-	  virtual void InitBeamParticles(int n_per_cell1){}
-	  void Distribute(thrust::host_vector<Particle> &vecp)
+//	  virtual void InitBeamParticles(int n_per_cell1){}
+	  void Plasma::Distribute(thrust::host_vector<Particle> &vecp)
 	  {
 	     Cell c0 = (*AllCells)[0],c111;
 	     int    n;//,i;

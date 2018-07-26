@@ -418,7 +418,21 @@ int readStartPoint(int nt)
 
 	  int getBoundaryLimit(int dir){return ((dir == 0)*Nx  + (dir == 1)*Ny + (dir == 2)*Nz + 2);}
 
-#include "init.cu"
+//#include "init.cu"
+
+	  void Alloc();
+
+	  int initControlPointFile();
+	  virtual void InitCells();
+
+
+
+	  int initMeshArrays();
+
+
+	  void AssignArraysToCells();
+	  int InitializeGPU();
+	  void Initialize();
 
 
 
@@ -1017,16 +1031,25 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	      return 0;
 	}
 
-	void ClearAllParticles(void )
-	{
-	    for(int n = 0;n < (*AllCells).size();n++)
-	    {
-	        Cell c = (*AllCells)[n];
+	void ClearAllParticles(void );
 
-		c.ClearParticles();
+	void LoadTestData(int nt,
+			            int part_nt,
+			            std::vector<Particle> & ion_vp,
+			            std::vector<Particle> & el_vp,
+			            std::vector<Particle> & beam_vp);
 
-	    }
-	}
+	void InitializeCPU();
+	int addAllParticleListsToCells(std::vector<Particle> & ion_vp,
+				                         std::vector<Particle> & el_vp,
+				                         std::vector<Particle> & beam_vp);
+	int addParticleListToCells(std::vector<Particle>& vp);
+	void InitGPUParticles();
+	void printPICstatitstics(double m,double q_m, int total_particles);
+	int readParticles(FILE *f,int nt);
+	void InitBinaryParticles(int nt);
+	void Distribute(thrust::host_vector<Particle> &vecp);
+
 
 
 
@@ -1051,13 +1074,6 @@ double CheckGPUArraySilent	(double* a, double* d_a)
 	     tau        = TAU;
 	   }
 
-	   int initControlPointFile()
-	   {
-		   f_prec_report = fopen("control_points.dat","wt");
-		   fclose(f_prec_report);
-
-		   return 0;
-	   }
 
 
 
