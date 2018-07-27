@@ -194,6 +194,7 @@ int MemoryCopy(void* dst,void *src,size_t size,int dir);
 
 int MemoryAllocate(void** dst,size_t size);
 
+
 int GetDeviceMemory(size_t *m_free,size_t *m_total);
 
 int MemorySet(void *s, int c, size_t n);
