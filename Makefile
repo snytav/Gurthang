@@ -32,8 +32,8 @@ wrap_kernel.o: wrap_kernel.cu $(DEPS)
 #	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
 	
 
-service_functions.o: service_functions.cu $(DEPS)
-	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
+#service_functions.o: service_functions.cu $(DEPS)
+#	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
 
 archAPI.o: archAPI.cu $(DEPS)
 	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	

@@ -35,25 +35,25 @@
 
 using namespace std;
 
-int setPrintfLimit()
-{
-	size_t sizeP;
-
-	printf("Particle size %lu %lu CurrentTensor %d short %d\n",sizeof(Particle),sizeof(Particle)/sizeof(double),sizeof(CurrentTensor),sizeof(char));
-
-	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
-
-	printf("printf default limit %lu \n",sizeP/1024/1024);
-
-	sizeP *= 10000;
-	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
-
-	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
-
-	printf("printf limit set to %lu \n",sizeP/1024/1024);
-
-	return 0;
-}
+//int setPrintfLimit()
+//{
+//	size_t sizeP;
+//
+//	printf("Particle size %lu %lu CurrentTensor %d short %d\n",sizeof(Particle),sizeof(Particle)/sizeof(double),sizeof(CurrentTensor),sizeof(char));
+//
+//	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+//
+//	printf("printf default limit %lu \n",sizeP/1024/1024);
+//
+//	sizeP *= 10000;
+//	cudaDeviceSetLimit(cudaLimitPrintfFifoSize, sizeP);
+//
+//	cudaDeviceGetLimit(&sizeP,cudaLimitPrintfFifoSize);
+//
+//	printf("printf limit set to %lu \n",sizeP/1024/1024);
+//
+//	return 0;
+//}
 
 double get_meminfo(void)
 {
@@ -233,9 +233,9 @@ void get_load_data_file_names(
 
 void cudaMalloc3D(double **X,double **Y,double**Z,int nx,int ny,int nz)
 {
-	cudaMalloc(X,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
-	cudaMalloc(Y,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
-	cudaMalloc(Z,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
+	MemoryAllocate((void**)X,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
+	MemoryAllocate((void**)Y,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
+	MemoryAllocate((void**)Z,sizeof(double)*(nx+2)*(ny+2)*(nz+2));
 
 }
 

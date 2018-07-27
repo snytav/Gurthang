@@ -37,7 +37,7 @@ void get_load_data_file_names(
 double get_meminfo(void);
 double get_meminfo1(void);
 
-int setPrintfLimit();
+//int setPrintfLimit();
 
 __host__ __device__ int isNan(double t);
 

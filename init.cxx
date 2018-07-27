@@ -76,7 +76,7 @@ int Plasma::InitializeGPU()
     err = getLastError();
     if(err != cudaSuccess) { printf("%s:%d - error %d %s\n",__FILE__,__LINE__,err,getErrorString(err)); }
 
-    setPrintfLimit();
+//    setPrintfLimit();
 
     err = SetDevice(0);
 
