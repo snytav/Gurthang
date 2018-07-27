@@ -28,8 +28,8 @@ wrap_kernel.o: wrap_kernel.cu $(DEPS)
 #compare.o: compare.cu $(DEPS)
 #	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)
 	
-load_data.o: load_data.cu $(DEPS)
-	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
+#load_data.o: load_data.cu $(DEPS)
+#	$(CUDACC) -g -c -o $@ $< $(CUDAFLAGS)	
 	
 
 service_functions.o: service_functions.cu $(DEPS)
