@@ -70,11 +70,11 @@ typedef struct dim3 dim3;
 
 
 
-#ifdef __CUDACC__
-#define COPY_FUNCTION_POINTER(dst,src) 	cudaMemcpyFromSymbol( (dst),(src), sizeof( SingleNodeFunctionType ) );
-#else
-#define COPY_FUNCTION_POINTER(dst,src) {*(dst) = src;}
-#endif
+//#ifdef __CUDACC__
+//#define COPY_FUNCTION_POINTER(dst,src) 	cudaMemcpyFromSymbol( (dst),(src), sizeof( SingleNodeFunctionType ) );
+//#else
+//#define COPY_FUNCTION_POINTER(dst,src) {*(dst) = src;}
+//#endif
 
 #ifdef __CUDACC__
 __device__ void BlockThreadSynchronize();
