@@ -1,14 +1,3 @@
-/*
- * archAPI.h
- *
- *  Created on: Nov 9, 2015
- *      Author: snytav
- */
-
-
-
-
-
 #ifndef ARCHAPI_H_
 #define ARCHAPI_H_
 
@@ -68,10 +57,6 @@ typedef struct dim3 dim3;
 
 #endif
 
-
-
-
-
 #ifdef __CUDACC__
 __device__ void BlockThreadSynchronize();
 #else
@@ -82,7 +67,7 @@ void BlockThreadSynchronize();
 
 #endif
 
-//	double assumed,old=*address;
+
 #ifdef __CUDACC__
 __device__ double MultiThreadAdd(double *address, double val);
 
@@ -90,23 +75,9 @@ __device__ double MultiThreadAdd(double *address, double val);
 double MultiThreadAdd(double *address, double val);
 #endif
 
-//class cudaAPI{
-//public:
-//	cudaAPI(){}
+
 
 const char *getErrorString(int err);
-
-//#ifdef __CUDACC__
-// const char *getErrorString(int err)
-//{
-//	return cudaGetErrorString((cudaError_t)err);
-//}
-//#else
-//const char *getErrorString(int err);
-//
-//#endif
-
-
 
 int SetDevice(int n);
 
@@ -133,10 +104,6 @@ int ThreadSynchronize();
 #ifdef __CUDACC__
  int __device__ DeviceSynchronize();
 
-
-
-
-
  int getLastError();
 
 #else
@@ -144,11 +111,5 @@ int ThreadSynchronize();
  int getLastError();
 
 #endif
-
-
-//virtual ~cudaAPI(){}
-//
-//};
-
 
 #endif /* ARCHAPI_H_ */
