@@ -11,12 +11,21 @@
 #define DEVICE_TO_DEVICE -131316
 
 #ifdef __CUDACC__
+//#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef#ifdef
+
 #define hostdevice_for_CUDA __host__ __device__
 #define global_for_CUDA __global__
+
+
+
 #endif
 
 #ifndef __CUDACC__
+//#ifndef#ifndef#ifndef#ifndef#ifndef#ifndef#ifndef#ifndef#ifndef#ifndef#ifndef
+
+
 extern uint3 threadIdx,blockIdx;
+
 #endif
 
 
