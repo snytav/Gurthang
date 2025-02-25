@@ -70,7 +70,7 @@ void get_load_data_file_names(
 
     sprintf(d_hxfile,"dnhx%06d.dat",2*nt-1);
     sprintf(d_hyfile,"dnhy%06d.dat",2*nt-1);
-    printf(d_hyfile);
+//     printf(d_hyfile);
     sprintf(d_hzfile,"dnhz%06d.dat",2*nt-1);
 
     sprintf(jxfile,"dnjx%06d.dat",2*nt);
