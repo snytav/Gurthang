@@ -24,10 +24,10 @@
 //#include <stdio.h>
 #include <errno.h>
 
-#ifdef __CUDACC__
-#include <nvToolsExtCuda.h>
-#include <nvToolsExtCudaRt.h>
-#endif
+// #ifdef __CUDACC__
+// #include <nvToolsExtCuda.h>
+// #include <nvToolsExtCudaRt.h>
+// #endif
 
 
 #include <time.h>
